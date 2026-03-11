@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="google-site-verification" content="6j6FwOt6-oE6VX4WTOeKUeiXx2Cu9naWNzucuWF-ZLk" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+    <!-- Load fonts with display=swap for non-blocking render -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" as="style" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" /></noscript>
+
+    <!-- Preload LCP image (video poster) with high priority -->
+    <link rel="preload" href="/videos/video-poster.webp" as="image" type="image/webp" fetchpriority="high" />
+
+    <!-- Critical CSS for above-the-fold content - inlined for fastest FCP -->
+    <style>
+      /* Font-face with swap for non-blocking text render */
+      @font-face { font-family: 'DM Sans'; font-display: swap; src: local('DM Sans'); }
+      @font-face { font-family: 'Outfit'; font-display: swap; src: local('Outfit'); }
+
+      /* Critical layout CSS - prevents CLS and enables instant FCP */
+      *, *::before, *::after { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; line-height: 1.5; }
+      body {
+        margin: 0;
+        font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+        background: hsl(210 40% 98%);
+        color: hsl(222 47% 10%);
+        -webkit-font-smoothing: antialiased;
+      }
+      #root { min-height: 100vh; display: flex; flex-direction: column; }
+
+      /* Hero section critical styles */
+      .section-card {
+        padding: 1.5rem;
+        border-radius: 0.9rem;
+        background: hsl(0 0% 100%);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      h1 {
+        font-family: 'Outfit', system-ui, sans-serif;
+        font-size: clamp(1.875rem, 5vw, 3rem);
+        font-weight: 600;
+        line-height: 1.2;
+        color: hsl(222 47% 10%);
+        margin: 0;
+      }
+
+      /* Video poster placeholder - prevents layout shift */
+      .aspect-\[9\/16\] { aspect-ratio: 9/16; }
+      video { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+      /* Button critical styles for FCP */
+      button, a { font-family: inherit; }
+
+      /* Dark mode critical overrides */
+      @media (prefers-color-scheme: dark) {
+        body { background: hsl(222 47% 7%); color: hsl(210 40% 98%); }
+        .section-card { background: hsl(222 47% 9%); }
+        h1 { color: hsl(210 40% 98%); }
+      }
+    </style>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#16a34a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="CalorieVision" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon-v4.png" type="image/png" />
+    <link rel="shortcut icon" href="/favicon-v4.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/favicon-v4.png" />
+
+    <!-- Google Analytics - deferred for performance -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-RKQLNSV7XS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RKQLNSV7XS');
+    </script>
+
+    <title>CalorieVision - AI Meal Analysis From a Photo</title>
+    <meta
+      name="description"
+      content="CalorieVision estimates calories and nutrition from a photo of your meal. Educational, fast, and privacy-focused."
+    />
+    <meta name="author" content="CalorieVision" />
+    <link rel="canonical" href="https://calorievision.online/" />
+
+    <meta property="og:title" content="CalorieVision - AI Meal Analysis From a Photo" />
+    <meta
+      property="og:description"
+      content="Upload a meal photo to get an instant, educational calorie and nutrition breakdown with CalorieVision."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://calorievision.online/" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@CalorieVision" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="CalorieVision - AI Meal Analysis From a Photo" />
+    <meta
+      name="twitter:description"
+      content="Educational AI calorie estimates from a quick photo of your meal."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CalorieVision",
+        "url": "https://calorievision.online/",
+        "description": "Educational AI meal analysis from a photo with approximate calories and nutrition.",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "AI-powered calorie estimation from photos",
+          "Detailed nutritional breakdown (protein, carbs, fat)",
+          "Available in 8 languages",
+          "Privacy-focused - no data stored",
+          "Free to use"
+        ],
+        "screenshot": "https://calorievision.online/favicon.png",
+        "creator": {
+          "@type": "Organization",
+          "name": "CalorieVision",
+          "url": "https://calorievision.online"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "CalorieVision",
+        "url": "https://calorievision.online",
+        "logo": "https://calorievision.online/favicon.png",
+        "sameAs": []
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "CalorieVision",
+        "url": "https://calorievision.online",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://calorievision.online/analyze",
+          "query-input": "required"
+        }
+      }
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9930085345737948"
+     crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div id="root">
+      <!-- Static content for SEO crawlers -->
+      <noscript>
+        <div style="padding: 40px; text-align: center; font-family: system-ui, sans-serif;">
+          <h1>CalorieVision - AI Meal Analysis</h1>
+          <p>CalorieVision uses artificial intelligence to estimate calories and nutrition from a photo of your meal. Upload a photo and get instant educational nutritional information including calories, protein, carbs, and fat.</p>
+          <h2>Features</h2>
+          <ul style="list-style: none; padding: 0;">
+            <li>📸 Upload or take a photo of your meal</li>
+            <li>🤖 AI-powered calorie estimation</li>
+            <li>📊 Detailed nutritional breakdown</li>
+            <li>🌍 Available in 8 languages</li>
+            <li>🔒 Privacy-focused - no data stored</li>
+          </ul>
+          <p>Start analyzing your meals today at <a href="https://calorievision.online">calorievision.online</a></p>
+        </div>
+      </noscript>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

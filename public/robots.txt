@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://calorievision.online/sitemap.xml
+

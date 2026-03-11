@@ -1,0 +1,29 @@
+SLUG: 5-simple-tips-to-track-your-daily-calories
+TITLE: 5 Simple Tips to Track Your Daily Calories
+META: Discover 5 simple and effective tips to track your daily calories. Learn how to use apps, estimate portions, and build better nutrition awareness for a healthier lifestyle.
+CONTENT_HTML: <<NOT FOUND>>
+================================================================================
+
+SLUG: almond-calories-complete-guide
+TITLE: Almond Calories Uncovered: Everything You Need to Know About This Popular Nut
+META: Discover the calories in almonds - raw, roasted, almond butter, and almond milk. Plus protein content, portion sizes, and weight loss tips.
+CONTENT_HTML: <<NOT FOUND>>
+================================================================================
+
+SLUG: avocado-calories-complete-guide
+TITLE: The Complete Calorie Guide to Avocados: Everything You Need to Know
+META: Learn everything about avocado calories - whole, sliced, in guacamole, and on toast. Plus nutrition facts, health benefits, and smart portion tips.
+CONTENT_HTML: <<NOT FOUND>>
+================================================================================
+
+SLUG: beet-calories-complete-nutrition-guide
+TITLE: The Ultimate Calorie Guide to Beets: From Raw to Roasted and Everything Between
+META: Discover the calories in beets - raw, roasted, pickled and juiced. Plus beet nutrition facts, health benefits, and low-calorie cooking tips.
+CONTENT_HTML: <<NOT FOUND>>
+================================================================================
+
+SLUG: broccoli-calories-complete-guide
+TITLE: Broccoli Calories Explained: Why This Green Giant Is a Dieter's Best Friend
+META: Discover the calories in broccoli - raw, steamed, roasted, and with toppings. Plus vitamins, weight loss benefits, and healthy cooking tips.
+CONTENT_HTML: <<NOT FOUND>>
+================================================================================

@@ -1,0 +1,58 @@
+project_id = "smsikaqybxtnzjvruhsa"
+
+[functions.broadcast-notification]
+verify_jwt = true
+
+[functions.sitemap]
+verify_jwt = false
+
+[functions.meal-analysis]
+verify_jwt = false
+
+[functions.analyze-meal-proxy]
+verify_jwt = false
+
+[functions.translate-blog]
+verify_jwt = false
+
+# Internal functions - require service role key for server-to-server calls
+[functions.send-notification]
+verify_jwt = false
+
+[functions.process-queue]
+verify_jwt = false
+
+[functions.deactivate-stale-tokens]
+verify_jwt = false
+
+# Authenticated user endpoints
+[functions.queue-notification]
+verify_jwt = true
+
+[functions.schedule-notifications]
+verify_jwt = true
+
+[functions.trigger-calorie-alert]
+verify_jwt = true
+
+[functions.register-device]
+verify_jwt = false
+
+[functions.test-notification]
+verify_jwt = true
+
+[functions.get-firebase-config]
+verify_jwt = false
+
+[functions.warm-translation-cache]
+verify_jwt = false
+
+[functions.process-image]
+verify_jwt = true
+
+[functions.send-contact-email]
+verify_jwt = false
+
+[functions.public-site-assets]
+verify_jwt = false
+
