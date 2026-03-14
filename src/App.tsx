@@ -44,6 +44,7 @@ const AdminHomepageEditor = lazy(() => import("./pages/AdminHomepageEditor"));
 const ChangePassword = lazy(() => import("./pages/ChangePassword"));
 const NotificationSettings = lazy(() => import("./pages/NotificationSettings"));
 const Install = lazy(() => import("./pages/Install"));
+const Pricing = lazy(() => import("./pages/Pricing"));
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,15 @@ const LocalizedRoutes = () => (
           element={
             <MainLayout>
               <LazyPage><Install /></LazyPage>
+            </MainLayout>
+          }
+        />
+        {/* Pricing */}
+        <Route
+          path="pricing"
+          element={
+            <MainLayout>
+              <LazyPage><Pricing /></LazyPage>
             </MainLayout>
           }
         />

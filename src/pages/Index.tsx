@@ -13,6 +13,7 @@ import MediaShowcaseSection from "@/components/MediaShowcaseSection";
 
 import howItWorks1 from "@/assets/how-it-works-1.jpg";
 import howItWorks2 from "@/assets/how-it-works-2.jpg";
+import gaugeImage from "@/assets/gauge-no-bg.png";
 
 const Index = () => {
   const { language } = useLanguage();
@@ -213,6 +214,49 @@ const Index = () => {
   return <>
       {/* Media Showcase Section - Between Header and Hero */}
       <MediaShowcaseSection />
+
+      {/* Gauge Visualization Section */}
+      <ScrollAnimation animation="fade-up" duration={600}>
+        <section className="section-card text-center">
+          <h2 className="text-2xl font-semibold md:text-3xl mb-3">
+            {t(
+              "Visual Nutrition Analysis at a Glance",
+              "Analyse nutritionnelle visuelle en un coup d'œil",
+              "Análisis visual de nutrición de un vistazo",
+              "Análise visual de nutrição de relance",
+              "一目了然的视觉营养分析",
+              "تحليل التغذية البصري في لمحة",
+              "Analisi nutrizionale visiva in un colpo d'occhio",
+              "Visuelle Ernährungsanalyse auf einen Blick",
+              "Visuele voedingsanalyse in één oogopslag",
+              "Визуальный анализ питания с первого взгляда",
+              "一目でわかる視覚的栄養分析",
+            )}
+          </h2>
+          <p className="mb-6 text-sm text-muted-foreground md:text-base max-w-2xl mx-auto">
+            {t(
+              "CalorieVision instantly analyzes your meals and visualizes calories and macronutrients in a clear, intuitive way. From a single photo, understand the balance between proteins, carbohydrates, and fats to make smarter nutrition decisions.",
+              "CalorieVision analyse instantanément vos repas et visualise les calories et macronutriments de façon claire et intuitive. À partir d'une seule photo, comprenez l'équilibre entre protéines, glucides et lipides.",
+              "CalorieVision analiza instantáneamente tus comidas y visualiza calorías y macronutrientes de forma clara e intuitiva. Desde una sola foto, entiende el equilibrio entre proteínas, carbohidratos y grasas.",
+              "CalorieVision analisa instantaneamente as suas refeições e visualiza calorias e macronutrientes de forma clara e intuitiva. A partir de uma única foto, entenda o equilíbrio entre proteínas, carboidratos e gorduras.",
+              "CalorieVision即时分析您的餐食，以清晰直观的方式呈现卡路里和宏量营养素。从一张照片中了解蛋白质、碳水化合物和脂肪之间的平衡。",
+              "يحلل CalorieVision وجباتك فوراً ويُظهر السعرات الحرارية والعناصر الغذائية الكبرى بطريقة واضحة وبديهية. من صورة واحدة، افهم التوازن بين البروتينات والكربوهيدرات والدهون.",
+              "CalorieVision analizza istantaneamente i tuoi pasti e visualizza calorie e macronutrienti in modo chiaro e intuitivo. Da una singola foto, capisci l'equilibrio tra proteine, carboidrati e grassi.",
+              "CalorieVision analysiert Ihre Mahlzeiten sofort und visualisiert Kalorien und Makronährstoffe auf klare, intuitive Weise. Verstehen Sie aus einem einzigen Foto die Balance zwischen Proteinen, Kohlenhydraten und Fetten.",
+              "CalorieVision analyseert uw maaltijden direct en visualiseert calorieën en macronutriënten op een duidelijke, intuïtieve manier. Begrijp vanuit één foto de balans tussen eiwitten, koolhydraten en vetten.",
+              "CalorieVision мгновенно анализирует ваши блюда и наглядно отображает калории и макроэлементы. По одному фото поймите баланс между белками, углеводами и жирами.",
+              "CalorieVisionは食事を瞬時に分析し、カロリーと主要栄養素を明確で直感的な方法で視覚化します。1枚の写真から、タンパク質・炭水化物・脂質のバランスを把握できます。",
+            )}
+          </p>
+          <div className="flex justify-center">
+            <img
+              src={gaugeImage}
+              alt={t("Nutrition gauge chart", "Jauge nutritionnelle", "Medidor de nutrición", "Medidor de nutrição", "营养仪表盘", "مقياس التغذية", "Indicatore nutrizionale", "Ernährungsanzeige", "Voedingsmeter", "Датчик питания", "栄養ゲージ")}
+              className="max-w-[260px] md:max-w-[340px] w-full drop-shadow-md"
+            />
+          </div>
+        </section>
+      </ScrollAnimation>
 
       {/* Main Hero Section with H1 */}
       <ScrollAnimation animation="fade-up" duration={700}>

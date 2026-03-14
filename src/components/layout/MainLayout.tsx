@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UtensilsCrossed, ChevronDown, Menu, Bell } from "lucide-react";
+import { ChevronDown, Menu, Bell } from "lucide-react";
 import { LocalizedNavLink } from "@/components/LocalizedNavLink";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ const MainLayout = ({
       about: "About",
       contact: "Contact",
       blog: "Blog",
+      pricing: "Pricing",
       analyzeCta: "Analyze a meal",
       howItWorksCta: "How it works",
       brandingSettingsAria: "Open branding settings"
@@ -57,6 +58,7 @@ const MainLayout = ({
       about: "À propos",
       contact: "Contact",
       blog: "Blog",
+      pricing: "Tarifs",
       analyzeCta: "Analyser un repas",
       howItWorksCta: "Comment ça marche",
       brandingSettingsAria: "Ouvrir les paramètres de branding"
@@ -70,6 +72,7 @@ const MainLayout = ({
       about: "Acerca de",
       contact: "Contacto",
       blog: "Blog",
+      pricing: "Precios",
       analyzeCta: "Analizar una comida",
       howItWorksCta: "Cómo funciona",
       brandingSettingsAria: "Abrir los ajustes de marca"
@@ -83,6 +86,7 @@ const MainLayout = ({
       about: "Sobre",
       contact: "Contacto",
       blog: "Blog",
+      pricing: "Preços",
       analyzeCta: "Analisar uma refeição",
       howItWorksCta: "Como funciona",
       brandingSettingsAria: "Abrir as configurações de marca"
@@ -96,6 +100,7 @@ const MainLayout = ({
       about: "关于",
       contact: "联系",
       blog: "博客",
+      pricing: "定价",
       analyzeCta: "分析一餐",
       howItWorksCta: "了解工作原理",
       brandingSettingsAria: "打开品牌设置"
@@ -109,6 +114,7 @@ const MainLayout = ({
       about: "من نحن",
       contact: "اتصل بنا",
       blog: "المدونة",
+      pricing: "الأسعار",
       analyzeCta: "حلّل وجبة",
       howItWorksCta: "كيف يعمل",
       brandingSettingsAria: "فتح إعدادات الهوية البصرية"
@@ -122,6 +128,7 @@ const MainLayout = ({
       about: "Chi siamo",
       contact: "Contatti",
       blog: "Blog",
+      pricing: "Prezzi",
       analyzeCta: "Analizza un pasto",
       howItWorksCta: "Come funziona",
       brandingSettingsAria: "Apri le impostazioni del branding"
@@ -135,6 +142,7 @@ const MainLayout = ({
       about: "Über uns",
       contact: "Kontakt",
       blog: "Blog",
+      pricing: "Preise",
       analyzeCta: "Mahlzeit analysieren",
       howItWorksCta: "So funktioniert's",
       brandingSettingsAria: "Branding-Einstellungen öffnen"
@@ -148,6 +156,7 @@ const MainLayout = ({
       about: "Over ons",
       contact: "Contact",
       blog: "Blog",
+      pricing: "Prijzen",
       analyzeCta: "Analyseer een maaltijd",
       howItWorksCta: "Hoe het werkt",
       brandingSettingsAria: "Huisstijl instellingen openen"
@@ -161,6 +170,7 @@ const MainLayout = ({
       about: "О нас",
       contact: "Контакты",
       blog: "Блог",
+      pricing: "Цены",
       analyzeCta: "Анализировать блюдо",
       howItWorksCta: "Как это работает",
       brandingSettingsAria: "Открыть настройки бренда"
@@ -174,6 +184,7 @@ const MainLayout = ({
       about: "概要",
       contact: "お問い合わせ",
       blog: "ブログ",
+      pricing: "料金",
       analyzeCta: "食事を分析する",
       howItWorksCta: "使い方を見る",
       brandingSettingsAria: "ブランド設定を開く"
@@ -253,7 +264,7 @@ const MainLayout = ({
 
         {/* Logo and App Name */}
         <LocalizedNavLink to="/" className="flex items-center gap-2 shrink-0">
-          <UtensilsCrossed className="h-6 w-6 md:h-7 md:w-7" />
+          <img src="/temp-gauge-no-bg.png" className="h-7 w-7 md:h-8 md:w-8 object-contain drop-shadow-sm" alt="" aria-hidden="true" />
           <span className="text-lg font-bold md:text-xl">CalorieVision</span>
         </LocalizedNavLink>
 
@@ -276,6 +287,9 @@ const MainLayout = ({
           </LocalizedNavLink>
           <LocalizedNavLink to="/contact" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
             {current.contact}
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/pricing" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
+            {current.pricing}
           </LocalizedNavLink>
         </nav>
 
@@ -315,6 +329,9 @@ const MainLayout = ({
                 </LocalizedNavLink>
                 <LocalizedNavLink to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
                   {current.contact}
+                </LocalizedNavLink>
+                <LocalizedNavLink to="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
+                  {current.pricing}
                 </LocalizedNavLink>
                 {user && (
                   <LocalizedNavLink to="/notification-settings" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
