@@ -44,7 +44,7 @@ const Index = () => {
     }
   }, [navigate]);
 
-  const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string) => {
+  const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string, ru?: string, ja?: string) => {
     if (language === "fr") return fr;
     if (language === "es") return es;
     if (language === "pt") return pt ?? en;
@@ -53,6 +53,8 @@ const Index = () => {
     if (language === "it") return it ?? en;
     if (language === "de") return de ?? en;
     if (language === "nl") return nl ?? en;
+    if (language === "ru") return ru ?? en;
+    if (language === "ja") return ja ?? en;
     return en;
   };
 
@@ -153,6 +155,26 @@ const Index = () => {
       heroEducational: "Alleen educatieve inzichten",
       heroPhotosNotStored: "Foto's worden niet opgeslagen",
     },
+    ru: {
+      heroEyebrow: "ИИ-анализ приёма пищи по фото — мгновенно",
+      heroTitle: "Лучше понимайте свою еду с CalorieVision.",
+      heroSubtitle:
+        "Загрузите фото блюда и позвольте CalorieVision оценить состав, размер порций и примерную калорийность. Быстро, удобно и только в образовательных целях — не медицинский инструмент.",
+      heroUploadCta: "Загрузить фото",
+      heroTakePhotoCta: "Сделать фото",
+      heroEducational: "Только образовательная информация",
+      heroPhotosNotStored: "Фото не сохраняются",
+    },
+    ja: {
+      heroEyebrow: "AIによる食事の栄養分析 — 瞬時に",
+      heroTitle: "CalorieVisionで食事をもっとよく理解しましょう。",
+      heroSubtitle:
+        "お皿の写真をアップロードするだけで、CalorieVisionが食品の種類、量、およびおおよそのカロリーを推定します。速く、使いやすく、あくまで教育目的です — 医療ツールではありません。",
+      heroUploadCta: "写真をアップロード",
+      heroTakePhotoCta: "写真を撮る",
+      heroEducational: "教育目的の情報のみ",
+      heroPhotosNotStored: "写真は保存されません",
+    },
   } as const;
   const copy = contentByLang[language];
 
@@ -170,6 +192,8 @@ const Index = () => {
     it: "Conta le Calorie dei Tuoi Pasti in 3 Secondi con l'IA",
     de: "Zählen Sie die Kalorien Ihrer Mahlzeiten in 3 Sekunden mit KI",
     nl: "Tel de calorieën van je maaltijd in 3 seconden met AI",
+    ru: "Подсчитайте калории вашего блюда за 3 секунды с помощью ИИ",
+    ja: "AIで3秒で食事のカロリーを計算する",
   };
 
   const videoDesc: Record<string, string> = {
@@ -182,6 +206,8 @@ const Index = () => {
     it: "Scopri CalorieVision: l'app gratuita che analizza i tuoi pasti da una sola foto. La nostra IA identifica ogni alimento e calcola istantaneamente calorie, proteine, carboidrati e grassi. Senza registrazione, senza archiviazione dati, 100% privato.",
     de: "Entdecken Sie CalorieVision: die kostenlose App, die Ihre Mahlzeiten aus einem einzigen Foto analysiert. Unsere KI identifiziert jede Zutat und berechnet sofort Kalorien, Protein, Kohlenhydrate und Fett. Keine Anmeldung, keine Datenspeicherung, 100% privat.",
     nl: "Ontdek CalorieVision: de gratis app die je maaltijden analyseert vanuit één foto. Onze AI identificeert elk voedingsmiddel en berekent direct calorieën, eiwitten, koolhydraten en vetten. Geen registratie, geen gegevensopslag, 100% privé.",
+    ru: "Откройте для себя CalorieVision: бесплатное приложение для анализа блюд по одной фотографии. Наш ИИ распознаёт каждый продукт и мгновенно рассчитывает калории, белки, углеводы и жиры. Без регистрации, без хранения данных, 100% конфиденциально.",
+    ja: "CalorieVisionをご紹介：一枚の写真から食事を分析する無料アプリです。AIが各食品を識別し、カロリー・タンパク質・炭水化物・脂質を瞬時に計算します。登録不要、データ保存なし、100%プライバシー保護。",
   };
 
   return <>

@@ -9,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const HowItWorks = () => {
   const { language } = useLanguage();
 
-  const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string) => {
+  const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string, ru?: string, ja?: string) => {
     if (language === "fr") return fr;
     if (language === "es") return es;
     if (language === "pt") return pt ?? en;
@@ -18,6 +18,8 @@ const HowItWorks = () => {
     if (language === "it") return it ?? en;
     if (language === "de") return de ?? en;
     if (language === "nl") return nl ?? en;
+    if (language === "ru") return ru ?? en;
+    if (language === "ja") return ja ?? en;
     return en;
   };
 

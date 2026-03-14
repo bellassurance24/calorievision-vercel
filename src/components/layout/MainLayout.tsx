@@ -151,6 +151,32 @@ const MainLayout = ({
       analyzeCta: "Analyseer een maaltijd",
       howItWorksCta: "Hoe het werkt",
       brandingSettingsAria: "Huisstijl instellingen openen"
+    },
+    ru: {
+      tagline: "Анализ питания, не медицинская консультация",
+      home: "Главная",
+      analyze: "Анализ",
+      howItWorks: "Как это работает",
+      faq: "FAQ",
+      about: "О нас",
+      contact: "Контакты",
+      blog: "Блог",
+      analyzeCta: "Анализировать блюдо",
+      howItWorksCta: "Как это работает",
+      brandingSettingsAria: "Открыть настройки бренда"
+    },
+    ja: {
+      tagline: "食事の分析、医療アドバイスではありません",
+      home: "ホーム",
+      analyze: "分析",
+      howItWorks: "使い方",
+      faq: "よくある質問",
+      about: "概要",
+      contact: "お問い合わせ",
+      blog: "ブログ",
+      analyzeCta: "食事を分析する",
+      howItWorksCta: "使い方を見る",
+      brandingSettingsAria: "ブランド設定を開く"
     }
   } as const;
   const current = navLabels[language];
@@ -166,7 +192,9 @@ const MainLayout = ({
     ar: "/flags/waving/sa.png",
     it: "/flags/waving/it.png",
     de: "/flags/waving/de.png",
-    nl: "/flags/waving/nl.png"
+    nl: "/flags/waving/nl.png",
+    ru: "/flags/waving/ru.png",
+    ja: "/flags/waving/jp.png"
   };
 
   const languageNames: Record<Language, string> = {
@@ -178,7 +206,9 @@ const MainLayout = ({
     ar: "العربية",
     it: "Italiano",
     de: "Deutsch",
-    nl: "Nederlands"
+    nl: "Nederlands",
+    ru: "Русский",
+    ja: "日本語"
   };
 
   const isRTL = language === "ar";
@@ -354,22 +384,22 @@ const MainLayout = ({
               {current.blog}
             </LocalizedNavLink>
             <LocalizedNavLink to="/privacy-policy" className="transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
-              {language === "fr" ? "Politique de confidentialité" : language === "es" ? "Política de privacidad" : language === "pt" ? "Política de privacidade" : language === "zh" ? "隐私政策" : language === "ar" ? "سياسة الخصوصية" : language === "it" ? "Informativa sulla privacy" : language === "de" ? "Datenschutzrichtlinie" : language === "nl" ? "Privacybeleid" : "Privacy Policy"}
+              {language === "fr" ? "Politique de confidentialité" : language === "es" ? "Política de privacidad" : language === "pt" ? "Política de privacidade" : language === "zh" ? "隐私政策" : language === "ar" ? "سياسة الخصوصية" : language === "it" ? "Informativa sulla privacy" : language === "de" ? "Datenschutzrichtlinie" : language === "nl" ? "Privacybeleid" : language === "ru" ? "Политика конфиденциальности" : language === "ja" ? "プライバシーポリシー" : "Privacy Policy"}
             </LocalizedNavLink>
             <LocalizedNavLink to="/terms" className="transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
-              {language === "fr" ? "Conditions d'utilisation" : language === "es" ? "Términos y condiciones" : language === "pt" ? "Termos e condições" : language === "zh" ? "使用条款" : language === "ar" ? "الشروط والأحكام" : language === "it" ? "Termini e condizioni" : language === "de" ? "Nutzungsbedingungen" : language === "nl" ? "Voorwaarden" : "Terms"}
+              {language === "fr" ? "Conditions d'utilisation" : language === "es" ? "Términos y condiciones" : language === "pt" ? "Termos e condições" : language === "zh" ? "使用条款" : language === "ar" ? "الشروط والأحكام" : language === "it" ? "Termini e condizioni" : language === "de" ? "Nutzungsbedingungen" : language === "nl" ? "Voorwaarden" : language === "ru" ? "Условия использования" : language === "ja" ? "利用規約" : "Terms"}
             </LocalizedNavLink>
             <LocalizedNavLink to="/disclaimer" className="transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
-              {language === "fr" ? "Avertissement" : language === "es" ? "Aviso legal" : language === "pt" ? "Aviso de responsabilidade" : language === "zh" ? "免责声明" : language === "ar" ? "إخلاء المسؤولية" : language === "it" ? "Avvertenza" : language === "de" ? "Haftungsausschluss" : language === "nl" ? "Disclaimer" : "Disclaimer"}
+              {language === "fr" ? "Avertissement" : language === "es" ? "Aviso legal" : language === "pt" ? "Aviso de responsabilidade" : language === "zh" ? "免责声明" : language === "ar" ? "إخلاء المسؤولية" : language === "it" ? "Avvertenza" : language === "de" ? "Haftungsausschluss" : language === "nl" ? "Disclaimer" : language === "ru" ? "Отказ от ответственности" : language === "ja" ? "免責事項" : "Disclaimer"}
             </LocalizedNavLink>
             <LocalizedNavLink to="/cookie-policy" className="transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
-              {language === "fr" ? "Politique de cookies" : language === "es" ? "Política de cookies" : language === "pt" ? "Política de cookies" : language === "zh" ? "Cookie 政策" : language === "ar" ? "سياسة الكوكيز" : language === "it" ? "Politica sui cookie" : language === "de" ? "Cookie-Richtlinie" : language === "nl" ? "Cookiebeleid" : "Cookie Policy"}
+              {language === "fr" ? "Politique de cookies" : language === "es" ? "Política de cookies" : language === "pt" ? "Política de cookies" : language === "zh" ? "Cookie 政策" : language === "ar" ? "سياسة الكوكيز" : language === "it" ? "Politica sui cookie" : language === "de" ? "Cookie-Richtlinie" : language === "nl" ? "Cookiebeleid" : language === "ru" ? "Политика cookies" : language === "ja" ? "Cookieポリシー" : "Cookie Policy"}
             </LocalizedNavLink>
             <button
               onClick={reopenCookieConsent}
               className="transition-colors hover:text-primary-foreground cursor-pointer"
             >
-              {language === "fr" ? "Gérer les cookies" : language === "es" ? "Gestionar cookies" : language === "pt" ? "Gerir cookies" : language === "zh" ? "管理 Cookie" : language === "ar" ? "إدارة الكوكيز" : language === "it" ? "Gestisci cookie" : language === "de" ? "Cookies verwalten" : language === "nl" ? "Cookies beheren" : "Manage Cookies"}
+              {language === "fr" ? "Gérer les cookies" : language === "es" ? "Gestionar cookies" : language === "pt" ? "Gerir cookies" : language === "zh" ? "管理 Cookie" : language === "ar" ? "إدارة الكوكيز" : language === "it" ? "Gestisci cookie" : language === "de" ? "Cookies verwalten" : language === "nl" ? "Cookies beheren" : language === "ru" ? "Управление cookies" : language === "ja" ? "Cookieの管理" : "Manage Cookies"}
             </button>
           </div>
         </div>

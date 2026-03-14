@@ -1,7 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
+import { useBlogT } from '../hooks/useBlogT';
+
+const SITE_URL = 'https://calorievision.online';
+
+function setBlogIndexSEO(lang: string) {
+  document.title = 'Blog | CalorieVision';
+
+  let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
+  canonical.href = `${SITE_URL}/${lang}/blog`;
+
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+  SUPPORTED_LANGUAGES.forEach(l => {
+    const link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = l;
+    link.href = `${SITE_URL}/${l}/blog`;
+    document.head.appendChild(link);
+  });
+  const def = document.createElement('link');
+  def.rel = 'alternate';
+  def.hreflang = 'x-default';
+  def.href = `${SITE_URL}/en/blog`;
+  document.head.appendChild(def);
+}
 
 type BlogPost = {
   id: string;
@@ -18,7 +43,15 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
   const [isEnFallback, setIsEnFallback] = useState(false);
   const { language } = useLanguage();
+  const t = useBlogT();
 
+  // ── SEO ──────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    setBlogIndexSEO(language);
+    return () => { document.title = 'CalorieVision - AI Meal Analysis From a Photo'; };
+  }, [language]);
+
+  // ── Data fetch ────────────────────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
     setIsEnFallback(false);
@@ -28,7 +61,6 @@ export default function Blog() {
       try {
         const SELECT = 'id, title, slug, meta_description, featured_image_url, published_at, status';
 
-        // 1. Try current language
         let { data, error } = await supabase
           .from('blog_posts')
           .select(SELECT)
@@ -36,7 +68,6 @@ export default function Blog() {
           .eq('language', language)
           .order('published_at', { ascending: false });
 
-        // 2. Fall back to English if no translated posts exist
         if (!error && (!data || data.length === 0) && language !== 'en') {
           ({ data, error } = await supabase
             .from('blog_posts')
@@ -60,31 +91,40 @@ export default function Blog() {
   }, [language]);
 
   const blogPrefix = `/${language}/blog`;
+  const isRtl = language === 'ar';
 
+  // ── Loading ───────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center', fontFamily: 'sans-serif' }}>
         <div style={{ fontSize: '40px', marginBottom: '16px' }}>⏳</div>
-        <p style={{ color: '#6b7280', fontSize: '18px' }}>Loading blog posts…</p>
+        <p style={{ color: '#6b7280', fontSize: '18px' }}>{t.loading}</p>
       </div>
     );
   }
 
+  // ── Empty state ───────────────────────────────────────────────────────────────
   if (posts.length === 0) {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center', fontFamily: 'sans-serif' }}>
         <div style={{ fontSize: '40px', marginBottom: '16px' }}>✍️</div>
-        <h2 style={{ color: '#374151' }}>No posts found</h2>
-        <p style={{ color: '#6b7280' }}>Check back soon for articles on nutrition and healthy eating.</p>
+        <h2 style={{ color: '#374151' }}>{t.noPosts}</h2>
+        <p style={{ color: '#6b7280' }}>{t.noPostsSub}</p>
       </div>
     );
   }
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '36px', fontWeight: '800', marginBottom: '8px', color: '#111827' }}>Blog</h1>
-      <p style={{ color: '#6b7280', marginBottom: isEnFallback ? '16px' : '40px', fontSize: '16px' }}>
-        Tips, guides, and insights on nutrition and healthy eating.
+    <div
+      dir={isRtl ? 'rtl' : 'ltr'}
+      style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', fontFamily: 'sans-serif' }}
+    >
+      <h1 style={{ fontSize: '36px', fontWeight: '800', marginBottom: '8px', color: '#111827' }}>
+        {t.blogTitle}
+      </h1>
+      <p style={{ color: '#6b7280', marginBottom: isEnFallback ? '16px' : '40px', fontSize: '16px', textAlign: isRtl ? 'right' : 'left' }}>
+        {t.subtitle}
       </p>
 
       {isEnFallback && (
@@ -94,10 +134,9 @@ export default function Blog() {
           display: 'flex', alignItems: 'flex-start', gap: '8px',
         }}>
           <span>⚠️</span>
-          <span>
-            No articles found in <strong>{language.toUpperCase()}</strong> yet —
-            showing English articles instead.
-          </span>
+          <span dangerouslySetInnerHTML={{
+            __html: t.fallback.replace('{lang}', `<strong>${language.toUpperCase()}</strong>`),
+          }} />
         </div>
       )}
 
@@ -108,14 +147,15 @@ export default function Blog() {
             to={`${blogPrefix}/${post.slug}`}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <article style={{
-              background: '#ffffff',
-              borderRadius: '16px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-              overflow: 'hidden',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              cursor: 'pointer',
-            }}
+            <article
+              style={{
+                background: '#ffffff',
+                borderRadius: '16px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                overflow: 'hidden',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'pointer',
+              }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
                 (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
@@ -125,15 +165,14 @@ export default function Blog() {
                 (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)';
               }}
             >
-              {post.featured_image_url && (
+              {post.featured_image_url ? (
                 <img
                   src={post.featured_image_url}
                   alt={post.title}
                   style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                   loading="lazy"
                 />
-              )}
-              {!post.featured_image_url && (
+              ) : (
                 <div style={{ width: '100%', height: '120px', background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px' }}>
                   🥗
                 </div>
@@ -149,7 +188,7 @@ export default function Blog() {
                 )}
                 {post.published_at && (
                   <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>
-                    {new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    {new Date(post.published_at).toLocaleDateString(language, { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
                 )}
               </div>

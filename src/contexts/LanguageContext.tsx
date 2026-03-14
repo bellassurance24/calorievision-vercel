@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export type Language = "en" | "fr" | "es" | "pt" | "zh" | "ar" | "it" | "de" | "nl";
+export type Language = "en" | "fr" | "es" | "pt" | "zh" | "ar" | "it" | "de" | "nl" | "ru" | "ja";
 
-export const SUPPORTED_LANGUAGES: Language[] = ["en", "fr", "es", "pt", "zh", "ar", "it", "de", "nl"];
+export const SUPPORTED_LANGUAGES: Language[] = ["en", "fr", "es", "pt", "zh", "ar", "it", "de", "nl", "ru", "ja"];
 
 interface LanguageContextValue {
   language: Language;

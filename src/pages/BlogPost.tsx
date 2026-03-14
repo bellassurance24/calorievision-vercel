@@ -1,7 +1,53 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
-import { useLanguage, Language } from '../contexts/LanguageContext';
+import { useLanguage, Language, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
+import { useBlogT } from '../hooks/useBlogT';
+
+const SITE_URL = 'https://calorievision.online';
+
+/** Inject/update a <meta> tag by name attribute */
+function setMeta(name: string, content: string) {
+  let el = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
+  if (!el) { el = document.createElement('meta'); el.name = name; document.head.appendChild(el); }
+  el.content = content;
+}
+
+/** Inject/update a <meta property="og:…"> tag */
+function setOgMeta(property: string, content: string) {
+  let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el); }
+  el.content = content;
+}
+
+/** Set the canonical <link> tag */
+function setCanonical(href: string) {
+  let el = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!el) { el = document.createElement('link'); el.rel = 'canonical'; document.head.appendChild(el); }
+  el.href = href;
+}
+
+/** Replace all hreflang <link> tags for the current slug */
+function setHreflangTags(slug: string, currentLang: string) {
+  // Remove old hreflang tags
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+
+  // Add one tag per supported language
+  SUPPORTED_LANGUAGES.forEach(lang => {
+    const link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = lang;
+    link.href = `${SITE_URL}/${lang}/blog/${slug}`;
+    document.head.appendChild(link);
+  });
+
+  // x-default → English version
+  const def = document.createElement('link');
+  def.rel = 'alternate';
+  def.hreflang = 'x-default';
+  def.href = `${SITE_URL}/en/blog/${slug}`;
+  document.head.appendChild(def);
+}
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
@@ -57,6 +103,7 @@ const LOCALE_MAP: Partial<Record<Language, string>> = {
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
+  const t = useBlogT();
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -108,6 +155,45 @@ export default function BlogPost() {
     return () => { cancelled = true; };
   }, [slug, language]);
 
+  // ── SEO: title / meta / canonical / hreflang ────────────────────────────────
+  useEffect(() => {
+    if (!post || !slug) return;
+
+    const title       = post.meta_title        || post.title || 'CalorieVision Blog';
+    const description = post.meta_description  || '';
+    const canonical   = `${SITE_URL}/${language}/blog/${slug}`;
+    const image       = post.featured_image_url || `${SITE_URL}/favicon-v4.png`;
+
+    // Page title
+    document.title = `${title} | CalorieVision`;
+
+    // Standard meta
+    setMeta('description', description);
+
+    // Open Graph
+    setOgMeta('og:title',       title);
+    setOgMeta('og:description', description);
+    setOgMeta('og:type',        'article');
+    setOgMeta('og:url',         canonical);
+    setOgMeta('og:image',       image);
+
+    // Twitter / X
+    setOgMeta('twitter:title',       title);
+    setOgMeta('twitter:description', description);
+    setOgMeta('twitter:image',       image);
+
+    // Canonical
+    setCanonical(canonical);
+
+    // Hreflang — one link per language + x-default
+    setHreflangTags(slug, language);
+
+    return () => {
+      // Restore defaults when navigating away from the post
+      document.title = 'CalorieVision - AI Meal Analysis From a Photo';
+    };
+  }, [post, slug, language]);
+
   // ── derived values ──────────────────────────────────────────────────────────
   const { processedHtml, tocItems } = useMemo(
     () => injectHeadingIds(post?.content ?? ''),
@@ -131,7 +217,7 @@ export default function BlogPost() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
-        <p className="text-gray-500 text-lg">Loading article…</p>
+        <p className="text-gray-500 text-lg">{t.loading}</p>
       </div>
     );
   }
@@ -141,11 +227,11 @@ export default function BlogPost() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-6 text-center">
         <Link to={blogPath} className="text-teal-600 font-semibold hover:underline">
-          ← Back to Blog
+          {t.back}
         </Link>
         <span className="text-5xl">🔍</span>
-        <h2 className="text-2xl font-bold text-gray-800">Article not found</h2>
-        <p className="text-gray-500">This article may have been moved or is not yet translated.</p>
+        <h2 className="text-2xl font-bold text-gray-800">{t.notFound}</h2>
+        <p className="text-gray-500">{t.notFoundSub}</p>
       </div>
     );
   }
@@ -161,7 +247,7 @@ export default function BlogPost() {
         to={blogPath}
         className="inline-flex items-center gap-1 text-teal-600 font-semibold hover:underline text-sm mb-6"
       >
-        {isRtl ? '→' : '←'} Back to Blog
+        {t.back}
       </Link>
 
       {/* Title + date */}
@@ -185,10 +271,9 @@ export default function BlogPost() {
       {isEnFallback && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700 mb-8 flex items-start gap-2">
           <span>⚠️</span>
-          <span>
-            This article isn't available in <strong>{language.toUpperCase()}</strong> yet —
-            showing the English version.
-          </span>
+          <span dangerouslySetInnerHTML={{
+            __html: t.fallback.replace('{lang}', `<strong>${language.toUpperCase()}</strong>`),
+          }} />
         </div>
       )}
 
@@ -196,7 +281,7 @@ export default function BlogPost() {
       {tocItems.length > 0 && (
         <nav className="bg-teal-50 border border-teal-100 rounded-2xl p-6 mb-10 not-prose">
           <h3 className="text-teal-900 font-bold text-base mb-4 flex items-center gap-2">
-            ≡ Table of Contents
+            ≡ {t.toc}
           </h3>
           <ol className="space-y-2 list-none m-0 p-0">
             {tocItems.map((item) => (

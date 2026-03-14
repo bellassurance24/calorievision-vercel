@@ -18,6 +18,76 @@ const contactSchema = z.object({
   message: z.string().trim().min(1, "Message is required").max(5000, "Message must be less than 5000 characters"),
 });
 
+const ruContact: Record<string, string> = {
+  "Contact CalorieVision – Questions, Feedback, Support": "Контакты CalorieVision – Вопросы, отзывы, поддержка",
+  "Get in touch with the CalorieVision team with questions, feedback, or suggestions.": "Свяжитесь с командой CalorieVision по вопросам, отзывам или предложениям.",
+  "Validation error": "Ошибка валидации",
+  "Message sent": "Сообщение отправлено",
+  "Thank you for reaching out. We will get back to you at your email address soon.": "Спасибо за обращение! Мы ответим на ваш email в ближайшее время.",
+  "Error": "Ошибка",
+  "Failed to send message. Please try again.": "Не удалось отправить сообщение. Попробуйте ещё раз.",
+  "Get in touch": "Связаться с нами",
+  "Contact us": "Напишите нам",
+  "Have questions, suggestions, or feedback? We would love to hear from you. Use the form below and we will respond as soon as we can.": "Есть вопросы, предложения или отзывы? Мы рады вас услышать. Заполните форму ниже — мы ответим как можно скорее.",
+  "Name": "Имя",
+  "Your name": "Ваше имя",
+  "Email": "Электронная почта",
+  "Your message": "Ваше сообщение",
+  "How can we help?": "Чем можем помочь?",
+  "Sending...": "Отправка…",
+  "Send message": "Отправить сообщение",
+  "We will only use your email address to reply to your message.": "Мы используем ваш email только для ответа на ваше сообщение.",
+  "Support email": "Email поддержки",
+  "Privacy notice": "Уведомление о конфиденциальности",
+  "We only use your message and email address to respond to your enquiry. Messages sent through this form are not used for marketing without your explicit consent.": "Мы используем ваше сообщение и email только для ответа на ваш запрос. Данные из этой формы не используются в маркетинговых целях без вашего явного согласия.",
+  "Why contact CalorieVision?": "Зачем обращаться в CalorieVision?",
+  "We welcome general inquiries, feature suggestions, feedback on your experience, or any questions about how CalorieVision works.": "Мы рады общим вопросам, предложениям по функциям, отзывам о работе приложения и любым вопросам о принципах работы CalorieVision.",
+  "Response time": "Время ответа",
+  "We aim to respond to all messages within 24–72 business hours. Please allow additional time during weekends or holidays.": "Мы стараемся отвечать на все сообщения в течение 24–72 рабочих часов. В выходные и праздничные дни возможны задержки.",
+  "Legal & compliance notice": "Правовое уведомление",
+  "CalorieVision provides educational calorie estimates only. We do not provide medical, dietary, or health advice. Always consult a qualified professional for health-related decisions.": "CalorieVision предоставляет только образовательные оценки калорийности. Мы не даём медицинских, диетических или иных советов по здоровью. Для принятия решений, связанных со здоровьем, всегда консультируйтесь с квалифицированным специалистом.",
+  "Data privacy": "Конфиденциальность данных",
+  "Your data is handled in accordance with our Privacy Policy. We do not sell or share your personal information with third parties for marketing purposes.": "Ваши данные обрабатываются в соответствии с нашей Политикой конфиденциальности. Мы не продаём и не передаём ваши личные данные третьим лицам в маркетинговых целях.",
+  "Read our Privacy Policy": "Читать Политику конфиденциальности",
+  "Business transparency": "Прозрачность бизнеса",
+  "CalorieVision is an independent educational platform. We are not affiliated with any health, medical, or nutrition organization. Our mission is to make nutrition awareness accessible through technology.": "CalorieVision — независимая образовательная платформа. Мы не аффилированы ни с какими медицинскими, диетическими или оздоровительными организациями. Наша миссия — сделать информацию о питании доступной с помощью технологий.",
+};
+
+const jaContact: Record<string, string> = {
+  "Contact CalorieVision – Questions, Feedback, Support": "CalorieVisionへのお問い合わせ – ご質問・フィードバック・サポート",
+  "Get in touch with the CalorieVision team with questions, feedback, or suggestions.": "ご質問、フィードバック、ご提案はCalorieVisionチームまでお気軽にどうぞ。",
+  "Validation error": "入力エラー",
+  "Message sent": "送信完了",
+  "Thank you for reaching out. We will get back to you at your email address soon.": "お問い合わせありがとうございます。近日中にメールにてご返信いたします。",
+  "Error": "エラー",
+  "Failed to send message. Please try again.": "送信に失敗しました。もう一度お試しください。",
+  "Get in touch": "お問い合わせ",
+  "Contact us": "お問い合わせ",
+  "Have questions, suggestions, or feedback? We would love to hear from you. Use the form below and we will respond as soon as we can.": "ご質問、ご提案、フィードバックがあればぜひお聞かせください。以下のフォームよりご連絡いただければ、できる限り早くご返答いたします。",
+  "Name": "お名前",
+  "Your name": "お名前を入力してください",
+  "Email": "メールアドレス",
+  "Your message": "メッセージ",
+  "How can we help?": "お気軽にご相談ください",
+  "Sending...": "送信中…",
+  "Send message": "送信する",
+  "We will only use your email address to reply to your message.": "メールアドレスはご返信のみに使用いたします。",
+  "Support email": "サポートメール",
+  "Privacy notice": "プライバシーに関するご案内",
+  "We only use your message and email address to respond to your enquiry. Messages sent through this form are not used for marketing without your explicit consent.": "お問い合わせ内容とメールアドレスはご返答のみに使用します。ご同意なくマーケティング目的に使用することはありません。",
+  "Why contact CalorieVision?": "CalorieVisionへのお問い合わせについて",
+  "We welcome general inquiries, feature suggestions, feedback on your experience, or any questions about how CalorieVision works.": "一般的なご質問、機能のご提案、ご利用に関するフィードバック、CalorieVisionの仕組みに関するご質問など、なんでもお気軽にどうぞ。",
+  "Response time": "返信時間",
+  "We aim to respond to all messages within 24–72 business hours. Please allow additional time during weekends or holidays.": "すべてのメッセージに24〜72営業時間以内にご返答することを目指しております。週末や祝日はお時間をいただく場合があります。",
+  "Legal & compliance notice": "法的通知",
+  "CalorieVision provides educational calorie estimates only. We do not provide medical, dietary, or health advice. Always consult a qualified professional for health-related decisions.": "CalorieVisionは教育目的のカロリー推定のみを提供します。医療・栄養・健康に関するアドバイスは提供しておりません。健康に関する決定は必ず専門家にご相談ください。",
+  "Data privacy": "データプライバシー",
+  "Your data is handled in accordance with our Privacy Policy. We do not sell or share your personal information with third parties for marketing purposes.": "お客様のデータは当社のプライバシーポリシーに従って取り扱われます。マーケティング目的で第三者に個人情報を販売・共有することはありません。",
+  "Read our Privacy Policy": "プライバシーポリシーを読む",
+  "Business transparency": "ビジネスの透明性",
+  "CalorieVision is an independent educational platform. We are not affiliated with any health, medical, or nutrition organization. Our mission is to make nutrition awareness accessible through technology.": "CalorieVisionは独立した教育プラットフォームです。いかなる医療・健康・栄養団体とも提携していません。私たちのミッションは、テクノロジーを通じて栄養への意識を誰もがアクセスできるようにすることです。",
+};
+
 const Contact = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
@@ -32,6 +102,8 @@ const Contact = () => {
     if (language === "it") return it ?? en;
     if (language === "de") return de ?? en;
     if (language === "nl") return nl ?? en;
+    if (language === "ru") return ruContact[en] ?? en;
+    if (language === "ja") return jaContact[en] ?? en;
     return en;
   };
 
