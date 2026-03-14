@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePageMetadata } from "@/hooks/usePageMetadata";
@@ -26,50 +26,131 @@ const Pricing = () => {
 
   usePageMetadata({
     title: t(
-      "CalorieVision Pricing – Free & Pro Plans",
-      "Tarifs CalorieVision – Plans Gratuit et Pro",
-      "Precios de CalorieVision – Planes Gratuito y Pro",
-      "Preços CalorieVision – Planos Gratuito e Pro",
-      "CalorieVision 定价 – 免费和专业版",
-      "أسعار CalorieVision – الخطط المجانية والاحترافية",
-      "Prezzi CalorieVision – Piani Gratuito e Pro",
-      "CalorieVision Preise – Kostenlos & Pro",
-      "CalorieVision Prijzen – Gratis & Pro",
-      "Цены CalorieVision – Бесплатный и Pro-планы",
-      "CalorieVision 料金 – 無料・プロプラン",
+      "CalorieVision Pricing – Starter, Pro & Ultimate",
+      "Tarifs CalorieVision – Starter, Pro et Ultimate",
+      "Precios de CalorieVision – Starter, Pro y Ultimate",
+      "Preços CalorieVision – Starter, Pro e Ultimate",
+      "CalorieVision 定价 – Starter、Pro 和 Ultimate",
+      "أسعار CalorieVision – Starter وPro وUltimate",
+      "Prezzi CalorieVision – Starter, Pro e Ultimate",
+      "CalorieVision Preise – Starter, Pro & Ultimate",
+      "CalorieVision Prijzen – Starter, Pro & Ultimate",
+      "Цены CalorieVision – Starter, Pro и Ultimate",
+      "CalorieVision 料金 – Starter・Pro・Ultimate",
     ),
     description: t(
-      "Start for free with 3 daily scans or upgrade to Pro for unlimited access, personalized tracking, and no ads.",
-      "Commencez gratuitement avec 3 analyses par jour ou passez à Pro pour un accès illimité.",
-      "Empieza gratis con 3 análisis diarios o pasa a Pro para acceso ilimitado y sin anuncios.",
-      "Comece gratuitamente com 3 análises diárias ou atualize para Pro com acesso ilimitado.",
-      "免费使用每日3次扫描，或升级Pro获得无限访问、个性化追踪和无广告体验。",
-      "ابدأ مجاناً بـ 3 عمليات مسح يومية أو قم بالترقية إلى Pro للوصول غير المحدود.",
-      "Inizia gratuitamente con 3 scansioni giornaliere o passa a Pro per accesso illimitato.",
-      "Starten Sie kostenlos mit 3 täglichen Scans oder wechseln Sie zu Pro für unbegrenzten Zugang.",
-      "Begin gratis met 3 dagelijkse scans of upgrade naar Pro voor onbeperkte toegang.",
-      "Начните бесплатно с 3 сканирований в день или перейдите на Pro для неограниченного доступа.",
-      "1日3回の無料スキャンから始めるか、プロプランで無制限アクセスにアップグレード。",
+      "Choose the plan that fits your nutrition goals. Free Starter, Pro with 100 scans/month, or Ultimate with unlimited access.",
+      "Choisissez le plan adapté à vos objectifs. Starter gratuit, Pro avec 100 analyses/mois ou Ultimate illimité.",
+      "Elige el plan que se adapte a tus objetivos. Starter gratis, Pro con 100 análisis/mes o Ultimate ilimitado.",
+      "Escolha o plano adequado. Starter grátis, Pro com 100 análises/mês ou Ultimate ilimitado.",
+      "选择适合您营养目标的计划。免费Starter、每月100次扫描的Pro或无限Ultimate。",
+      "اختر الخطة التي تناسب أهدافك. Starter مجاني أو Pro بـ 100 مسح/شهر أو Ultimate غير محدود.",
+      "Scegli il piano adatto ai tuoi obiettivi. Starter gratuito, Pro con 100 scansioni/mese o Ultimate illimitato.",
+      "Wählen Sie den passenden Plan. Kostenloser Starter, Pro mit 100 Scans/Monat oder Ultimate unbegrenzt.",
+      "Kies het plan dat past bij uw doelen. Gratis Starter, Pro met 100 scans/maand of onbeperkte Ultimate.",
+      "Выберите подходящий план. Бесплатный Starter, Pro с 100 сканированиями/мес. или безлимитный Ultimate.",
+      "目標に合ったプランを選択。無料Starter、月100回スキャンのPro、または無制限のUltimate。",
     ),
     path: "/pricing",
   });
 
-  const proMonthlyPrice = 4.49;
-  const proYearlyPrice = 2.99;
-
-  const starterFeatures = [
-    t("3 AI scans per day", "3 analyses IA par jour", "3 análisis IA por día", "3 análises IA por dia", "每天3次AI扫描", "3 عمليات مسح ذكاء اصطناعي يومياً", "3 scansioni IA al giorno", "3 KI-Scans pro Tag", "3 AI-scans per dag", "3 ИИ-сканирования в день", "1日3回AIスキャン"),
-    t("Full blog access", "Accès complet au blog", "Acceso completo al blog", "Acesso completo ao blog", "完整博客访问", "وصول كامل للمدونة", "Accesso completo al blog", "Vollständiger Blog-Zugang", "Volledige blogtoegang", "Полный доступ к блогу", "ブログへのフルアクセス"),
-    t("Basic BMI tools", "Outils IMC de base", "Herramientas básicas de IMC", "Ferramentas básicas de IMC", "基础BMI工具", "أدوات مؤشر كتلة الجسم الأساسية", "Strumenti BMI di base", "Grundlegende BMI-Tools", "Basis BMI-tools", "Базовые инструменты ИМТ", "基本BMIツール"),
+  const plans = [
+    {
+      id: "starter",
+      name: t("Starter", "Starter", "Starter", "Starter", "入门版", "Starter", "Starter", "Starter", "Starter", "Starter", "スターター"),
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      description: t(
+        "Perfect for occasional use.",
+        "Parfait pour une utilisation occasionnelle.",
+        "Perfecto para uso ocasional.",
+        "Perfeito para uso ocasional.",
+        "适合偶尔使用。",
+        "مثالي للاستخدام العرضي.",
+        "Perfetto per l'uso occasionale.",
+        "Perfekt für gelegentliche Nutzung.",
+        "Perfect voor occasioneel gebruik.",
+        "Идеально для периодического использования.",
+        "たまに使う方に最適。",
+      ),
+      cta: t("Get started free", "Commencer gratuitement", "Empezar gratis", "Começar grátis", "免费开始", "ابدأ مجاناً", "Inizia gratis", "Kostenlos starten", "Gratis beginnen", "Начать бесплатно", "無料で始める"),
+      ctaVariant: "outline" as const,
+      popular: false,
+      features: [
+        { text: t("3 AI scans per day", "3 analyses IA par jour", "3 análisis IA por día", "3 análises IA por dia", "每天3次AI扫描", "3 عمليات مسح ذكاء اصطناعي يومياً", "3 scansioni IA al giorno", "3 KI-Scans pro Tag", "3 AI-scans per dag", "3 ИИ-сканирования в день", "1日3回AIスキャン"), included: true },
+        { text: t("Basic BMI tools", "Outils IMC de base", "Herramientas básicas de IMC", "Ferramentas básicas de IMC", "基础BMI工具", "أدوات مؤشر كتلة الجسم الأساسية", "Strumenti BMI di base", "Grundlegende BMI-Tools", "Basis BMI-tools", "Базовые инструменты ИМТ", "基本BMIツール"), included: true },
+        { text: t("Full blog access", "Accès complet au blog", "Acceso completo al blog", "Acesso completo ao blog", "完整博客访问", "وصول كامل للمدونة", "Accesso completo al blog", "Vollständiger Blog-Zugang", "Volledige blogtoegang", "Полный доступ к блогу", "ブログへのフルアクセス"), included: true },
+        { text: t("Contains ads", "Contient des publicités", "Contiene anuncios", "Contém anúncios", "含有广告", "يحتوي على إعلانات", "Contiene pubblicità", "Enthält Werbung", "Bevat advertenties", "Содержит рекламу", "広告あり"), included: false },
+        { text: t("Meal tracking", "Suivi des repas", "Seguimiento de comidas", "Rastreamento de refeições", "餐食追踪", "تتبع الوجبات", "Monitoraggio pasti", "Mahlzeiten-Tracking", "Maaltijdtracking", "Отслеживание приёмов пищи", "食事トラッキング"), included: false },
+        { text: t("Weekly reports", "Rapports hebdomadaires", "Informes semanales", "Relatórios semanais", "每周报告", "تقارير أسبوعية", "Rapporti settimanali", "Wöchentliche Berichte", "Wekelijkse rapporten", "Еженедельные отчёты", "週次レポート"), included: false },
+      ],
+    },
+    {
+      id: "pro",
+      name: "Pro",
+      monthlyPrice: 5.99,
+      yearlyPrice: 4.99,
+      description: t(
+        "For consistent nutrition tracking.",
+        "Pour un suivi nutritionnel régulier.",
+        "Para un seguimiento nutricional constante.",
+        "Para rastreamento nutricional constante.",
+        "用于持续的营养追踪。",
+        "لتتبع التغذية المنتظم.",
+        "Per un monitoraggio nutrizionale costante.",
+        "Für konsequentes Ernährungstracking.",
+        "Voor consistent voedingsregistratie.",
+        "Для регулярного отслеживания питания.",
+        "継続的な栄養管理に。",
+      ),
+      cta: t("Start Pro", "Commencer Pro", "Empezar Pro", "Começar Pro", "开始Pro", "ابدأ Pro", "Inizia Pro", "Pro starten", "Start Pro", "Начать Pro", "Proを始める"),
+      ctaVariant: "hero" as const,
+      popular: true,
+      features: [
+        { text: t("100 AI scans per month", "100 analyses IA par mois", "100 análisis IA por mes", "100 análises IA por mês", "每月100次AI扫描", "100 عملية مسح ذكاء اصطناعي شهرياً", "100 scansioni IA al mese", "100 KI-Scans pro Monat", "100 AI-scans per maand", "100 ИИ-сканирований в месяц", "月100回AIスキャン"), included: true },
+        { text: t("Meal tracking", "Suivi des repas", "Seguimiento de comidas", "Rastreamento de refeições", "餐食追踪", "تتبع الوجبات", "Monitoraggio pasti", "Mahlzeiten-Tracking", "Maaltijdtracking", "Отслеживание приёмов пищи", "食事トラッキング"), included: true },
+        { text: t("Weekly nutrition reports", "Rapports nutritionnels hebdomadaires", "Informes nutricionales semanales", "Relatórios nutricionais semanais", "每周营养报告", "تقارير غذائية أسبوعية", "Rapporti nutrizionali settimanali", "Wöchentliche Ernährungsberichte", "Wekelijkse voedingsrapporten", "Еженедельные отчёты о питании", "週次栄養レポート"), included: true },
+        { text: t("Ad-Free experience", "Expérience sans publicité", "Experiencia sin anuncios", "Experiência sem anúncios", "无广告体验", "تجربة بدون إعلانات", "Esperienza senza pubblicità", "Werbefreie Erfahrung", "Advertentievrije ervaring", "Опыт без рекламы", "広告なし体験"), included: true },
+        { text: t("Basic BMI tools", "Outils IMC de base", "Herramientas básicas de IMC", "Ferramentas básicas de IMC", "基础BMI工具", "أدوات مؤشر كتلة الجسم الأساسية", "Strumenti BMI di base", "Grundlegende BMI-Tools", "Basis BMI-tools", "Базовые инструменты ИМТ", "基本BMIツール"), included: true },
+        { text: t("Advanced insights", "Analyses avancées", "Análisis avanzado", "Insights avançados", "高级洞察", "رؤى متقدمة", "Analisi avanzate", "Erweiterte Einblicke", "Geavanceerde inzichten", "Расширенная аналитика", "高度なインサイト"), included: false },
+      ],
+    },
+    {
+      id: "ultimate",
+      name: "Ultimate",
+      monthlyPrice: 12.99,
+      yearlyPrice: 9.99,
+      description: t(
+        "For serious nutrition enthusiasts.",
+        "Pour les passionnés de nutrition sérieux.",
+        "Para los entusiastas serios de la nutrición.",
+        "Para entusiastas sérios de nutrição.",
+        "适合营养爱好者。",
+        "لعشاق التغذية الجادين.",
+        "Per i veri appassionati di nutrizione.",
+        "Für ernsthafte Ernährungsbegeisterte.",
+        "Voor serieuze voedingsliefhebbers.",
+        "Для серьёзных ценителей питания.",
+        "本格的な栄養愛好家のために。",
+      ),
+      cta: t("Start Ultimate", "Commencer Ultimate", "Empezar Ultimate", "Começar Ultimate", "开始Ultimate", "ابدأ Ultimate", "Inizia Ultimate", "Ultimate starten", "Start Ultimate", "Начать Ultimate", "Ultimateを始める"),
+      ctaVariant: "outline" as const,
+      popular: false,
+      features: [
+        { text: t("Unlimited* scans (Fair Use)", "Analyses illimitées* (usage équitable)", "Análisis ilimitados* (uso justo)", "Análises ilimitadas* (uso justo)", "无限*扫描（公平使用）", "عمليات مسح غير محدودة* (الاستخدام العادل)", "Scansioni illimitate* (uso equo)", "Unbegrenzte* Scans (Fair Use)", "Onbeperkte* scans (eerlijk gebruik)", "Неограниченные* сканирования (честное использование)", "無制限*スキャン（フェアユース）"), included: true },
+        { text: t("Advanced insights", "Analyses avancées", "Análisis avanzado", "Insights avançados", "高级洞察", "رؤى متقدمة", "Analisi avanzate", "Erweiterte Einblicke", "Geavanceerde inzichten", "Расширенная аналитика", "高度なインサイト"), included: true },
+        { text: t("Meal tracking", "Suivi des repas", "Seguimiento de comidas", "Rastreamento de refeições", "餐食追踪", "تتبع الوجبات", "Monitoraggio pasti", "Mahlzeiten-Tracking", "Maaltijdtracking", "Отслеживание приёмов пищи", "食事トラッキング"), included: true },
+        { text: t("Weekly nutrition reports", "Rapports nutritionnels hebdomadaires", "Informes nutricionales semanales", "Relatórios nutricionais semanais", "每周营养报告", "تقارير غذائية أسبوعية", "Rapporti nutrizionali settimanali", "Wöchentliche Ernährungsberichte", "Wekelijkse voedingsrapporten", "Еженедельные отчёты о питании", "週次栄養レポート"), included: true },
+        { text: t("Priority support", "Support prioritaire", "Soporte prioritario", "Suporte prioritário", "优先支持", "دعم ذو أولوية", "Supporto prioritario", "Prioritärer Support", "Prioritaire ondersteuning", "Приоритетная поддержка", "優先サポート"), included: true },
+        { text: t("Ad-Free experience", "Expérience sans publicité", "Experiencia sin anuncios", "Experiência sem anúncios", "无广告体验", "تجربة بدون إعلانات", "Esperienza senza pubblicità", "Werbefreie Erfahrung", "Advertentievrije ervaring", "Опыт без рекламы", "広告なし体験"), included: true },
+      ],
+    },
   ];
 
-  const proFeatures = [
-    t("Unlimited AI scans", "Analyses IA illimitées", "Análisis IA ilimitados", "Análises IA ilimitadas", "无限AI扫描", "عمليات مسح ذكاء اصطناعي غير محدودة", "Scansioni IA illimitate", "Unbegrenzte KI-Scans", "Onbeperkte AI-scans", "Неограниченные ИИ-сканирования", "無制限AIスキャン"),
-    t("Personalized tracking", "Suivi personnalisé", "Seguimiento personalizado", "Rastreamento personalizado", "个性化追踪", "تتبع شخصي", "Monitoraggio personalizzato", "Personalisiertes Tracking", "Gepersonaliseerde tracking", "Персональное отслеживание", "パーソナライズされた追跡"),
-    t("Weekly nutrition reports", "Rapports nutritionnels hebdomadaires", "Informes nutricionales semanales", "Relatórios nutricionais semanais", "每周营养报告", "تقارير غذائية أسبوعية", "Rapporti nutrizionali settimanali", "Wöchentliche Ernährungsberichte", "Wekelijkse voedingsrapporten", "Еженедельные отчёты о питании", "週次栄養レポート"),
-    t("No ads", "Sans publicités", "Sin anuncios", "Sem anúncios", "无广告", "بدون إعلانات", "Nessuna pubblicità", "Keine Werbung", "Geen advertenties", "Без рекламы", "広告なし"),
-    t("Priority support", "Support prioritaire", "Soporte prioritario", "Suporte prioritário", "优先支持", "دعم ذو أولوية", "Supporto prioritario", "Prioritärer Support", "Prioritaire ondersteuning", "Приоритетная поддержка", "優先サポート"),
-  ];
+  const mostPopularLabel = t("Most Popular", "Le plus populaire", "Más popular", "Mais popular", "最受欢迎", "الأكثر شعبية", "Più popolare", "Am beliebtesten", "Meest populair", "Самый популярный", "最人気");
+  const monthLabel = t("month", "mois", "mes", "mês", "月", "شهر", "mese", "Monat", "maand", "мес.", "月");
+  const freeLabel = t("Free", "Gratuit", "Gratis", "Grátis", "免费", "مجاناً", "Gratuito", "Kostenlos", "Gratis", "Бесплатно", "無料");
+  const billedYearlyLabel = t("billed yearly", "facturé annuellement", "facturado anualmente", "faturado anualmente", "按年计费", "يُدفع سنوياً", "fatturato annualmente", "jährlich abgerechnet", "jaarlijks gefactureerd", "оплата ежегодно", "年払い");
 
   return (
     <section className="section-card">
@@ -93,17 +174,17 @@ const Pricing = () => {
       </h1>
       <p className="mb-8 max-w-2xl text-sm text-muted-foreground md:text-base">
         {t(
-          "Start for free. Upgrade when you're ready. No hidden fees.",
-          "Commencez gratuitement. Mettez à niveau quand vous êtes prêt. Pas de frais cachés.",
-          "Empieza gratis. Actualiza cuando estés listo. Sin cargos ocultos.",
-          "Comece gratuitamente. Atualize quando estiver pronto. Sem taxas ocultas.",
-          "免费开始。准备好后升级。无隐藏费用。",
-          "ابدأ مجاناً. قم بالترقية عندما تكون مستعداً. لا رسوم خفية.",
-          "Inizia gratuitamente. Aggiorna quando sei pronto. Nessuna tariffa nascosta.",
-          "Starten Sie kostenlos. Upgraden Sie, wenn Sie bereit sind. Keine versteckten Gebühren.",
-          "Begin gratis. Upgrade wanneer u klaar bent. Geen verborgen kosten.",
-          "Начните бесплатно. Обновитесь, когда будете готовы. Без скрытых платежей.",
-          "無料でスタート。準備ができたらアップグレード。隠れた料金なし。",
+          "Start for free. Upgrade anytime. No hidden fees.",
+          "Commencez gratuitement. Mettez à niveau à tout moment. Pas de frais cachés.",
+          "Empieza gratis. Actualiza en cualquier momento. Sin cargos ocultos.",
+          "Comece gratuitamente. Atualize a qualquer momento. Sem taxas ocultas.",
+          "免费开始。随时升级。无隐藏费用。",
+          "ابدأ مجاناً. قم بالترقية في أي وقت. لا رسوم خفية.",
+          "Inizia gratuitamente. Aggiorna in qualsiasi momento. Nessuna tariffa nascosta.",
+          "Starten Sie kostenlos. Jederzeit upgraden. Keine versteckten Gebühren.",
+          "Begin gratis. Upgrade op elk moment. Geen verborgen kosten.",
+          "Начните бесплатно. Обновляйтесь в любое время. Без скрытых платежей.",
+          "無料でスタート。いつでもアップグレード。隠れた料金なし。",
         )}
       </p>
 
@@ -122,141 +203,89 @@ const Pricing = () => {
         <span className={`text-sm font-medium transition-colors ${billingCycle === "yearly" ? "text-foreground" : "text-muted-foreground"}`}>
           {t("Yearly", "Annuel", "Anual", "Anual", "每年", "سنوي", "Annuale", "Jährlich", "Jaarlijks", "Ежегодно", "年払い")}
           <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-            {t("Save 33%", "Économisez 33%", "Ahorra 33%", "Poupe 33%", "节省33%", "وفّر 33%", "Risparmia 33%", "33% sparen", "Bespaar 33%", "Сэкономьте 33%", "33%お得")}
+            {t("Save up to 23%", "Économisez jusqu'à 23%", "Ahorra hasta 23%", "Poupe até 23%", "最多节省23%", "وفّر حتى 23%", "Risparmia fino al 23%", "Bis zu 23% sparen", "Bespaar tot 23%", "Сэкономьте до 23%", "最大23%お得")}
           </span>
         </span>
       </div>
 
-      {/* Plans grid */}
-      <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
+      {/* 3-column plans grid */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-stretch">
+        {plans.map((plan, idx) => (
+          <ScrollAnimation key={plan.id} animation="fade-up" duration={500 + idx * 100}>
+            <div className={`relative rounded-2xl border p-6 flex flex-col gap-5 h-full transition-shadow ${
+              plan.popular
+                ? "border-2 border-primary shadow-xl bg-card"
+                : "border-border bg-card shadow-sm hover:shadow-md"
+            }`}>
 
-        {/* Starter plan */}
-        <ScrollAnimation animation="fade-up" duration={600}>
-          <div className="rounded-2xl border border-border bg-card p-6 flex flex-col gap-5 h-full">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                {t("Starter", "Débutant", "Iniciante", "Iniciante", "入门版", "المبتدئ", "Base", "Starter", "Starter", "Начальный", "スターター")}
-              </p>
-              <div className="mt-2 flex items-end gap-1">
-                <span className="text-4xl font-bold">$0</span>
-                <span className="mb-1 text-sm text-muted-foreground">
-                  / {t("month", "mois", "mes", "mês", "月", "شهر", "mese", "Monat", "maand", "мес.", "月")}
+              {/* Most Popular badge */}
+              {plan.popular && (
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-md whitespace-nowrap">
+                  {mostPopularLabel}
                 </span>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t(
-                  "Perfect for occasional use.",
-                  "Parfait pour une utilisation occasionnelle.",
-                  "Perfecto para uso ocasional.",
-                  "Perfeito para uso ocasional.",
-                  "适合偶尔使用。",
-                  "مثالي للاستخدام العرضي.",
-                  "Perfetto per l'uso occasionale.",
-                  "Perfekt für gelegentliche Nutzung.",
-                  "Perfect voor occasioneel gebruik.",
-                  "Идеально для периодического использования.",
-                  "たまに使う方に最適。",
-                )}
-              </p>
-            </div>
-            <Button variant="outline" className="w-full" asChild>
-              <LocalizedNavLink to="/analyze">
-                {t("Get started free", "Commencer gratuitement", "Empezar gratis", "Começar grátis", "免费开始", "ابدأ مجاناً", "Inizia gratis", "Kostenlos starten", "Gratis beginnen", "Начать бесплатно", "無料で始める")}
-              </LocalizedNavLink>
-            </Button>
-            <ul className="flex flex-col gap-3 text-sm mt-auto">
-              {starterFeatures.map((feature) => (
-                <li key={feature} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </ScrollAnimation>
-
-        {/* Pro plan */}
-        <ScrollAnimation animation="fade-up" duration={700}>
-          <div className="relative rounded-2xl border-2 border-primary bg-card p-6 flex flex-col gap-5 shadow-lg h-full">
-            {/* Most Popular badge */}
-            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-md whitespace-nowrap">
-              {t("Most Popular", "Le plus populaire", "Más popular", "Mais popular", "最受欢迎", "الأكثر شعبية", "Più popolare", "Am beliebtesten", "Meest populair", "Самый популярный", "最人気")}
-            </span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Pro</p>
-              <div className="mt-2 flex items-end gap-1">
-                <span className="text-4xl font-bold">
-                  ${billingCycle === "monthly" ? proMonthlyPrice.toFixed(2) : proYearlyPrice.toFixed(2)}
-                </span>
-                <span className="mb-1 text-sm text-muted-foreground">
-                  / {t("month", "mois", "mes", "mês", "月", "شهر", "mese", "Monat", "maand", "мес.", "月")}
-                </span>
-              </div>
-              {billingCycle === "yearly" && (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t(
-                    `Billed $${(proYearlyPrice * 12).toFixed(2)} / year`,
-                    `Facturé $${(proYearlyPrice * 12).toFixed(2)} / an`,
-                    `Facturado $${(proYearlyPrice * 12).toFixed(2)} / año`,
-                    `Cobrado $${(proYearlyPrice * 12).toFixed(2)} / ano`,
-                    `每年收费 $${(proYearlyPrice * 12).toFixed(2)}`,
-                    `يُدفع $${(proYearlyPrice * 12).toFixed(2)} / سنة`,
-                    `Fatturato $${(proYearlyPrice * 12).toFixed(2)} / anno`,
-                    `${(proYearlyPrice * 12).toFixed(2)} $ / Jahr abgerechnet`,
-                    `Jaarlijks gefactureerd $${(proYearlyPrice * 12).toFixed(2)}`,
-                    `Списывается $${(proYearlyPrice * 12).toFixed(2)} / год`,
-                    `年間 $${(proYearlyPrice * 12).toFixed(2)} で請求`,
-                  )}
-                </p>
               )}
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t(
-                  "For serious nutrition tracking.",
-                  "Pour un suivi nutritionnel sérieux.",
-                  "Para un seguimiento nutricional serio.",
-                  "Para rastreamento nutricional sério.",
-                  "用于严肃的营养追踪。",
-                  "لتتبع التغذية الجاد.",
-                  "Per un monitoraggio nutrizionale serio.",
-                  "Für ernsthaftes Ernährungstracking.",
-                  "Voor serieuze voedingsregistratie.",
-                  "Для серьёзного отслеживания питания.",
-                  "本格的な栄養管理のために。",
-                )}
-              </p>
-            </div>
-            <Button variant="hero" className="w-full" asChild>
-              <LocalizedNavLink to="/analyze">
-                {t("Start Pro", "Commencer Pro", "Empezar Pro", "Começar Pro", "开始Pro", "ابدأ Pro", "Inizia Pro", "Pro starten", "Start Pro", "Начать Pro", "Proを始める")}
-              </LocalizedNavLink>
-            </Button>
-            <ul className="flex flex-col gap-3 text-sm mt-auto">
-              {proFeatures.map((feature) => (
-                <li key={feature} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </ScrollAnimation>
 
+              {/* Plan header */}
+              <div>
+                <p className={`text-xs font-semibold uppercase tracking-widest ${plan.popular ? "text-primary" : "text-muted-foreground"}`}>
+                  {plan.name}
+                </p>
+                <div className="mt-2 flex items-end gap-1">
+                  {plan.monthlyPrice === 0 ? (
+                    <span className="text-4xl font-bold">{freeLabel}</span>
+                  ) : (
+                    <>
+                      <span className="text-4xl font-bold">
+                        ${billingCycle === "monthly" ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)}
+                      </span>
+                      <span className="mb-1 text-sm text-muted-foreground">/ {monthLabel}</span>
+                    </>
+                  )}
+                </div>
+                {plan.monthlyPrice > 0 && billingCycle === "yearly" && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    ${(plan.yearlyPrice * 12).toFixed(2)} {billedYearlyLabel}
+                  </p>
+                )}
+                <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
+              </div>
+
+              {/* CTA */}
+              <Button variant={plan.ctaVariant} className="w-full" asChild>
+                <LocalizedNavLink to="/analyze">{plan.cta}</LocalizedNavLink>
+              </Button>
+
+              {/* Feature list */}
+              <ul className="flex flex-col gap-2.5 text-sm mt-auto">
+                {plan.features.map((feature) => (
+                  <li key={feature.text} className={`flex items-start gap-2 ${feature.included ? "" : "opacity-40"}`}>
+                    {feature.included
+                      ? <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" aria-hidden="true" />
+                      : <X className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" aria-hidden="true" />
+                    }
+                    <span>{feature.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ScrollAnimation>
+        ))}
       </div>
 
       {/* Fine print */}
       <p className="mt-10 text-center text-xs text-muted-foreground max-w-xl mx-auto">
-        {t(
-          "All plans include educational AI meal analysis. CalorieVision is not a medical tool.",
-          "Tous les plans incluent l'analyse de repas IA éducative. CalorieVision n'est pas un outil médical.",
-          "Todos los planes incluyen análisis de comidas IA educativo. CalorieVision no es una herramienta médica.",
-          "Todos os planos incluem análise de refeições IA educacional. CalorieVision não é uma ferramenta médica.",
-          "所有计划均包含教育性AI餐食分析。CalorieVision不是医疗工具。",
-          "تشمل جميع الخطط تحليل الوجبات بالذكاء الاصطناعي التعليمي. CalorieVision ليست أداة طبية.",
-          "Tutti i piani includono l'analisi dei pasti IA educativa. CalorieVision non è uno strumento medico.",
-          "Alle Pläne beinhalten die pädagogische KI-Mahlzeitanalyse. CalorieVision ist kein medizinisches Werkzeug.",
-          "Alle plannen bevatten educatieve AI-maaltijdanalyse. CalorieVision is geen medisch hulpmiddel.",
-          "Все планы включают образовательный ИИ-анализ блюд. CalorieVision не является медицинским инструментом.",
-          "すべてのプランに教育的AI食事分析が含まれます。CalorieVisionは医療ツールではありません。",
+        * {t(
+          "Unlimited scans are subject to fair use policy. CalorieVision is an educational tool, not a medical device.",
+          "Les analyses illimitées sont soumises à une politique d'usage équitable. CalorieVision est un outil éducatif, pas un appareil médical.",
+          "Los análisis ilimitados están sujetos a la política de uso justo. CalorieVision es una herramienta educativa, no un dispositivo médico.",
+          "As análises ilimitadas estão sujeitas à política de uso justo. CalorieVision é uma ferramenta educacional, não um dispositivo médico.",
+          "无限扫描受公平使用政策约束。CalorieVision是教育工具，不是医疗设备。",
+          "عمليات المسح غير المحدودة خاضعة لسياسة الاستخدام العادل. CalorieVision أداة تعليمية وليست جهازاً طبياً.",
+          "Le scansioni illimitate sono soggette alla politica di utilizzo equo. CalorieVision è uno strumento educativo, non un dispositivo medico.",
+          "Unbegrenzte Scans unterliegen der Fair-Use-Richtlinie. CalorieVision ist ein Bildungswerkzeug, kein Medizinprodukt.",
+          "Onbeperkte scans zijn onderworpen aan het eerlijk gebruiksbeleid. CalorieVision is een educatief hulpmiddel, geen medisch apparaat.",
+          "Неограниченные сканирования подпадают под политику честного использования. CalorieVision — образовательный инструмент, а не медицинское устройство.",
+          "無制限スキャンはフェアユースポリシーに従います。CalorieVisionは教育ツールであり、医療機器ではありません。",
         )}
       </p>
     </section>

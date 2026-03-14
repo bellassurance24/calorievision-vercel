@@ -13,7 +13,7 @@ import MediaShowcaseSection from "@/components/MediaShowcaseSection";
 
 import howItWorks1 from "@/assets/how-it-works-1.jpg";
 import howItWorks2 from "@/assets/how-it-works-2.jpg";
-import gaugeImage from "@/assets/gauge-no-bg.png";
+import gaugeImage from "@/assets/gauge-original.webp";
 
 const Index = () => {
   const { language } = useLanguage();
@@ -249,11 +249,13 @@ const Index = () => {
             )}
           </p>
           <div className="flex justify-center">
-            <img
-              src={gaugeImage}
-              alt={t("Nutrition gauge chart", "Jauge nutritionnelle", "Medidor de nutrición", "Medidor de nutrição", "营养仪表盘", "مقياس التغذية", "Indicatore nutrizionale", "Ernährungsanzeige", "Voedingsmeter", "Датчик питания", "栄養ゲージ")}
-              className="max-w-[260px] md:max-w-[340px] w-full drop-shadow-md"
-            />
+            <div className="rounded-2xl bg-white p-5 shadow-sm inline-block">
+              <img
+                src={gaugeImage}
+                alt={t("Nutrition gauge chart", "Jauge nutritionnelle", "Medidor de nutrición", "Medidor de nutrição", "营养仪表盘", "مقياس التغذية", "Indicatore nutrizionale", "Ernährungsanzeige", "Voedingsmeter", "Датчик питания", "栄養ゲージ")}
+                className="max-w-[240px] md:max-w-[320px] w-full"
+              />
+            </div>
           </div>
         </section>
       </ScrollAnimation>
