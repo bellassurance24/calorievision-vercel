@@ -213,7 +213,7 @@ const Index = () => {
   return <>
       {/* Media Showcase Section - Between Header and Hero */}
       <MediaShowcaseSection />
-      
+
       {/* Main Hero Section with H1 */}
       <ScrollAnimation animation="fade-up" duration={700}>
       <section className="section-card relative overflow-hidden">
@@ -264,6 +264,8 @@ const Index = () => {
                   "Anteprima rapida del pasto",
                   "Schneller Mahlzeitenüberblick",
                   "Snelle maaltijdweergave",
+                  "Быстрый обзор блюда",
+                  "食事の概要プレビュー",
                 )}
               </CardTitle>
               <CardDescription>
@@ -277,6 +279,8 @@ const Index = () => {
                   "Questa è un'anteprima di come potrebbe apparire una scheda di analisi CalorieVision. L'analisi dei pasti con IA è ora alimentata da Lovable AI.",
                   "Dies ist eine Vorschau, wie eine CalorieVision-Analysekarte aussehen könnte. Die KI-Mahlzeitanalyse wird jetzt von Lovable AI unterstützt.",
                   "Dit is een voorbeeld van hoe een CalorieVision analysekaart eruit zou kunnen zien. AI-maaltijdanalyse wordt nu aangedreven door Lovable AI.",
+                  "Это пример того, как может выглядеть карточка анализа CalorieVision. ИИ-анализ блюд теперь работает на базе Lovable AI.",
+                  "これはCalorieVisionの分析カードのプレビューです。AI食事分析はLovable AIによって提供されています。",
                 )}
               </CardDescription>
             </CardHeader>
@@ -284,13 +288,37 @@ const Index = () => {
             <div className="flex items-center justify-between rounded-2xl bg-secondary px-3 py-2">
                 <div>
                   <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                    {t("Estimated total", "Total estimé", "Total estimado", "Total estimado", "预估总量", "الإجمالي المُقدَّر", "Totale stimato", "Geschätzter Gesamtwert", "Geschat totaal")}
+                    {t(
+                      "Estimated total",
+                      "Total estimé",
+                      "Total estimado",
+                      "Total estimado",
+                      "预估总量",
+                      "الإجمالي المُقدَّر",
+                      "Totale stimato",
+                      "Geschätzter Gesamtwert",
+                      "Geschat totaal",
+                      "Примерный итог",
+                      "推定合計",
+                    )}
                   </p>
                   <p className="text-lg font-semibold">~620 kcal</p>
                 </div>
                 <div className="text-right text-xs text-muted-foreground">
                   <p>
-                    {t("Balanced plate", "Assiette équilibrée", "Plato equilibrado", "Prato equilibrado", "均衡餐盘", "طبق متوازن", "Piatto equilibrato", "Ausgewogener Teller", "Uitgebalanceerd bord")}
+                    {t(
+                      "Balanced plate",
+                      "Assiette équilibrée",
+                      "Plato equilibrado",
+                      "Prato equilibrado",
+                      "均衡餐盘",
+                      "طبق متوازن",
+                      "Piatto equilibrato",
+                      "Ausgewogener Teller",
+                      "Uitgebalanceerd bord",
+                      "Сбалансированная тарелка",
+                      "バランスの良いプレート",
+                    )}
                   </p>
                   <p>
                   {t(
@@ -303,6 +331,8 @@ const Index = () => {
                       "Solo pasto di esempio",
                       "Nur Beispielmahlzeit",
                       "Alleen voorbeeldmaaltijd",
+                      "Только пример блюда",
+                      "例示の食事のみ",
                     )}
                   </p>
                 </div>
@@ -310,19 +340,55 @@ const Index = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">
-                    {t("Grilled chicken", "Poulet grillé", "Pollo a la parrilla", "Frango grelhado", "烤鸡肉", "دجاج مشوي", "Pollo alla griglia", "Gegrilltes Hähnchen", "Gegrilde kip")}
+                    {t(
+                      "Grilled chicken",
+                      "Poulet grillé",
+                      "Pollo a la parrilla",
+                      "Frango grelhado",
+                      "烤鸡肉",
+                      "دجاج مشوي",
+                      "Pollo alla griglia",
+                      "Gegrilltes Hähnchen",
+                      "Gegrilde kip",
+                      "Куриное филе на гриле",
+                      "グリルチキン",
+                    )}
                   </span>
                   <span className="font-medium">~220 kcal</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">
-                    {t("Rice", "Riz", "Arroz", "Arroz", "米饭", "أرز", "Riso", "Reis", "Rijst")}
+                    {t(
+                      "Rice",
+                      "Riz",
+                      "Arroz",
+                      "Arroz",
+                      "米饭",
+                      "أرز",
+                      "Riso",
+                      "Reis",
+                      "Rijst",
+                      "Рис",
+                      "ご飯",
+                    )}
                   </span>
                   <span className="font-medium">~260 kcal</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">
-                    {t("Mixed vegetables", "Légumes variés", "Verduras mixtas", "Legumes mistos", "混合蔬菜", "خضروات مشكّلة", "Verdure miste", "Gemischtes Gemüse", "Gemengde groenten")}
+                    {t(
+                      "Mixed vegetables",
+                      "Légumes variés",
+                      "Verduras mixtas",
+                      "Legumes mistos",
+                      "混合蔬菜",
+                      "خضروات مشكّلة",
+                      "Verdure miste",
+                      "Gemischtes Gemüse",
+                      "Gemengde groenten",
+                      "Смешанные овощи",
+                      "ミックス野菜",
+                    )}
                   </span>
                   <span className="font-medium">~80 kcal</span>
                 </div>
@@ -338,6 +404,8 @@ const Index = () => {
                       "Salsa leggera e extra",
                       "Leichte Sauce & Extras",
                       "Lichte saus & extra's",
+                      "Лёгкий соус и дополнения",
+                      "軽いソースとトッピング",
                     )}
                   </span>
                   <span>~60 kcal</span>
@@ -345,7 +413,19 @@ const Index = () => {
               </div>
               <div className="rounded-2xl bg-muted/70 px-3 py-2 text-xs text-muted-foreground">
                 <p className="font-medium text-foreground">
-                  {t("Friendly tip", "Conseil bienveillant", "Consejo amistoso", "Dica amigável", "温馨提示", "نصيحة ودّية", "Consiglio amichevole", "Freundlicher Tipp", "Vriendelijke tip")}
+                  {t(
+                    "Friendly tip",
+                    "Conseil bienveillant",
+                    "Consejo amistoso",
+                    "Dica amigável",
+                    "温馨提示",
+                    "نصيحة ودّية",
+                    "Consiglio amichevole",
+                    "Freundlicher Tipp",
+                    "Vriendelijke tip",
+                    "Полезный совет",
+                    "ヒント",
+                  )}
                 </p>
                 <p>
                   {t(
@@ -358,6 +438,8 @@ const Index = () => {
                     "Aggiungi un po' più di verdure colorate o insalata per aumentare fibre e micronutrienti. Nessun giudizio, solo guida gentile.",
                     "Fügen Sie etwas mehr buntes Gemüse oder Salat hinzu, um Ballaststoffe und Mikronährstoffe zu steigern. Keine Bewertung, nur sanfte Anleitung.",
                     "Voeg wat meer kleurrijke groenten of salade toe voor meer vezels en micronutriënten. Geen oordeel, alleen vriendelijk advies.",
+                    "Добавьте больше разноцветных овощей или салата — это поможет увеличить количество клетчатки и микронутриентов. Никаких оценок, только мягкие подсказки.",
+                    "食物繊維やミネラルを増やすために、色とりどりの野菜やサラダを少し追加してみましょう。判断ではなく、やさしいアドバイスです。",
                   )}
                 </p>
               </div>
@@ -380,7 +462,7 @@ const Index = () => {
             </p>
           </div>
           <div className="relative mx-auto w-full max-w-sm">
-            <HomeVideo 
+            <HomeVideo
               fallbackText={t(
                 "Your browser does not support the video. Please update your browser or try another device.",
                 "Votre navigateur ne prend pas en charge la vidéo. Veuillez mettre à jour votre navigateur ou essayer un autre appareil.",
@@ -390,7 +472,9 @@ const Index = () => {
                 "متصفحك لا يدعم الفيديو. يرجى تحديث المتصفح أو تجربة جهاز آخر.",
                 "Il tuo browser non supporta il video. Aggiorna il browser o prova un altro dispositivo.",
                 "Ihr Browser unterstützt das Video nicht. Bitte aktualisieren Sie Ihren Browser oder versuchen Sie ein anderes Gerät.",
-                "Je browser ondersteunt de video niet. Update je browser of probeer een ander apparaat."
+                "Je browser ondersteunt de video niet. Update je browser of probeer een ander apparaat.",
+                "Ваш браузер не поддерживает видео. Обновите браузер или попробуйте другое устройство.",
+                "お使いのブラウザは動画をサポートしていません。ブラウザを更新するか、別のデバイスをお試しください。",
               )}
             />
           </div>
@@ -412,6 +496,8 @@ const Index = () => {
               "Informazioni sullo strumento",
               "Über das Werkzeug",
               "Over de tool",
+              "Об инструменте",
+              "ツールについて",
             )}
           </p>
           <h2 id="what-is-calorievision" className="mb-3 text-2xl font-semibold md:text-3xl">
@@ -425,6 +511,8 @@ const Index = () => {
               "Cos'è CalorieVision?",
               "Was ist CalorieVision?",
               "Wat is CalorieVision?",
+              "Что такое CalorieVision?",
+              "CalorieVisionとは？",
             )}
           </h2>
           <p className="mb-3 text-sm text-muted-foreground md:text-base">
@@ -438,6 +526,8 @@ const Index = () => {
               "CalorieVision è uno strumento educativo basato su IA progettato per aiutarti a capire meglio i tuoi pasti – senza bilance, senza registrazione manuale e senza complicati tracker nutrizionali.",
               "CalorieVision ist ein KI-Bildungswerkzeug, das Ihnen hilft, Ihre Mahlzeiten besser zu verstehen – ohne Waagen, ohne manuelles Aufzeichnen und ohne komplizierte Ernährungstracker.",
               "CalorieVision is een educatieve AI-tool ontworpen om je te helpen je maaltijden beter te begrijpen – geen weegschalen, geen handmatig loggen en geen ingewikkelde voedingstrackers.",
+              "CalorieVision — образовательный ИИ-инструмент, помогающий лучше понять состав своих блюд — без весов, ручного ввода и сложных трекеров питания.",
+              "CalorieVisionは、食事をより明確に理解するための教育的なAIツールです。秤も手動記録も複雑な栄養トラッカーも不要です。",
             )}
           </p>
           <p className="mb-3 text-sm text-muted-foreground md:text-base">
@@ -451,6 +541,8 @@ const Index = () => {
               "Carica semplicemente una foto del tuo piatto e la nostra tecnologia di visione lavora in background per stimare quali alimenti sono presenti, quanto di ciascuno c'è nel piatto e approssimativamente quante calorie potrebbe contenere il tuo pasto.",
               "Laden Sie einfach ein Foto Ihres Tellers hoch und unsere Bilderkennungstechnologie arbeitet im Hintergrund, um zu schätzen, welche Lebensmittel vorhanden sind, wie viel von jedem auf Ihrem Teller ist und ungefähr wie viele Kalorien Ihre Mahlzeit enthalten könnte.",
               "Upload simpelweg een foto van je bord en onze vision-technologie werkt op de achtergrond om te schatten welke voedingsmiddelen aanwezig zijn, hoeveel van elk op je bord ligt en ongeveer hoeveel calorieën je maaltijd zou kunnen bevatten.",
+              "Просто загрузите фото тарелки, и наша технология компьютерного зрения в фоновом режиме определит, какие продукты на ней, их примерное количество и приблизительную калорийность блюда.",
+              "お皿の写真をアップロードするだけで、ビジョン技術がバックグラウンドで食品の種類・量・おおよそのカロリーを推定します。",
             )}
           </p>
           <p className="mb-3 text-sm text-muted-foreground md:text-base">
@@ -464,6 +556,8 @@ const Index = () => {
               "Il nostro obiettivo non è giudicare le tue abitudini alimentari o dirti cosa dovresti o non dovresti mangiare. CalorieVision ti fornisce informazioni semplici e accessibili per sviluppare la tua consapevolezza e prendere decisioni più consapevoli nel tempo.",
               "Unser Ziel ist es nicht, Ihre Essgewohnheiten zu beurteilen oder Ihnen zu sagen, was Sie essen sollten oder nicht. CalorieVision gibt Ihnen stattdessen einfache, zugängliche Informationen, damit Sie Ihr eigenes Bewusstsein aufbauen und mit der Zeit bewusstere Entscheidungen treffen können.",
               "Ons doel is niet om je eetgewoonten te beoordelen of je te vertellen wat je wel of niet zou moeten eten. In plaats daarvan geeft CalorieVision je eenvoudige, toegankelijke informatie zodat je je eigen bewustzijn kunt opbouwen en in de loop van de tijd meer bewuste beslissingen kunt nemen.",
+              "Наша цель — не оценивать ваши пищевые привычки и не указывать, что есть, а что нет. CalorieVision предоставляет простую, доступную информацию, чтобы вы могли развивать осознанность и со временем делать более взвешенные выборы.",
+              "私たちの目標は、あなたの食習慣を評価したり、何を食べるべきかを指示したりすることではありません。CalorieVisionは、シンプルでわかりやすい情報を提供し、あなた自身の意識を高め、より賢明な選択ができるようにサポートします。",
             )}
           </p>
           <p className="text-sm text-muted-foreground md:text-base">
@@ -477,6 +571,8 @@ const Index = () => {
               "Questa piattaforma non è un dispositivo medico e non sostituisce i consigli di un professionista della nutrizione. Tutti i risultati sono approssimazioni destinate esclusivamente all'apprendimento e alla riflessione.",
               "Diese Plattform ist kein medizinisches Gerät und ersetzt keine professionelle Ernährungsberatung. Alle Ergebnisse sind Näherungswerte, die ausschließlich zum Lernen und Nachdenken bestimmt sind.",
               "Dit platform is geen medisch hulpmiddel en vervangt geen professioneel voedingsadvies. Alle resultaten zijn schattingen die uitsluitend bedoeld zijn voor leren en reflectie.",
+              "Эта платформа не является медицинским устройством и не заменяет профессиональную консультацию диетолога. Все результаты являются приблизительными и предназначены исключительно для обучения и самоанализа.",
+              "このプラットフォームは医療機器ではなく、専門的な栄養アドバイスの代替にはなりません。すべての結果はおおよその推定値であり、学習と振り返りのみを目的としています。",
             )}
           </p>
         </section>
@@ -493,6 +589,8 @@ const Index = () => {
               "Perché è importante",
               "Warum es wichtig ist",
               "Waarom het belangrijk is",
+              "Почему это важно",
+              "なぜ重要なのか",
             )}
           </p>
           <h2 className="mb-3 text-2xl font-semibold md:text-3xl">
@@ -506,6 +604,8 @@ const Index = () => {
               "Perché usare CalorieVision?",
               "Warum CalorieVision verwenden?",
               "Waarom CalorieVision gebruiken?",
+              "Зачем использовать CalorieVision?",
+              "なぜCalorieVisionを使うのか？",
             )}
           </h2>
           <ul className="space-y-2 text-sm md:text-base">
@@ -523,6 +623,8 @@ const Index = () => {
                     "Veloce e semplice.",
                     "Schnell und einfach.",
                     "Snel en gemakkelijk.",
+                    "Быстро и просто.",
+                    "速くて簡単。",
                   )}
                 </span>{" "}
                 {t(
@@ -535,6 +637,8 @@ const Index = () => {
                   "Scatta una foto veloce e ottieni subito un'analisi chiara e comprensibile del tuo pasto.",
                   "Machen Sie ein schnelles Foto und erhalten Sie sofort eine klare, verständliche Aufschlüsselung Ihrer Mahlzeit.",
                   "Maak snel een foto en krijg direct een duidelijke, leesbare uitsplitsing van je maaltijd.",
+                  "Сделайте снимок и мгновенно получите понятную разбивку состава вашего блюда.",
+                  "さっと写真を撮るだけで、食事の内容が一目でわかる分析が即座に得られます。",
                 )}
               </span>
             </li>
@@ -552,6 +656,8 @@ const Index = () => {
                     "Basato su IA.",
                     "KI-gestützt.",
                     "Aangedreven door AI.",
+                    "На базе ИИ.",
+                    "AI搭載。",
                   )}
                 </span>{" "}
                 {t(
@@ -564,6 +670,8 @@ const Index = () => {
                   "Dietro le quinte, CalorieVision utilizza moderni modelli di riconoscimento immagini per rilevare gli alimenti e stimare le porzioni.",
                   "Im Hintergrund verwendet CalorieVision moderne Bilderkennungsmodelle, um Lebensmittel zu erkennen und Portionen zu schätzen.",
                   "Achter de schermen gebruikt CalorieVision moderne beeldherkenningsmodellen om voedsel te detecteren en porties te schatten.",
+                  "За кулисами CalorieVision использует современные модели распознавания изображений для обнаружения продуктов и оценки порций.",
+                  "CalorieVisionはバックグラウンドで最新の画像認識モデルを使用して食品を検出し、量を推定します。",
                 )}
               </span>
             </li>
@@ -581,6 +689,8 @@ const Index = () => {
                     "Educativo, non clinico.",
                     "Lehrreich, nicht klinisch.",
                     "Educatief, niet klinisch.",
+                    "Образовательный, не медицинский.",
+                    "教育的であり、臨床的ではない。",
                   )}
                 </span>{" "}
                 {t(
@@ -593,6 +703,8 @@ const Index = () => {
                   "Le informazioni sono generali e non mediche, pensate per aiutarti a imparare, non per diagnosticare o prescrivere.",
                   "Die Erkenntnisse sind allgemein und nicht medizinisch, gedacht um Ihnen beim Lernen zu helfen, nicht um zu diagnostizieren oder zu verschreiben.",
                   "Inzichten zijn algemeen en niet-medisch, bedoeld om je te helpen leren, niet om te diagnosticeren of voor te schrijven.",
+                  "Рекомендации носят общий и немедицинский характер — они помогают учиться, а не ставить диагноз или назначать лечение.",
+                  "アドバイスは一般的で非医療的なものであり、学習を目的としています。診断や処方を意図したものではありません。",
                 )}
               </span>
             </li>
@@ -610,6 +722,8 @@ const Index = () => {
                     "Consigli nutrizionali utili.",
                     "Hilfreiche Ernährungstipps.",
                     "Handige voedingstips.",
+                    "Полезные советы по питанию.",
+                    "役立つ栄養のヒント。",
                   )}
                 </span>{" "}
                 {t(
@@ -622,6 +736,8 @@ const Index = () => {
                   "Ricevi suggerimenti amichevoli come aggiungere più verdure o bilanciare carboidrati e proteine.",
                   "Erhalten Sie freundliche Vorschläge wie mehr Gemüse hinzuzufügen oder Kohlenhydrate mit Eiweiß auszugleichen.",
                   "Ontvang vriendelijke ideeën zoals meer groenten toevoegen of koolhydraten balanceren met eiwitten.",
+                  "Получайте дружеские советы — например, добавить больше овощей или сбалансировать углеводы с белком.",
+                  "野菜を増やしたり、炭水化物とタンパク質のバランスを取るなど、親切なアドバイスを受け取れます。",
                 )}
               </span>
             </li>
@@ -639,6 +755,8 @@ const Index = () => {
                     "Privato e rispettoso.",
                     "Privat und respektvoll.",
                     "Privé en respectvol.",
+                    "Конфиденциально и уважительно.",
+                    "プライベートで敬意ある。",
                   )}
                 </span>{" "}
                 {t(
@@ -651,6 +769,8 @@ const Index = () => {
                   "Le foto non vengono salvate e non vengono usate per addestrare modelli – il tuo pasto sono affari tuoi.",
                   "Fotos werden nicht gespeichert und nicht zum Trainieren von Modellen verwendet – Ihre Mahlzeit ist Ihre Privatsache.",
                   "Foto's worden niet opgeslagen en niet gebruikt om modellen te trainen – je maaltijd is jouw zaak.",
+                  "Фотографии не хранятся и не используются для обучения моделей — ваше блюдо остаётся вашим личным делом.",
+                  "写真は保存されず、モデルのトレーニングにも使用されません。あなたの食事はあなただけのものです。",
                 )}
               </span>
             </li>
@@ -668,6 +788,8 @@ const Index = () => {
                     "100% gratuito.",
                     "100% kostenlos.",
                     "100% gratis te gebruiken.",
+                    "100% бесплатно.",
+                    "100%無料で使用可能。",
                   )}
                 </span>{" "}
                 {t(
@@ -680,6 +802,8 @@ const Index = () => {
                   "Esplora i tuoi pasti tutte le volte che vuoi senza abbonamenti o paywall.",
                   "Analysieren Sie Ihre Mahlzeiten so oft Sie möchten ohne Abonnements oder Bezahlschranken.",
                   "Ontdek je maaltijden zo vaak als je wilt zonder abonnementen of betaalmuren.",
+                  "Анализируйте блюда сколько угодно раз без подписок и платных барьеров.",
+                  "サブスクリプションや有料コンテンツなしで、好きなだけ食事を分析できます。",
                 )}
               </span>
             </li>
@@ -703,6 +827,8 @@ const Index = () => {
               "Guardalo in azione",
               "Sehen Sie es in Aktion",
               "Bekijk het in actie",
+              "Смотрите в действии",
+              "実際に動作を見る",
             )}
           </p>
           <h2 className="text-2xl font-semibold md:text-3xl">
@@ -716,13 +842,15 @@ const Index = () => {
               "Come funziona CalorieVision",
               "So funktioniert CalorieVision",
               "Hoe CalorieVision werkt",
+              "Как работает CalorieVision",
+              "CalorieVisionの仕組み",
             )}
           </h2>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4">
-            <img 
-              src={howItWorks1} 
+            <img
+              src={howItWorks1}
               alt={t(
                 "Taking a photo of a meal with a smartphone",
                 "Prise de photo d'un repas avec un smartphone",
@@ -733,6 +861,8 @@ const Index = () => {
                 "Scattare una foto di un pasto con lo smartphone",
                 "Ein Foto einer Mahlzeit mit dem Smartphone aufnehmen",
                 "Een foto maken van een maaltijd met een smartphone",
+                "Фотографирование еды на смартфон",
+                "スマートフォンで食事の写真を撮る",
               )}
               className="w-full h-48 md:h-64 object-cover rounded-xl mb-4"
               loading="lazy"
@@ -751,6 +881,8 @@ const Index = () => {
                 "1. Cattura il tuo pasto",
                 "1. Fotografieren Sie Ihre Mahlzeit",
                 "1. Leg je maaltijd vast",
+                "1. Сфотографируйте блюдо",
+                "1. 食事を撮影する",
               )}
             </h3>
             <p className="text-sm text-muted-foreground">
@@ -764,12 +896,14 @@ const Index = () => {
                 "Scatta semplicemente una foto del tuo piatto con lo smartphone. Assicurati che l'illuminazione sia buona e che tutti gli alimenti siano visibili.",
                 "Machen Sie einfach ein Foto Ihres Tellers mit Ihrem Smartphone. Achten Sie auf gute Beleuchtung und dass alle Lebensmittel sichtbar sind.",
                 "Maak gewoon een foto van je bord met je smartphone. Zorg voor goede verlichting en dat alle voedingsmiddelen zichtbaar zijn.",
+                "Просто сфотографируйте тарелку на смартфон. Убедитесь, что освещение хорошее и все продукты видны.",
+                "スマートフォンでお皿の写真を撮るだけです。照明が良く、すべての食品が見えるようにしてください。",
               )}
             </p>
           </div>
           <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4">
-            <img 
-              src={howItWorks2} 
+            <img
+              src={howItWorks2}
               alt={t(
                 "Nutrition analysis dashboard showing calories and macros",
                 "Tableau de bord d'analyse nutritionnelle affichant les calories et les macros",
@@ -780,6 +914,8 @@ const Index = () => {
                 "Dashboard di analisi nutrizionale che mostra calorie e macro",
                 "Ernährungsanalyse-Dashboard mit Kalorien und Makronährstoffen",
                 "Voedingsanalyse dashboard met calorieën en macro's",
+                "Панель анализа питания с калориями и макронутриентами",
+                "カロリーとマクロ栄養素を示す栄養分析ダッシュボード",
               )}
               className="w-full h-48 md:h-64 object-cover rounded-xl mb-4"
               loading="lazy"
@@ -798,6 +934,8 @@ const Index = () => {
                 "2. Ottieni un'analisi istantanea",
                 "2. Erhalten Sie sofortige Analyse",
                 "2. Ontvang directe analyse",
+                "2. Получите мгновенный анализ",
+                "2. 即座に分析を取得する",
               )}
             </h3>
             <p className="text-sm text-muted-foreground">
@@ -811,6 +949,8 @@ const Index = () => {
                 "La nostra IA analizza il tuo pasto e fornisce una ripartizione dettagliata di calorie, proteine, carboidrati e grassi per ogni alimento.",
                 "Unsere KI analysiert Ihre Mahlzeit und liefert eine detaillierte Aufschlüsselung von Kalorien, Proteinen, Kohlenhydraten und Fetten für jedes Lebensmittel.",
                 "Onze AI analyseert je maaltijd en geeft een gedetailleerde uitsplitsing van calorieën, eiwitten, koolhydraten en vetten voor elk voedingsmiddel.",
+                "Наш ИИ анализирует блюдо и предоставляет подробную разбивку калорий, белков, углеводов и жиров по каждому продукту.",
+                "AIが食事を分析し、各食品のカロリー・タンパク質・炭水化物・脂質の詳細な内訳を提供します。",
               )}
             </p>
           </div>
@@ -833,6 +973,8 @@ const Index = () => {
                 "Dalla foto all'analisi",
                 "Vom Foto zur Erkenntnis",
                 "Van foto naar inzicht",
+                "От фото к пониманию",
+                "写真から洞察へ",
               )}
             </p>
             <h2 id="home-how-it-works-heading" className="text-2xl font-semibold md:text-3xl">
@@ -846,12 +988,26 @@ const Index = () => {
                 "Come funziona in quattro semplici passaggi",
                 "So funktioniert es in vier einfachen Schritten",
                 "Hoe het werkt in vier eenvoudige stappen",
+                "Как это работает в четырёх простых шагах",
+                "4つの簡単なステップでの仕組み",
               )}
             </h2>
           </div>
           <Button variant="outline" size="sm" asChild className="hidden shrink-0 md:inline-flex">
             <LocalizedNavLink to="/how-it-works" className="text-border bg-primary">
-              {t("Deep dive", "Voir en détail", "Ver en detalle", "Ver em detalhe", "详细了解", "استكشاف متعمّق", "Approfondisci", "Mehr erfahren", "Meer weten")}
+              {t(
+                "Deep dive",
+                "Voir en détail",
+                "Ver en detalle",
+                "Ver em detalhe",
+                "详细了解",
+                "استكشاف متعمّق",
+                "Approfondisci",
+                "Mehr erfahren",
+                "Meer weten",
+                "Подробнее",
+                "詳しく見る",
+              )}
             </LocalizedNavLink>
           </Button>
         </div>
@@ -868,6 +1024,8 @@ const Index = () => {
                 "Passo 1 – Carica la foto del tuo pasto",
                 "Schritt 1 – Laden Sie Ihr Mahlzeitenfoto hoch",
                 "Stap 1 – Upload je maaltijdfoto",
+                "Шаг 1 – Загрузите фото блюда",
+                "ステップ1 – 食事の写真をアップロード",
               )}
             </h3>
             <p className="text-xs text-muted-foreground md:text-sm">
@@ -881,6 +1039,8 @@ const Index = () => {
                 "Scatta una foto nitida del tuo pasto o caricane una dal tuo dispositivo. Più l'immagine è chiara, migliore sarà la stima.",
                 "Machen Sie ein klares Foto Ihrer Mahlzeit oder laden Sie eines von Ihrem Gerät hoch. Je klarer das Bild, desto besser die Schätzung.",
                 "Maak een duidelijke foto van je maaltijd of upload er een vanaf je apparaat. Hoe helderder de afbeelding, hoe beter de schatting.",
+                "Сделайте чёткий снимок блюда или загрузите фото с устройства. Чем чётче изображение, тем точнее оценка.",
+                "食事の鮮明な写真を撮るか、デバイスからアップロードしてください。画像が鮮明であるほど、推定精度が向上します。",
               )}
             </p>
           </article>
@@ -896,6 +1056,8 @@ const Index = () => {
                 "Passo 2 – Rilevamento alimenti con IA",
                 "Schritt 2 – KI-Lebensmittelerkennung",
                 "Stap 2 – AI-voedseldetectie",
+                "Шаг 2 – Распознавание продуктов ИИ",
+                "ステップ2 – AIによる食品検出",
               )}
             </h3>
             <p className="text-xs text-muted-foreground md:text-sm">
@@ -909,6 +1071,8 @@ const Index = () => {
                 "La nostra IA analizza forme, colori e texture per identificare cosa c'è nel tuo piatto usando la tecnologia visiva.",
                 "Unsere KI analysiert Formen, Farben und Texturen, um mithilfe von Bilderkennungstechnologie zu identifizieren, was auf Ihrem Teller ist.",
                 "Onze AI bekijkt vormen, kleuren en texturen om te identificeren wat er op je bord ligt met behulp van visietechnologie.",
+                "Наш ИИ анализирует формы, цвета и текстуры, чтобы определить, что находится на тарелке, используя технологию компьютерного зрения.",
+                "AIは形状・色・食感を分析し、ビジョン技術でお皿の上の食品を識別します。",
               )}
             </p>
           </article>
@@ -924,6 +1088,8 @@ const Index = () => {
                 "Passo 3 – Stima delle calorie",
                 "Schritt 3 – Kalorienschätzung",
                 "Stap 3 – Calorieënschatting",
+                "Шаг 3 – Оценка калорийности",
+                "ステップ3 – カロリー推定",
               )}
             </h3>
             <p className="text-xs text-muted-foreground md:text-sm">
@@ -937,6 +1103,8 @@ const Index = () => {
                 "CalorieVision utilizza dati nutrizionali di riferimento per stimare le calorie di ogni alimento e del pasto totale.",
                 "CalorieVision verwendet Ernährungsreferenzdaten, um Kalorien für jedes Element und die gesamte Mahlzeit zu schätzen.",
                 "CalorieVision gebruikt voedingsreferentiegegevens om calorieën te schatten voor elk item en de totale maaltijd.",
+                "CalorieVision использует справочные данные по питательности для оценки калорий каждого продукта и всего блюда.",
+                "CalorieVisionは栄養参照データを使用して、各食品と食事全体のカロリーを推定します。",
               )}
             </p>
           </article>
@@ -952,6 +1120,8 @@ const Index = () => {
                 "Passo 4 – Consigli nutrizionali semplici",
                 "Schritt 4 – Einfache Ernährungstipps",
                 "Stap 4 – Eenvoudige voedingstips",
+                "Шаг 4 – Простые советы по питанию",
+                "ステップ4 – シンプルな栄養アドバイス",
               )}
             </h3>
             <p className="text-xs text-muted-foreground md:text-sm">
@@ -965,6 +1135,8 @@ const Index = () => {
                 "Vedrai suggerimenti amichevoli e non medici per aiutarti a costruire piatti più equilibrati nel tempo.",
                 "Sie erhalten freundliche, nicht-medizinische Vorschläge, die Ihnen helfen, im Laufe der Zeit ausgewogenere Mahlzeiten zusammenzustellen.",
                 "Je ziet vriendelijke, niet-medische suggesties om je te helpen na verloop van tijd evenwichtigere borden samen te stellen.",
+                "Вы получаете дружеские, немедицинские рекомендации, которые помогают со временем составлять более сбалансированное меню.",
+                "時間をかけてよりバランスの取れた食事を作るための、親切で非医療的なアドバイスが表示されます。",
               )}
             </p>
           </article>
@@ -985,6 +1157,8 @@ const Index = () => {
                 "Domande frequenti",
                 "Häufig gestellte Fragen",
                 "Veelgestelde vragen",
+                "Часто задаваемые вопросы",
+                "よくある質問",
               )}
             </p>
             <h2 id="home-faq-heading" className="text-2xl font-semibold md:text-3xl">
@@ -998,6 +1172,8 @@ const Index = () => {
                 "Hai ancora domande?",
                 "Haben Sie noch Fragen?",
                 "Heeft u nog vragen?",
+                "Остались вопросы?",
+                "まだ質問がありますか？",
               )}
             </h2>
           </div>
@@ -1013,6 +1189,8 @@ const Index = () => {
                 "Vedi FAQ completa",
                 "Vollständige FAQ anzeigen",
                 "Bekijk volledige FAQ",
+                "Полный список вопросов",
+                "完全なFAQを見る",
               )}
             </LocalizedNavLink>
           </Button>
