@@ -15,6 +15,8 @@ const legalNoticeTranslations: Record<Language, string> = {
   it: "ℹ️ Questa pagina è disponibile solo in inglese per motivi legali.",
   de: "ℹ️ Diese Seite ist aus rechtlichen Gründen nur auf Englisch verfügbar.",
   nl: "ℹ️ Deze pagina is alleen beschikbaar in het Engels voor juridische doeleinden.",
+  ru: "ℹ️ Эта страница доступна только на английском языке в юридических целях.",
+  ja: "ℹ️ このページは法的な理由により英語のみでご提供しています。",
 };
 
 /**
