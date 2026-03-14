@@ -1,122 +1,82 @@
-#!/usr/bin/env npx tsx
-/**
- * fix_remaining.ts — Retry the 13 still-failing blog translations
- *
- * Run with:
- *   npx tsx scripts/fix_remaining.ts
- *
- * Requires .env (or .env.local) to contain:
- *   SUPABASE_URL=https://<ref>.supabase.co
- *   SUPABASE_SERVICE_ROLE_KEY=<service_role_jwt>
- *
- * What it does for each (slug, language) pair:
- *   1. Fetches the English post from Supabase (cached per slug).
- *   2. Calls the translate-blog Edge Function for title, content, and meta_description.
- *   3. Waits 15 seconds before the next pair to avoid rate limits.
- */
+import { createClient } from "@supabase/supabase-js";
 
-import { createClient } from '@supabase/supabase-js';
-import { config } from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+// ── Keys (same as run_translate.ts — proven to work) ─────────────────────────
+const SUPABASE_URL = "https://ttjcfwspcpnxtxzqnfrh.supabase.co";
+const ANON_KEY     = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0amNmd3NwY3BueHR4enFuZnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTE1MjgsImV4cCI6MjA4Nzk4NzUyOH0.wxynpIi5qzWdFlFNdhe5GjKRKQJwTIpJsInCdY59jhE";
+const SERVICE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0amNmd3NwY3BueHR4enFuZnJoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjQxMTUyOCwiZXhwIjoyMDg3OTg3NTI4fQ.nBjpnQmLNiQBRCMibiCltStri6YGG0EIIYODbVf35xw";
+// ─────────────────────────────────────────────────────────────────────────────
 
-// ── Load env ────────────────────────────────────────────────────────────────
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '../.env') });
-config({ path: resolve(__dirname, '../.env.local'), override: false });
+const EDGE_URL    = `${SUPABASE_URL}/functions/v1/auto-translate-blog-post`;
+const DELAY_MS    = 15_000;   // 15 s between each (slug, lang) call
+const MAX_RETRIES = 3;
+const RETRY_BASE  = 30_000;   // first retry wait: 30 s, then 60 s, then 120 s
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('❌  SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set in .env');
-  process.exit(1);
-}
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: false },
-});
-
-// ── The 13 failing (slug → languages) pairs ─────────────────────────────────
-const FAILING: { slug: string; title: string; langs: string[] }[] = [
-  {
-    slug: 'pasta-calories-complete-guide',
-    title: 'Pasta Calories Unveiled: From Spaghetti to Lasagna and Beyond',
-    langs: ['de', 'ru', 'ja'],
-  },
-  {
-    slug: 'avocado-calories-complete-guide',
-    title: 'The Complete Calorie Guide to Avocados: Everything You Need to Know',
-    langs: ['ar'],
-  },
-  {
-    slug: 'beet-calories-complete-nutrition-guide',
-    title: 'The Ultimate Calorie Guide to Beets: From Raw to Roasted and Everything Between',
-    langs: ['ar', 'es', 'it', 'ja'],
-  },
-  {
-    slug: 'eggplant-calories-complete-guide',
-    title: 'Eggplant Calories Demystified: Your Complete Guide to This Versatile Vegetable',
-    langs: ['ja', 'zh'],
-  },
-  {
-    slug: 'how-many-calories-in-grapes',
-    title: "How Many Calories in Grapes? Your Complete Guide to This Sweet Snack",
-    langs: ['ja'],
-  },
-  {
-    slug: 'how-many-calories-in-pizza',
-    title: 'How Many Calories in Pizza? Complete Nutrition Guide',
-    langs: ['es', 'pt'],
-  },
+// ── The 13 failing (slug → languages) pairs ──────────────────────────────────
+const FAILING: { slug: string; langs: string[] }[] = [
+  { slug: "pasta-calories-complete-guide",            langs: ["de", "ru", "ja"] },
+  { slug: "avocado-calories-complete-guide",          langs: ["ar"] },
+  { slug: "beet-calories-complete-nutrition-guide",   langs: ["ar", "es", "it", "ja"] },
+  { slug: "eggplant-calories-complete-guide",         langs: ["ja", "zh"] },
+  { slug: "how-many-calories-in-grapes",              langs: ["ja"] },
+  { slug: "how-many-calories-in-pizza",               langs: ["es", "pt"] },
 ];
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-// Cache fetched posts so we don't re-query Supabase for the same slug
-const postCache: Record<string, { title: string; content: string; meta_description: string }> = {};
-
-async function fetchPost(slug: string) {
-  if (postCache[slug]) return postCache[slug];
-
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .select('title, content, meta_description')
-    .eq('slug', slug)
-    .eq('language', 'en')
-    .single();
-
-  if (error || !data) {
-    throw new Error(`Could not fetch post "${slug}": ${error?.message ?? 'not found'}`);
-  }
-
-  postCache[slug] = data as { title: string; content: string; meta_description: string };
-  return postCache[slug];
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-/** Call the translate-blog Edge Function for a single text + language */
-async function translateField(
-  text: string,
-  targetLanguage: string,
-  pageId: string,
-  stripHtml = false,
-): Promise<'ok' | 'already_cached' | 'error'> {
-  const { data, error } = await supabase.functions.invoke('translate-blog', {
-    body: { text, targetLanguage, pageId, stripHtml },
-  });
-
-  if (error) {
-    console.error(`   ⚠  translate-blog error for ${pageId} [${targetLanguage}]: ${error.message}`);
-    return 'error';
-  }
-
-  return data?.cached ? 'already_cached' : 'ok';
+function isRetryable(status: number, body: string): boolean {
+  return status === 429 || status >= 500 || body.includes("WORKER_LIMIT") || body.includes("Worker limit");
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
+async function callEdge(
+  postId: string,
+  targetLang: string,
+): Promise<{ ok: boolean; status: string; error?: string }> {
+  let lastError = "";
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const res = await fetch(EDGE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "apikey":        ANON_KEY,
+        "Authorization": `Bearer ${SERVICE_KEY}`,
+      },
+      body: JSON.stringify({ postId, targetLang }),
+    });
+
+    const text = await res.text();
+    let body: any;
+    try { body = JSON.parse(text); } catch { body = { raw: text }; }
+
+    if (res.ok) {
+      if (body?.skipped) return { ok: true,  status: `skipped (${body.reason ?? "unknown"})` };
+      if (body?.ok)      return { ok: true,  status: body.status ?? "created" };
+      return              { ok: false, status: "failed", error: body?.error ?? text.slice(0, 200) };
+    }
+
+    if (isRetryable(res.status, text)) {
+      const waitMs = RETRY_BASE * Math.pow(2, attempt - 1);
+      lastError = `HTTP ${res.status} — ${text.slice(0, 120).trim()}`;
+      if (attempt < MAX_RETRIES) {
+        console.log(`   ⚠  ${lastError}`);
+        console.log(`   ↻  retry ${attempt}/${MAX_RETRIES - 1} in ${waitMs / 1000}s…`);
+        await sleep(waitMs);
+        continue;
+      }
+    } else {
+      return { ok: false, status: "failed", error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
+    }
+  }
+
+  return { ok: false, status: "failed", error: `Exhausted retries. Last: ${lastError}` };
+}
+
 async function main() {
-  // Build a flat list of all (slug, lang) jobs
+  // ── Build flat job list ───────────────────────────────────────────────────
   const jobs: { slug: string; lang: string }[] = [];
   for (const entry of FAILING) {
     for (const lang of entry.langs) {
@@ -126,55 +86,76 @@ async function main() {
 
   const total = jobs.length;
   console.log(`\n🔧  fix_remaining.ts — ${total} translation jobs queued\n`);
-  console.log('   Post breakdown:');
-  for (const entry of FAILING) {
-    const postLabel = entry.title.substring(0, 55) + (entry.title.length > 55 ? '…' : '');
-    console.log(`   • [${entry.langs.join(', ')}]  ${postLabel}`);
+
+  // ── Fetch all needed English post UUIDs in one query ─────────────────────
+  const slugs = [...new Set(FAILING.map(e => e.slug))];
+  const { data: posts, error } = await supabase
+    .from("blog_posts")
+    .select("id, slug, title")
+    .eq("language", "en")
+    .in("slug", slugs);
+
+  if (error || !posts) {
+    console.error("❌  Could not fetch posts from Supabase:", error?.message);
+    process.exit(1);
   }
+
+  const slugToId: Record<string, string> = {};
+  for (const p of posts) slugToId[p.slug] = p.id;
+
+  console.log("   Posts found in Supabase:");
+  for (const entry of FAILING) {
+    const id  = slugToId[entry.slug];
+    const ok  = id ? "✅" : "❌ NOT FOUND";
+    console.log(`   ${ok}  [${entry.langs.join(", ")}]  ${entry.slug}${id ? "  ("+id+")" : ""}`);
+  }
+
+  const missing = FAILING.filter(e => !slugToId[e.slug]);
+  if (missing.length > 0) {
+    console.error(`\n❌  ${missing.length} slug(s) not found in the database. Aborting.`);
+    process.exit(1);
+  }
+
   console.log();
 
-  let done = 0;
-  for (const { slug, lang } of jobs) {
-    done++;
-    console.log(`[${done}/${total}]  ${slug}  →  ${lang.toUpperCase()}`);
+  // ── Run jobs ──────────────────────────────────────────────────────────────
+  let succeeded = 0, skipped = 0, failed = 0;
 
-    // 1. Fetch the English source post
-    let post: { title: string; content: string; meta_description: string };
+  for (let i = 0; i < jobs.length; i++) {
+    const { slug, lang } = jobs[i];
+    const postId = slugToId[slug];
+    const label  = `[${i + 1}/${total}]`;
+
+    process.stdout.write(`${label}  ${slug}  →  ${lang.toUpperCase()}  …`);
+
     try {
-      post = await fetchPost(slug);
-    } catch (err) {
-      console.error(`   ❌  ${(err as Error).message}`);
-      console.log(`   ⏳  Waiting 15 s before next job…\n`);
-      if (done < total) await sleep(15_000);
-      continue;
+      const result = await callEdge(postId, lang);
+
+      if (result.ok && result.status.startsWith("skipped")) {
+        process.stdout.write(` 🔁 SKIPPED (${result.status})\n`);
+        skipped++;
+      } else if (result.ok) {
+        process.stdout.write(` ✅ OK (${result.status})\n`);
+        succeeded++;
+      } else {
+        process.stdout.write(` ❌ FAILED — ${result.error}\n`);
+        failed++;
+      }
+    } catch (err: any) {
+      process.stdout.write(` ❌ ERROR — ${err.message}\n`);
+      failed++;
     }
 
-    // 2. Translate title (plain text)
-    console.log(`   ↳  title        (${slug}-title)`);
-    const titleStatus = await translateField(post.title, lang, `${slug}-title`, true);
-    console.log(`      ${titleStatus === 'ok' ? '✅ translated' : titleStatus === 'already_cached' ? '🔁 already cached' : '❌ failed'}`);
-
-    // 3. Translate content (HTML preserved)
-    console.log(`   ↳  content      (${slug}-content)`);
-    const contentStatus = await translateField(post.content, lang, `${slug}-content`, false);
-    console.log(`      ${contentStatus === 'ok' ? '✅ translated' : contentStatus === 'already_cached' ? '🔁 already cached' : '❌ failed'}`);
-
-    // 4. Translate meta description (plain text)
-    console.log(`   ↳  meta         (${slug}-meta)`);
-    const metaStatus = await translateField(post.meta_description, lang, `${slug}-meta`, true);
-    console.log(`      ${metaStatus === 'ok' ? '✅ translated' : metaStatus === 'already_cached' ? '🔁 already cached' : '❌ failed'}`);
-
-    // 5. Wait 15 s before the next (slug, lang) pair — skip after the last job
-    if (done < total) {
-      console.log(`   ⏳  Waiting 15 s before next job…\n`);
-      await sleep(15_000);
+    // 15-second delay between jobs (skip after the last one)
+    if (i < jobs.length - 1) {
+      console.log(`   ⏳  Waiting ${DELAY_MS / 1000}s before next job…`);
+      await sleep(DELAY_MS);
     }
   }
 
-  console.log('\n🎉  All jobs completed.\n');
+  console.log(`\n${"─".repeat(55)}`);
+  console.log(`🎉  Done!  ✅ Created: ${succeeded}  |  🔁 Skipped: ${skipped}  |  ❌ Failed: ${failed}`);
+  console.log(`   Total: ${jobs.length} jobs`);
 }
 
-main().catch(err => {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});
+main();
