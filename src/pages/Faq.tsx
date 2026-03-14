@@ -730,6 +730,8 @@ const Faq = () => {
       "FAQ CalorieVision – Domande frequenti",
       "CalorieVision FAQ – Häufig gestellte Fragen",
       "CalorieVision FAQ – Veelgestelde vragen",
+      "CalorieVision FAQ – Ответы на частые вопросы",
+      "CalorieVision よくある質問",
     ),
     description: t(
       "Get answers about accuracy, privacy, AI technology, and how to use CalorieVision safely and effectively.",
@@ -741,6 +743,8 @@ const Faq = () => {
       "Trova risposte su precisione, privacy, tecnologia IA e come utilizzare CalorieVision in modo sicuro ed efficace.",
       "Erhalten Sie Antworten zu Genauigkeit, Datenschutz, KI-Technologie und wie Sie CalorieVision sicher und effektiv nutzen.",
       "Krijg antwoorden over nauwkeurigheid, privacy, AI-technologie en hoe u CalorieVision veilig en effectief kunt gebruiken.",
+      "Точность, конфиденциальность, ИИ-технологии и безопасное использование CalorieVision — всё здесь.",
+      "精度・プライバシー・AI技術・安全な使い方についての回答をまとめました。",
     ),
     path: "/faq",
   });
@@ -763,7 +767,7 @@ const Faq = () => {
   return (
     <section className="section-card">
       <p className="eyebrow">
-        {t("Support", "Support", "Soporte", "Suporte", "支持", "الدعم والمساعدة", "Supporto", "Support", "Ondersteuning")}
+        {t("Support", "Support", "Soporte", "Suporte", "支持", "الدعم والمساعدة", "Supporto", "Support", "Ondersteuning", "Поддержка", "サポート")}
       </p>
       <h1 className="mb-3 text-3xl font-semibold md:text-4xl">
         {t(
@@ -776,6 +780,8 @@ const Faq = () => {
           "Domande frequenti",
           "Häufig gestellte Fragen",
           "Veelgestelde vragen",
+          "Часто задаваемые вопросы",
+          "よくある質問",
         )}
       </h1>
       <p className="mb-6 max-w-2xl text-sm text-muted-foreground md:text-base">
@@ -789,6 +795,8 @@ const Faq = () => {
           "Trova risposte rapide su come funziona CalorieVision, cosa aspettarti dall'IA e come proteggiamo la tua privacy.",
           "Finden Sie schnelle Antworten darüber, wie CalorieVision funktioniert, was Sie von der KI erwarten können und wie wir Ihre Privatsphäre schützen.",
           "Vind snelle antwoorden over hoe CalorieVision werkt, wat u van de AI kunt verwachten en hoe wij uw privacy beschermen.",
+          "Быстрые ответы о том, как работает CalorieVision, чего ожидать от ИИ и как мы защищаем вашу конфиденциальность.",
+          "CalorieVisionの仕組み、AIへの期待、そしてプライバシーの保護について素早く回答を確認できます。",
         )}
       </p>
 
