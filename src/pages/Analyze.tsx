@@ -14,6 +14,9 @@ import { translateFoodName, isEnglishFoodName } from "@/utils/foodTranslations";
 import { supabase } from "@/integrations/supabase/client";
 import { trackMealAnalysis } from "@/hooks/useAnalytics";
 import { getDeviceInfo, getGeolocation } from "@/hooks/useDeviceInfo";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription, incrementGuestScans } from "@/hooks/useSubscription";
+import { LimitReachedModal } from "@/components/LimitReachedModal";
 
 interface FoodItem {
   name: string;
@@ -41,7 +44,10 @@ interface MealAnalysis {
 const Analyze = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
+  const { user } = useAuth();
+  const { isAtLimit, plan, dailyScans, monthlyScans, dailyLimit, monthlyLimit, refresh } = useSubscription();
 
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -396,6 +402,12 @@ const Analyze = () => {
   };
 
   const handleAnalyze = async () => {
+    // ── Limit guard ────────────────────────────────────────────────────────
+    if (isAtLimit) {
+      setShowLimitModal(true);
+      return;
+    }
+
     if (!imageFile) {
       toast({
         title: t("Add a meal photo first", "Ajoutez d'abord une photo de repas", "Añade primero una foto de comida", "Adicione uma foto de refeição primeiro", "请先添加餐食照片", "أضف صورة وجبة أولاً"),
@@ -487,7 +499,17 @@ const Analyze = () => {
       }
 
       setAnalysis(analysisResult);
-      
+
+      // ── Log usage scan ────────────────────────────────────────────────────
+      if (user) {
+        await supabase.from("usage_logs").insert({ user_id: user.id }).then(
+          ({ error }) => { if (error) console.warn("[Analyze] usage_logs insert:", error.message); }
+        );
+      } else {
+        incrementGuestScans();
+      }
+      refresh(); // keep limit counter in sync
+
       // Track successful meal analysis
       trackMealAnalysis(true);
     } catch (err) {
@@ -513,6 +535,7 @@ const Analyze = () => {
   const hasAnalysis = Boolean(analysis && analysis.food?.length);
 
   return (
+    <>
     <section className="section-card">
       <p className="eyebrow">{copy.eyebrow}</p>
       <h1 className="mb-3 text-3xl font-semibold md:text-4xl">{copy.title}</h1>
@@ -781,6 +804,18 @@ const Analyze = () => {
         </div>
       </div>
     </section>
+
+    {/* Scan limit modal */}
+    <LimitReachedModal
+      open={showLimitModal}
+      onClose={() => setShowLimitModal(false)}
+      plan={plan}
+      dailyScans={dailyScans}
+      monthlyScans={monthlyScans}
+      dailyLimit={dailyLimit}
+      monthlyLimit={monthlyLimit}
+    />
+    </>
   );
 };
 

@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePageMetadata } from "@/hooks/usePageMetadata";
 import { LocalizedNavLink } from "@/components/LocalizedNavLink";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null); // plan id being processed
 
   const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string, ru?: string, ja?: string) => {
     if (language === "fr") return fr;
@@ -53,6 +59,61 @@ const Pricing = () => {
     ),
     path: "/pricing",
   });
+
+  // ── Stripe Checkout handler ────────────────────────────────────────────────
+  const handleCheckout = async (planId: "pro" | "ultimate") => {
+    setCheckoutLoading(planId);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: {
+          planType:     planId,
+          billingCycle,
+          userId:       user?.id ?? "",
+          email:        user?.email ?? undefined,
+        },
+      });
+
+      if (error || !data?.url) {
+        toast({
+          title: t(
+            "Payment unavailable",
+            "Paiement indisponible",
+            "Pago no disponible",
+            "Pagamento indisponível",
+            "支付暂不可用",
+            "الدفع غير متاح",
+            "Pagamento non disponibile",
+            "Zahlung nicht verfügbar",
+            "Betaling niet beschikbaar",
+            "Оплата недоступна",
+            "お支払い不可",
+          ),
+          description: t(
+            "Stripe is not configured yet. Please check back soon.",
+            "Stripe n'est pas encore configuré. Revenez bientôt.",
+            "Stripe aún no está configurado. Vuelve pronto.",
+            "O Stripe ainda não está configurado. Volte em breve.",
+            "Stripe 尚未配置，请稍后再试。",
+            "لم يتم تكوين Stripe بعد. تفضل بالعودة قريباً.",
+            "Stripe non è ancora configurato. Riprova presto.",
+            "Stripe ist noch nicht konfiguriert. Bitte schau bald wieder vorbei.",
+            "Stripe is nog niet geconfigureerd. Kom snel terug.",
+            "Stripe ещё не настроен. Загляните позже.",
+            "Stripeはまだ設定されていません。後でもう一度ご確認ください。",
+          ),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } catch (e: any) {
+      console.error("[Pricing] checkout error:", e);
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
 
   const plans = [
     {
@@ -251,9 +312,23 @@ const Pricing = () => {
               </div>
 
               {/* CTA */}
-              <Button variant={plan.ctaVariant} className="w-full" asChild>
-                <LocalizedNavLink to="/analyze">{plan.cta}</LocalizedNavLink>
-              </Button>
+              {plan.id === "starter" ? (
+                <Button variant={plan.ctaVariant} className="w-full" asChild>
+                  <LocalizedNavLink to="/analyze">{plan.cta}</LocalizedNavLink>
+                </Button>
+              ) : (
+                <Button
+                  variant={plan.ctaVariant}
+                  className="w-full gap-2"
+                  onClick={() => handleCheckout(plan.id as "pro" | "ultimate")}
+                  disabled={checkoutLoading === plan.id}
+                >
+                  {checkoutLoading === plan.id && (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  )}
+                  {plan.cta}
+                </Button>
+              )}
 
               {/* Feature list */}
               <ul className="flex flex-col gap-2.5 text-sm mt-auto">
