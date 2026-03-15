@@ -199,13 +199,15 @@ const Pricing = () => {
   });
 
   // ── Stripe Checkout handler ────────────────────────────────────────────────
-  const handleCheckout = async (planId: "pro" | "ultimate") => {
+  // `cycle` is passed explicitly by the onClick so we always read the live
+  // billingCycle state value at click time — no closure capture issues.
+  const handleCheckout = async (planId: "pro" | "ultimate", cycle: "monthly" | "yearly") => {
     setCheckoutLoading(planId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
           planType:     planId,
-          billingCycle,
+          billingCycle: cycle,
           userId:       user?.id ?? "",
           email:        user?.email ?? undefined,
           // Send the browser's current origin so the Edge Function uses
@@ -462,7 +464,7 @@ const Pricing = () => {
                 <Button
                   variant={plan.ctaVariant}
                   className="w-full gap-2"
-                  onClick={() => handleCheckout(plan.id as "pro" | "ultimate")}
+                  onClick={() => handleCheckout(plan.id as "pro" | "ultimate", billingCycle)}
                   disabled={checkoutLoading === plan.id}
                 >
                   {checkoutLoading === plan.id && (
