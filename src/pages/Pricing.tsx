@@ -70,6 +70,10 @@ const Pricing = () => {
           billingCycle,
           userId:       user?.id ?? "",
           email:        user?.email ?? undefined,
+          // Send the browser's current origin so the Edge Function uses
+          // localhost:8080 in dev and calorievision.online in production
+          // — no hardcoded URLs anywhere.
+          origin:       window.location.origin,
         },
       });
 

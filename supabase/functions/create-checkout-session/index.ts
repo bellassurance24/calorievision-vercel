@@ -11,7 +11,11 @@
  *
  * Request body (JSON):
  *   { planType: "pro"|"ultimate", billingCycle: "monthly"|"yearly",
- *     userId: string, email?: string }
+ *     userId: string, email?: string, origin: string }
+ *
+ *  `origin` is window.location.origin sent by the frontend.
+ *  This means success/cancel URLs automatically work on localhost AND production
+ *  without any changes to this function.
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -24,7 +28,8 @@ const CORS = {
 };
 const JSON_HEADERS = { ...CORS, "Content-Type": "application/json" };
 
-const APP_URL = "https://calorievision.online";
+/** Fallback used only if the frontend forgets to send `origin` */
+const FALLBACK_URL = "https://calorievision.online";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
@@ -40,7 +45,11 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16", httpClient: Stripe.createFetchHttpClient() });
 
-    const { planType, billingCycle, userId, email } = await req.json();
+    const { planType, billingCycle, userId, email, origin } = await req.json();
+
+    // Use the origin sent by the browser (works on localhost:8080, localhost:5173,
+    // staging URLs, and production — no code changes ever needed).
+    const baseUrl = (origin && origin.startsWith("http")) ? origin : FALLBACK_URL;
 
     // Map plan+cycle → Stripe Price ID (stored as env secrets)
     const priceIds: Record<string, Record<string, string | undefined>> = {
@@ -66,8 +75,8 @@ serve(async (req) => {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${APP_URL}/pricing?checkout=success&plan=${planType}`,
-      cancel_url:  `${APP_URL}/pricing?checkout=canceled`,
+      success_url: `${baseUrl}/pricing?checkout=success&plan=${planType}`,
+      cancel_url:  `${baseUrl}/pricing?checkout=canceled`,
       metadata: { userId: userId ?? "", planType, billingCycle },
       ...(email ? { customer_email: email } : {}),
     });
