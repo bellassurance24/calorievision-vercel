@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -8,13 +8,17 @@ import { ScrollAnimation } from "@/components/ScrollAnimation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const Pricing = () => {
   const { language } = useLanguage();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null); // plan id being processed
+  const [verifying, setVerifying] = useState(false);
 
   const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string, ru?: string, ja?: string) => {
     if (language === "fr") return fr;
@@ -29,6 +33,92 @@ const Pricing = () => {
     if (language === "ja") return ja ?? en;
     return en;
   };
+
+  // ── Stripe success redirect handler ────────────────────────────────────────
+  // When Stripe redirects to /pricing?checkout=success&session_id=cs_...,
+  // we call verify-checkout-session to write the subscription row immediately.
+  // This is the primary activation path — webhooks are only a backup.
+  useEffect(() => {
+    const checkout  = searchParams.get("checkout");
+    const sessionId = searchParams.get("session_id");
+
+    if (checkout !== "success" || !sessionId || !user?.id || verifying) return;
+
+    setVerifying(true);
+
+    supabase.functions
+      .invoke("verify-checkout-session", {
+        body: { sessionId, userId: user.id },
+      })
+      .then(({ data, error }) => {
+        if (error || !data?.success) {
+          console.error("[Pricing] verify-checkout-session error:", error ?? data);
+          toast({
+            title: t(
+              "Activation issue",
+              "Problème d'activation",
+              "Problema de activación",
+              "Problema de ativação",
+              "激活问题",
+              "مشكلة في التفعيل",
+              "Problema di attivazione",
+              "Aktivierungsproblem",
+              "Activeringsprobleem",
+              "Ошибка активации",
+              "アクティベーションエラー",
+            ),
+            description: t(
+              "Your payment was received but we couldn't activate your plan automatically. Please contact support.",
+              "Votre paiement a été reçu mais nous n'avons pas pu activer votre plan. Contactez le support.",
+              "Tu pago fue recibido pero no pudimos activar tu plan. Contacta con soporte.",
+              "Seu pagamento foi recebido, mas não conseguimos ativar seu plano. Entre em contato com o suporte.",
+              "您的付款已收到，但我们无法自动激活您的计划。请联系支持。",
+              "تم استلام دفعتك لكن تعذّر تفعيل خطتك تلقائياً. تواصل مع الدعم.",
+              "Il pagamento è stato ricevuto ma non siamo riusciti ad attivare il piano. Contatta il supporto.",
+              "Ihre Zahlung wurde empfangen, aber wir konnten Ihren Plan nicht aktivieren. Bitte kontaktieren Sie den Support.",
+              "Uw betaling is ontvangen maar we konden uw plan niet activeren. Neem contact op met de support.",
+              "Платёж получен, но мы не смогли активировать план. Обратитесь в поддержку.",
+              "お支払いは完了しましたが、プランを自動的にアクティベートできませんでした。サポートにお問い合わせください。",
+            ),
+            variant: "destructive",
+          });
+        } else {
+          const plan = data.plan as string;
+          toast({
+            title: t(
+              `🎉 ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan activated!`,
+              `🎉 Plan ${plan} activé !`,
+              `🎉 ¡Plan ${plan} activado!`,
+              `🎉 Plano ${plan} ativado!`,
+              `🎉 ${plan} 计划已激活！`,
+              `🎉 تم تفعيل خطة ${plan}!`,
+              `🎉 Piano ${plan} attivato!`,
+              `🎉 ${plan}-Plan aktiviert!`,
+              `🎉 ${plan}-plan geactiveerd!`,
+              `🎉 План ${plan} активирован!`,
+              `🎉 ${plan}プランが有効になりました！`,
+            ),
+            description: t(
+              "Welcome! Your subscription is now active.",
+              "Bienvenue ! Votre abonnement est maintenant actif.",
+              "¡Bienvenido! Tu suscripción ya está activa.",
+              "Bem-vindo! Sua assinatura já está ativa.",
+              "欢迎！您的订阅现已激活。",
+              "مرحباً! اشتراكك أصبح نشطاً الآن.",
+              "Benvenuto! Il tuo abbonamento è ora attivo.",
+              "Willkommen! Ihr Abonnement ist jetzt aktiv.",
+              "Welkom! Uw abonnement is nu actief.",
+              "Добро пожаловать! Ваша подписка активна.",
+              "ようこそ！サブスクリプションが有効になりました。",
+            ),
+          });
+        }
+        // Clean the URL so a page refresh doesn't re-trigger verification
+        navigate(window.location.pathname, { replace: true });
+      })
+      .finally(() => setVerifying(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, searchParams]);
 
   usePageMetadata({
     title: t(

@@ -86,26 +86,41 @@ serve(async (req) => {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.CheckoutSession;
       if (session.mode === "subscription" && session.subscription) {
-        // Retrieve full subscription object (session metadata → subscription metadata)
-        const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+        const userId   = session.metadata?.userId;
+        const planType = session.metadata?.planType ?? "pro";
 
-        // Copy metadata from session to subscription (needed for webhook routing)
-        if (session.metadata?.userId) {
-          await stripe.subscriptions.update(sub.id, {
-            metadata: {
-              userId:      session.metadata.userId,
-              planType:    session.metadata.planType ?? "pro",
-              billingCycle: session.metadata.billingCycle ?? "monthly",
-            },
-          });
-          sub.metadata = {
-            ...sub.metadata,
-            userId:   session.metadata.userId,
-            planType: session.metadata.planType ?? "pro",
-          };
+        if (!userId) {
+          console.warn("[stripe-webhook] checkout.session.completed missing userId – skipping DB write");
+          break;
         }
 
-        await upsertSub(sub);
+        // Retrieve the subscription to get period_end and status
+        const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+
+        const subStatus = sub.status === "active" || sub.status === "trialing"
+          ? "active" : "past_due";
+
+        // Write directly using session.metadata values — do NOT depend on the
+        // subscription object having userId in its own metadata (Stripe doesn't
+        // copy checkout session metadata to subscriptions automatically).
+        const { error } = await db.from("subscriptions").upsert(
+          {
+            user_id:                userId,
+            plan_type:              planType,
+            status:                 subStatus,
+            stripe_subscription_id: sub.id,
+            stripe_customer_id:     sub.customer as string,
+            current_period_end:     new Date(sub.current_period_end * 1000).toISOString(),
+            updated_at:             new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+
+        if (error) {
+          console.error("[stripe-webhook] DB upsert error:", error.message);
+        } else {
+          console.log(`[stripe-webhook] Subscription activated: user=${userId} plan=${planType}`);
+        }
       }
       break;
     }

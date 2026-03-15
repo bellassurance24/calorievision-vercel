@@ -75,7 +75,9 @@ serve(async (req) => {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${baseUrl}/pricing?checkout=success&plan=${planType}`,
+      // Stripe replaces {CHECKOUT_SESSION_ID} with the real session ID.
+      // The frontend reads it on redirect and calls verify-checkout-session.
+      success_url: `${baseUrl}/pricing?checkout=success&plan=${planType}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/pricing?checkout=canceled`,
       metadata: { userId: userId ?? "", planType, billingCycle },
       ...(email ? { customer_email: email } : {}),
