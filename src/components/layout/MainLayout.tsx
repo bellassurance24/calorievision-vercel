@@ -264,7 +264,7 @@ const MainLayout = ({
 
         {/* Logo and App Name */}
         <LocalizedNavLink to="/" className="flex items-center gap-2 shrink-0">
-          <img src="/temp-gauge-no-bg.png" className="h-7 w-7 md:h-8 md:w-8 object-contain mix-blend-multiply" alt="" aria-hidden="true" />
+          <img src="/temp-gauge-no-bg.png" className="h-7 w-7 md:h-8 md:w-8 object-contain" alt="" aria-hidden="true" />
           <span className="text-lg font-bold md:text-xl">CalorieVision</span>
         </LocalizedNavLink>
 
@@ -285,11 +285,11 @@ const MainLayout = ({
           <LocalizedNavLink to="/faq" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
             {current.faq}
           </LocalizedNavLink>
-          <LocalizedNavLink to="/contact" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
-            {current.contact}
-          </LocalizedNavLink>
           <LocalizedNavLink to="/pricing" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
             {current.pricing}
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/contact" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
+            {current.contact}
           </LocalizedNavLink>
         </nav>
 
@@ -327,11 +327,11 @@ const MainLayout = ({
                 <LocalizedNavLink to="/faq" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
                   {current.faq}
                 </LocalizedNavLink>
-                <LocalizedNavLink to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
-                  {current.contact}
-                </LocalizedNavLink>
                 <LocalizedNavLink to="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
                   {current.pricing}
+                </LocalizedNavLink>
+                <LocalizedNavLink to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
+                  {current.contact}
                 </LocalizedNavLink>
                 {user && (
                   <LocalizedNavLink to="/notification-settings" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
