@@ -39,17 +39,17 @@ const Pricing = () => {
       "CalorieVision 料金 – Starter・Pro・Ultimate",
     ),
     description: t(
-      "Choose the plan that fits your nutrition goals. Free Starter, Pro with 100 scans/month, or Ultimate with unlimited access.",
-      "Choisissez le plan adapté à vos objectifs. Starter gratuit, Pro avec 100 analyses/mois ou Ultimate illimité.",
-      "Elige el plan que se adapte a tus objetivos. Starter gratis, Pro con 100 análisis/mes o Ultimate ilimitado.",
-      "Escolha o plano adequado. Starter grátis, Pro com 100 análises/mês ou Ultimate ilimitado.",
-      "选择适合您营养目标的计划。免费Starter、每月100次扫描的Pro或无限Ultimate。",
-      "اختر الخطة التي تناسب أهدافك. Starter مجاني أو Pro بـ 100 مسح/شهر أو Ultimate غير محدود.",
-      "Scegli il piano adatto ai tuoi obiettivi. Starter gratuito, Pro con 100 scansioni/mese o Ultimate illimitato.",
-      "Wählen Sie den passenden Plan. Kostenloser Starter, Pro mit 100 Scans/Monat oder Ultimate unbegrenzt.",
-      "Kies het plan dat past bij uw doelen. Gratis Starter, Pro met 100 scans/maand of onbeperkte Ultimate.",
-      "Выберите подходящий план. Бесплатный Starter, Pro с 100 сканированиями/мес. или безлимитный Ultimate.",
-      "目標に合ったプランを選択。無料Starter、月100回スキャンのPro、または無制限のUltimate。",
+      "Choose the plan that fits your nutrition goals. Free Starter, Pro with 1,000 scans/month, or Ultimate with unlimited access.",
+      "Choisissez le plan adapté à vos objectifs. Starter gratuit, Pro avec 1 000 analyses/mois ou Ultimate illimité.",
+      "Elige el plan que se adapte a tus objetivos. Starter gratis, Pro con 1.000 análisis/mes o Ultimate ilimitado.",
+      "Escolha o plano adequado. Starter grátis, Pro com 1.000 análises/mês ou Ultimate ilimitado.",
+      "选择适合您营养目标的计划。免费Starter、每月1,000次扫描的Pro或无限Ultimate。",
+      "اختر الخطة التي تناسب أهدافك. Starter مجاني أو Pro بـ 1,000 مسح/شهر أو Ultimate غير محدود.",
+      "Scegli il piano adatto ai tuoi obiettivi. Starter gratuito, Pro con 1.000 scansioni/mese o Ultimate illimitato.",
+      "Wählen Sie den passenden Plan. Kostenloser Starter, Pro mit 1.000 Scans/Monat oder Ultimate unbegrenzt.",
+      "Kies het plan dat past bij uw doelen. Gratis Starter, Pro met 1.000 scans/maand of onbeperkte Ultimate.",
+      "Выберите подходящий план. Бесплатный Starter, Pro с 1 000 сканированиями/мес. или безлимитный Ultimate.",
+      "目標に合ったプランを選択。無料Starter、月1,000回スキャンのPro、または無制限のUltimate。",
     ),
     path: "/pricing",
   });
@@ -77,7 +77,7 @@ const Pricing = () => {
       ctaVariant: "outline" as const,
       popular: false,
       features: [
-        { text: t("3 AI scans per day", "3 analyses IA par jour", "3 análisis IA por día", "3 análises IA por dia", "每天3次AI扫描", "3 عمليات مسح ذكاء اصطناعي يومياً", "3 scansioni IA al giorno", "3 KI-Scans pro Tag", "3 AI-scans per dag", "3 ИИ-сканирования в день", "1日3回AIスキャン"), included: true },
+        { text: t("2 AI scans per day", "2 analyses IA par jour", "2 análisis IA por día", "2 análises IA por dia", "每天2次AI扫描", "2 عمليات مسح ذكاء اصطناعي يومياً", "2 scansioni IA al giorno", "2 KI-Scans pro Tag", "2 AI-scans per dag", "2 ИИ-сканирования в день", "1日2回AIスキャン"), included: true },
         { text: t("Basic BMI tools", "Outils IMC de base", "Herramientas básicas de IMC", "Ferramentas básicas de IMC", "基础BMI工具", "أدوات مؤشر كتلة الجسم الأساسية", "Strumenti BMI di base", "Grundlegende BMI-Tools", "Basis BMI-tools", "Базовые инструменты ИМТ", "基本BMIツール"), included: true },
         { text: t("Full blog access", "Accès complet au blog", "Acceso completo al blog", "Acesso completo ao blog", "完整博客访问", "وصول كامل للمدونة", "Accesso completo al blog", "Vollständiger Blog-Zugang", "Volledige blogtoegang", "Полный доступ к блогу", "ブログへのフルアクセス"), included: true },
         { text: t("Contains ads", "Contient des publicités", "Contiene anuncios", "Contém anúncios", "含有广告", "يحتوي على إعلانات", "Contiene pubblicità", "Enthält Werbung", "Bevat advertenties", "Содержит рекламу", "広告あり"), included: false },
@@ -107,7 +107,7 @@ const Pricing = () => {
       ctaVariant: "hero" as const,
       popular: true,
       features: [
-        { text: t("100 AI scans per month", "100 analyses IA par mois", "100 análisis IA por mes", "100 análises IA por mês", "每月100次AI扫描", "100 عملية مسح ذكاء اصطناعي شهرياً", "100 scansioni IA al mese", "100 KI-Scans pro Monat", "100 AI-scans per maand", "100 ИИ-сканирований в месяц", "月100回AIスキャン"), included: true },
+        { text: t("1,000 AI scans per month", "1 000 analyses IA par mois", "1.000 análisis IA por mes", "1.000 análises IA por mês", "每月1,000次AI扫描", "1,000 عملية مسح ذكاء اصطناعي شهرياً", "1.000 scansioni IA al mese", "1.000 KI-Scans pro Monat", "1.000 AI-scans per maand", "1 000 ИИ-сканирований в месяц", "月1,000回AIスキャン"), included: true },
         { text: t("Meal tracking", "Suivi des repas", "Seguimiento de comidas", "Rastreamento de refeições", "餐食追踪", "تتبع الوجبات", "Monitoraggio pasti", "Mahlzeiten-Tracking", "Maaltijdtracking", "Отслеживание приёмов пищи", "食事トラッキング"), included: true },
         { text: t("Weekly nutrition reports", "Rapports nutritionnels hebdomadaires", "Informes nutricionales semanales", "Relatórios nutricionais semanais", "每周营养报告", "تقارير غذائية أسبوعية", "Rapporti nutrizionali settimanali", "Wöchentliche Ernährungsberichte", "Wekelijkse voedingsrapporten", "Еженедельные отчёты о питании", "週次栄養レポート"), included: true },
         { text: t("Ad-Free experience", "Expérience sans publicité", "Experiencia sin anuncios", "Experiência sem anúncios", "无广告体验", "تجربة بدون إعلانات", "Esperienza senza pubblicità", "Werbefreie Erfahrung", "Advertentievrije ervaring", "Опыт без рекламы", "広告なし体験"), included: true },
@@ -137,7 +137,7 @@ const Pricing = () => {
       ctaVariant: "outline" as const,
       popular: false,
       features: [
-        { text: t("Unlimited* scans (Fair Use)", "Analyses illimitées* (usage équitable)", "Análisis ilimitados* (uso justo)", "Análises ilimitadas* (uso justo)", "无限*扫描（公平使用）", "عمليات مسح غير محدودة* (الاستخدام العادل)", "Scansioni illimitate* (uso equo)", "Unbegrenzte* Scans (Fair Use)", "Onbeperkte* scans (eerlijk gebruik)", "Неограниченные* сканирования (честное использование)", "無制限*スキャン（フェアユース）"), included: true },
+        { text: t("Unlimited* scans (5,000 soft-cap)", "Analyses illimitées* (plafond à 5 000)", "Análisis ilimitados* (límite de 5.000)", "Análises ilimitadas* (limite de 5.000)", "无限*扫描（5,000软上限）", "عمليات مسح غير محدودة* (حد 5,000)", "Scansioni illimitate* (limite di 5.000)", "Unbegrenzte* Scans (5.000 Soft-Limit)", "Onbeperkte* scans (5.000 soft-cap)", "Неограниченные* сканирования (лимит 5 000)", "無制限*スキャン（5,000ソフトキャップ）"), included: true },
         { text: t("Advanced insights", "Analyses avancées", "Análisis avanzado", "Insights avançados", "高级洞察", "رؤى متقدمة", "Analisi avanzate", "Erweiterte Einblicke", "Geavanceerde inzichten", "Расширенная аналитика", "高度なインサイト"), included: true },
         { text: t("Meal tracking", "Suivi des repas", "Seguimiento de comidas", "Rastreamento de refeições", "餐食追踪", "تتبع الوجبات", "Monitoraggio pasti", "Mahlzeiten-Tracking", "Maaltijdtracking", "Отслеживание приёмов пищи", "食事トラッキング"), included: true },
         { text: t("Weekly nutrition reports", "Rapports nutritionnels hebdomadaires", "Informes nutricionales semanales", "Relatórios nutricionais semanais", "每周营养报告", "تقارير غذائية أسبوعية", "Rapporti nutrizionali settimanali", "Wöchentliche Ernährungsberichte", "Wekelijkse voedingsrapporten", "Еженедельные отчёты о питании", "週次栄養レポート"), included: true },
@@ -203,7 +203,7 @@ const Pricing = () => {
         <span className={`text-sm font-medium transition-colors ${billingCycle === "yearly" ? "text-foreground" : "text-muted-foreground"}`}>
           {t("Yearly", "Annuel", "Anual", "Anual", "每年", "سنوي", "Annuale", "Jährlich", "Jaarlijks", "Ежегодно", "年払い")}
           <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-            {t("Save up to 23%", "Économisez jusqu'à 23%", "Ahorra hasta 23%", "Poupe até 23%", "最多节省23%", "وفّر حتى 23%", "Risparmia fino al 23%", "Bis zu 23% sparen", "Bespaar tot 23%", "Сэкономьте до 23%", "最大23%お得")}
+            {t("Save up to 25%", "Économisez jusqu'à 25%", "Ahorra hasta 25%", "Poupe até 25%", "最多节省25%", "وفّر حتى 25%", "Risparmia fino al 25%", "Bis zu 25% sparen", "Bespaar tot 25%", "Сэкономьте до 25%", "最大25%お得")}
           </span>
         </span>
       </div>
