@@ -42,13 +42,20 @@ const Pricing = () => {
     const checkout  = searchParams.get("checkout");
     const sessionId = searchParams.get("session_id");
 
-    if (checkout !== "success" || !sessionId || !user?.id || verifying) return;
+    // Allow guests (no user?.id) — the Edge Function resolves identity from Stripe email
+    if (checkout !== "success" || !sessionId || verifying) return;
 
     setVerifying(true);
 
     supabase.functions
       .invoke("verify-checkout-session", {
-        body: { sessionId, userId: user.id },
+        body: {
+          sessionId,
+          // Pass userId only if already logged in; otherwise the function will
+          // find-or-create the account from the Stripe customer email.
+          userId: user?.id ?? null,
+          origin: window.location.origin,
+        },
       })
       .then(({ data, error }) => {
         if (error || !data?.success) {
@@ -68,57 +75,98 @@ const Pricing = () => {
               "アクティベーションエラー",
             ),
             description: t(
-              "Your payment was received but we couldn't activate your plan automatically. Please contact support.",
-              "Votre paiement a été reçu mais nous n'avons pas pu activer votre plan. Contactez le support.",
-              "Tu pago fue recibido pero no pudimos activar tu plan. Contacta con soporte.",
-              "Seu pagamento foi recebido, mas não conseguimos ativar seu plano. Entre em contato com o suporte.",
-              "您的付款已收到，但我们无法自动激活您的计划。请联系支持。",
-              "تم استلام دفعتك لكن تعذّر تفعيل خطتك تلقائياً. تواصل مع الدعم.",
-              "Il pagamento è stato ricevuto ma non siamo riusciti ad attivare il piano. Contatta il supporto.",
-              "Ihre Zahlung wurde empfangen, aber wir konnten Ihren Plan nicht aktivieren. Bitte kontaktieren Sie den Support.",
-              "Uw betaling is ontvangen maar we konden uw plan niet activeren. Neem contact op met de support.",
-              "Платёж получен, но мы не смогли активировать план. Обратитесь в поддержку.",
-              "お支払いは完了しましたが、プランを自動的にアクティベートできませんでした。サポートにお問い合わせください。",
+              "Your payment was received but we couldn't activate your plan automatically. Please contact support@calorievision.online.",
+              "Votre paiement a été reçu mais nous n'avons pas pu activer votre plan. Contactez support@calorievision.online.",
+              "Tu pago fue recibido pero no pudimos activar tu plan. Contacta support@calorievision.online.",
+              "Seu pagamento foi recebido, mas não conseguimos ativar seu plano. Contate support@calorievision.online.",
+              "您的付款已收到，但我们无法自动激活您的计划。请联系 support@calorievision.online。",
+              "تم استلام دفعتك لكن تعذّر تفعيل خطتك. تواصل مع support@calorievision.online.",
+              "Il pagamento è stato ricevuto ma non siamo riusciti ad attivare il piano. Contatta support@calorievision.online.",
+              "Ihre Zahlung wurde empfangen, aber wir konnten Ihren Plan nicht aktivieren. Bitte kontaktieren Sie support@calorievision.online.",
+              "Uw betaling is ontvangen maar we konden uw plan niet activeren. Neem contact op via support@calorievision.online.",
+              "Платёж получен, но мы не смогли активировать план. Напишите на support@calorievision.online.",
+              "お支払いは完了しましたが、プランをアクティベートできませんでした。support@calorievision.online にお問い合わせください。",
             ),
             variant: "destructive",
           });
-        } else {
-          const plan = data.plan as string;
+          // Still clean the URL
+          navigate(window.location.pathname, { replace: true });
+          return;
+        }
+
+        const plan      = (data.plan as string) ?? "pro";
+        const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+
+        // ── If the function returned a magic link → auto-login the user ──
+        // (only happens for guests who weren't logged in before payment)
+        if (data.magicLink) {
           toast({
             title: t(
-              `🎉 ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan activated!`,
-              `🎉 Plan ${plan} activé !`,
-              `🎉 ¡Plan ${plan} activado!`,
-              `🎉 Plano ${plan} ativado!`,
-              `🎉 ${plan} 计划已激活！`,
-              `🎉 تم تفعيل خطة ${plan}!`,
-              `🎉 Piano ${plan} attivato!`,
-              `🎉 ${plan}-Plan aktiviert!`,
-              `🎉 ${plan}-plan geactiveerd!`,
-              `🎉 План ${plan} активирован!`,
-              `🎉 ${plan}プランが有効になりました！`,
+              `🎉 ${planLabel} plan activated!`,
+              `🎉 Plan ${planLabel} activé !`,
+              `🎉 ¡Plan ${planLabel} activado!`,
+              `🎉 Plano ${planLabel} ativado!`,
+              `🎉 ${planLabel} 计划已激活！`,
+              `🎉 تم تفعيل خطة ${planLabel}!`,
+              `🎉 Piano ${planLabel} attivato!`,
+              `🎉 ${planLabel}-Plan aktiviert!`,
+              `🎉 ${planLabel}-plan geactiveerd!`,
+              `🎉 План ${planLabel} активирован!`,
+              `🎉 ${planLabel}プランが有効になりました！`,
             ),
             description: t(
-              "Welcome! Your subscription is now active.",
-              "Bienvenue ! Votre abonnement est maintenant actif.",
-              "¡Bienvenido! Tu suscripción ya está activa.",
-              "Bem-vindo! Sua assinatura já está ativa.",
-              "欢迎！您的订阅现已激活。",
-              "مرحباً! اشتراكك أصبح نشطاً الآن.",
-              "Benvenuto! Il tuo abbonamento è ora attivo.",
-              "Willkommen! Ihr Abonnement ist jetzt aktiv.",
-              "Welkom! Uw abonnement is nu actief.",
-              "Добро пожаловать! Ваша подписка активна.",
-              "ようこそ！サブスクリプションが有効になりました。",
+              "Signing you in automatically…",
+              "Connexion automatique en cours…",
+              "Iniciando sesión automáticamente…",
+              "Fazendo login automaticamente…",
+              "正在自动登录…",
+              "جارٍ تسجيل الدخول تلقائياً…",
+              "Accesso automatico in corso…",
+              "Automatische Anmeldung läuft…",
+              "Automatisch inloggen…",
+              "Выполняется автоматический вход…",
+              "自動ログイン中…",
             ),
           });
+          // Navigate to magic link → Supabase logs the user in → redirects to /analyze
+          window.location.href = data.magicLink;
+          return;
         }
-        // Clean the URL so a page refresh doesn't re-trigger verification
+
+        // ── Already logged in user ──────────────────────────────────────────
+        toast({
+          title: t(
+            `🎉 ${planLabel} plan activated!`,
+            `🎉 Plan ${planLabel} activé !`,
+            `🎉 ¡Plan ${planLabel} activado!`,
+            `🎉 Plano ${planLabel} ativado!`,
+            `🎉 ${planLabel} 计划已激活！`,
+            `🎉 تم تفعيل خطة ${planLabel}!`,
+            `🎉 Piano ${planLabel} attivato!`,
+            `🎉 ${planLabel}-Plan aktiviert!`,
+            `🎉 ${planLabel}-plan geactiveerd!`,
+            `🎉 План ${planLabel} активирован!`,
+            `🎉 ${planLabel}プランが有効になりました！`,
+          ),
+          description: t(
+            "Welcome! Your subscription is now active. Happy scanning!",
+            "Bienvenue ! Votre abonnement est maintenant actif. Bonne analyse !",
+            "¡Bienvenido! Tu suscripción ya está activa. ¡Disfruta!",
+            "Bem-vindo! Sua assinatura já está ativa. Bom uso!",
+            "欢迎！您的订阅现已激活，开始扫描吧！",
+            "مرحباً! اشتراكك أصبح نشطاً. استمتع بالمسح!",
+            "Benvenuto! Il tuo abbonamento è ora attivo. Buona scansione!",
+            "Willkommen! Ihr Abonnement ist jetzt aktiv. Viel Spaß beim Scannen!",
+            "Welkom! Uw abonnement is nu actief. Veel scan-plezier!",
+            "Добро пожаловать! Ваша подписка активна. Удачных сканирований!",
+            "ようこそ！サブスクリプションが有効になりました。スキャンをお楽しみください！",
+          ),
+        });
         navigate(window.location.pathname, { replace: true });
       })
       .finally(() => setVerifying(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, searchParams]);
+  }, [searchParams]); // intentionally omit user?.id — run when URL params change
 
   usePageMetadata({
     title: t(
