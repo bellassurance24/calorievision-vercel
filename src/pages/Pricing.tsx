@@ -202,6 +202,8 @@ const Pricing = () => {
   // `cycle` is passed explicitly by the onClick so we always read the live
   // billingCycle state value at click time — no closure capture issues.
   const handleCheckout = async (planId: "pro" | "ultimate", cycle: "monthly" | "yearly") => {
+    // ── Diagnostic log — visible in browser DevTools → Console ──────────────
+    console.log("[Checkout] planId:", planId, "| billingCycle:", cycle);
     setCheckoutLoading(planId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
