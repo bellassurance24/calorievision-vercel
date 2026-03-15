@@ -45,25 +45,33 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16", httpClient: Stripe.createFetchHttpClient() });
 
-    const { planType, billingCycle, userId, email, origin } = await req.json();
+    const { planType, billingCycle, priceId: clientPriceId, userId, email, origin } = await req.json();
 
     // Use the origin sent by the browser (works on localhost:8080, localhost:5173,
     // staging URLs, and production — no code changes ever needed).
     const baseUrl = (origin && origin.startsWith("http")) ? origin : FALLBACK_URL;
 
-    // Map plan+cycle → Stripe Price ID (stored as env secrets)
-    const priceIds: Record<string, Record<string, string | undefined>> = {
-      pro: {
-        monthly: Deno.env.get("STRIPE_PRICE_PRO_MONTHLY"),
-        yearly:  Deno.env.get("STRIPE_PRICE_PRO_YEARLY"),
-      },
-      ultimate: {
-        monthly: Deno.env.get("STRIPE_PRICE_ULTIMATE_MONTHLY"),
-        yearly:  Deno.env.get("STRIPE_PRICE_ULTIMATE_YEARLY"),
-      },
-    };
+    // ── Price ID resolution ──────────────────────────────────────────────────
+    // Priority 1: priceId sent directly from the frontend (VITE_STRIPE_PRICE_* env vars).
+    // Priority 2: server-side secret lookup (fallback for legacy callers).
+    let priceId: string | undefined = clientPriceId;
 
-    const priceId = priceIds[planType]?.[billingCycle];
+    if (!priceId) {
+      const priceMap: Record<string, Record<string, string | undefined>> = {
+        pro: {
+          monthly: Deno.env.get("STRIPE_PRICE_PRO_MONTHLY"),
+          yearly:  Deno.env.get("STRIPE_PRICE_PRO_YEARLY"),
+        },
+        ultimate: {
+          monthly: Deno.env.get("STRIPE_PRICE_ULTIMATE_MONTHLY"),
+          yearly:  Deno.env.get("STRIPE_PRICE_ULTIMATE_YEARLY"),
+        },
+      };
+      priceId = priceMap[planType]?.[billingCycle];
+    }
+
+    console.log(`[create-checkout-session] planType=${planType} billingCycle=${billingCycle} priceId=${priceId ?? "MISSING"} source=${clientPriceId ? "frontend" : "secret"}`);
+
     if (!priceId) {
       return new Response(
         JSON.stringify({ error: `No Stripe price ID configured for ${planType}/${billingCycle}` }),

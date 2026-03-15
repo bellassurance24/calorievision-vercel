@@ -198,23 +198,59 @@ const Pricing = () => {
     path: "/pricing",
   });
 
+  // ── Price ID map (Vite env vars — set in Vercel project settings) ──────────
+  // NOTE: These are NOT secrets — Stripe price IDs are public catalog identifiers.
+  // Add VITE_STRIPE_PRICE_* to your Vercel project → Settings → Environment Variables.
+  const PRICE_IDS = {
+    pro: {
+      monthly:  import.meta.env.VITE_STRIPE_PRICE_PRO_MONTHLY  as string | undefined,
+      yearly:   import.meta.env.VITE_STRIPE_PRICE_PRO_YEARLY   as string | undefined,
+    },
+    ultimate: {
+      monthly:  import.meta.env.VITE_STRIPE_PRICE_ULTIMATE_MONTHLY as string | undefined,
+      yearly:   import.meta.env.VITE_STRIPE_PRICE_ULTIMATE_YEARLY  as string | undefined,
+    },
+  } as const;
+
   // ── Stripe Checkout handler ────────────────────────────────────────────────
-  // `cycle` is passed explicitly by the onClick so we always read the live
-  // billingCycle state value at click time — no closure capture issues.
   const handleCheckout = async (planId: "pro" | "ultimate", cycle: "monthly" | "yearly") => {
+    // Resolve price ID on the frontend — simple if/else, no server-side map.
+    let priceId: string | undefined;
+    if (planId === "pro") {
+      if (cycle === "yearly") {
+        priceId = PRICE_IDS.pro.yearly;
+      } else {
+        priceId = PRICE_IDS.pro.monthly;
+      }
+    } else {
+      if (cycle === "yearly") {
+        priceId = PRICE_IDS.ultimate.yearly;
+      } else {
+        priceId = PRICE_IDS.ultimate.monthly;
+      }
+    }
+
     // ── Diagnostic log — visible in browser DevTools → Console ──────────────
-    console.log("[Checkout] planId:", planId, "| billingCycle:", cycle);
+    console.log("[Checkout] planId:", planId, "| cycle:", cycle, "| priceId:", priceId ?? "⚠️ MISSING — add VITE_STRIPE_PRICE_* to Vercel env vars");
+
+    if (!priceId) {
+      toast({
+        title: "Configuration error",
+        description: "Stripe price ID is not set. Add VITE_STRIPE_PRICE_* to your Vercel environment variables.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setCheckoutLoading(planId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
           planType:     planId,
           billingCycle: cycle,
+          priceId,                        // ← sent directly; Edge Function uses this
           userId:       user?.id ?? "",
           email:        user?.email ?? undefined,
-          // Send the browser's current origin so the Edge Function uses
-          // localhost:8080 in dev and calorievision.online in production
-          // — no hardcoded URLs anywhere.
           origin:       window.location.origin,
         },
       });
