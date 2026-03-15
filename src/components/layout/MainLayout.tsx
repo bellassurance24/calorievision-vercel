@@ -264,7 +264,7 @@ const MainLayout = ({
 
         {/* Logo and App Name */}
         <LocalizedNavLink to="/" className="flex items-center gap-2 shrink-0">
-          <img src="/temp-gauge-no-bg.png" className="h-7 w-7 md:h-8 md:w-8 object-contain" alt="" aria-hidden="true" />
+          <img src="/temp-gauge-no-bg.png" className="h-7 w-7 md:h-8 md:w-8 object-cover rounded-full" alt="" aria-hidden="true" />
           <span className="text-lg font-bold md:text-xl">CalorieVision</span>
         </LocalizedNavLink>
 
