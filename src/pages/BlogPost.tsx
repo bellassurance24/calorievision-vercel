@@ -27,25 +27,28 @@ function setCanonical(href: string) {
   el.href = href;
 }
 
-/** Replace all hreflang <link> tags for the current slug */
-function setHreflangTags(slug: string, currentLang: string) {
-  // Remove old hreflang tags
+/** Replace all hreflang <link> tags using per-language localized slugs */
+function setHreflangTags(
+  baseSlug: string,
+  langSlugMap: Record<string, string>, // lang → localized_slug (or base slug as fallback)
+) {
   document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
 
-  // Add one tag per supported language
   SUPPORTED_LANGUAGES.forEach(lang => {
+    const localSlug = langSlugMap[lang] ?? baseSlug;
     const link = document.createElement('link');
     link.rel = 'alternate';
     link.hreflang = lang;
-    link.href = `${SITE_URL}/${lang}/blog/${slug}`;
+    link.href = `${SITE_URL}/${lang}/blog/${encodeURIComponent(localSlug)}`;
     document.head.appendChild(link);
   });
 
   // x-default → English version
+  const enSlug = langSlugMap['en'] ?? baseSlug;
   const def = document.createElement('link');
   def.rel = 'alternate';
   def.hreflang = 'x-default';
-  def.href = `${SITE_URL}/en/blog/${slug}`;
+  def.href = `${SITE_URL}/en/blog/${encodeURIComponent(enSlug)}`;
   document.head.appendChild(def);
 }
 
@@ -108,6 +111,8 @@ export default function BlogPost() {
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isEnFallback, setIsEnFallback] = useState(false);
+  // Map lang → localized_slug for correct hreflang tags
+  const [langSlugMap, setLangSlugMap] = useState<Record<string, string>>({});
 
   // ── data fetch ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -119,31 +124,74 @@ export default function BlogPost() {
       setLoading(true);
 
       try {
-        // 1. Try the current language first
+        // 1. Try localized_slug match for the current language
         let res = await supabase
           .from('blog_posts')
           .select('*')
-          .eq('slug', slug)
+          .eq('localized_slug', slug)
           .eq('language', language)
           .eq('status', 'published')
           .maybeSingle();
 
-        // 2. If no translation found, fall back to English
-        if (!res.error && !res.data && language !== 'en') {
+        // 2. Fallback: try the base English slug column (handles English posts
+        //    and any legacy URLs where localized_slug === slug)
+        if (!res.error && !res.data) {
           res = await supabase
             .from('blog_posts')
             .select('*')
             .eq('slug', slug)
+            .eq('language', language)
+            .eq('status', 'published')
+            .maybeSingle();
+        }
+
+        // 3. If still not found and not English, try English version
+        if (!res.error && !res.data && language !== 'en') {
+          // Try localized_slug in English first, then base slug
+          let enRes = await supabase
+            .from('blog_posts')
+            .select('*')
+            .eq('localized_slug', slug)
             .eq('language', 'en')
             .eq('status', 'published')
             .maybeSingle();
 
-          if (!cancelled && !res.error && res.data) {
+          if (!enRes.data) {
+            enRes = await supabase
+              .from('blog_posts')
+              .select('*')
+              .eq('slug', slug)
+              .eq('language', 'en')
+              .eq('status', 'published')
+              .maybeSingle();
+          }
+
+          if (!cancelled && !enRes.error && enRes.data) {
+            res = enRes;
             setIsEnFallback(true);
           }
         }
 
-        if (!cancelled && !res.error) setPost(res.data ?? null);
+        if (!cancelled && !res.error && res.data) {
+          setPost(res.data);
+
+          // 4. Fetch all language versions of this post to build hreflang map
+          const { data: allVersions } = await supabase
+            .from('blog_posts')
+            .select('language, slug, localized_slug')
+            .eq('slug', res.data.slug)
+            .eq('status', 'published');
+
+          if (!cancelled && allVersions) {
+            const map: Record<string, string> = {};
+            for (const v of allVersions) {
+              map[v.language] = v.localized_slug ?? v.slug;
+            }
+            setLangSlugMap(map);
+          }
+        } else if (!cancelled && !res.error) {
+          setPost(null);
+        }
       } catch {
         // Supabase offline — post stays null, handled gracefully below
       } finally {
@@ -161,7 +209,9 @@ export default function BlogPost() {
 
     const title       = post.meta_title        || post.title || 'CalorieVision Blog';
     const description = post.meta_description  || '';
-    const canonical   = `${SITE_URL}/${language}/blog/${slug}`;
+    // Use the post's own localized_slug for canonical (falls back to URL slug)
+    const canonicalSlug = post.localized_slug ?? slug;
+    const canonical   = `${SITE_URL}/${language}/blog/${encodeURIComponent(canonicalSlug)}`;
     const image       = post.featured_image_url || `${SITE_URL}/favicon-v4.png`;
 
     // Page title
@@ -185,14 +235,13 @@ export default function BlogPost() {
     // Canonical
     setCanonical(canonical);
 
-    // Hreflang — one link per language + x-default
-    setHreflangTags(slug, language);
+    // Hreflang — one link per language using their specific localized slugs
+    setHreflangTags(post.slug, langSlugMap);
 
     return () => {
-      // Restore defaults when navigating away from the post
       document.title = 'CalorieVision - AI Meal Analysis From a Photo';
     };
-  }, [post, slug, language]);
+  }, [post, slug, language, langSlugMap]);
 
   // ── derived values ──────────────────────────────────────────────────────────
   const { processedHtml, tocItems } = useMemo(

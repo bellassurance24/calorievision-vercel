@@ -32,6 +32,7 @@ type BlogPost = {
   id: string;
   title: string;
   slug: string;
+  localized_slug?: string | null;
   meta_description?: string;
   featured_image_url?: string;
   published_at?: string;
@@ -59,7 +60,7 @@ export default function Blog() {
     async function fetchPosts() {
       setLoading(true);
       try {
-        const SELECT = 'id, title, slug, meta_description, featured_image_url, published_at, status';
+        const SELECT = 'id, title, slug, localized_slug, meta_description, featured_image_url, published_at, status';
 
         let { data, error } = await supabase
           .from('blog_posts')
@@ -144,7 +145,7 @@ export default function Blog() {
         {posts.map((post) => (
           <Link
             key={post.id}
-            to={`${blogPrefix}/${post.slug}`}
+            to={`${blogPrefix}/${post.localized_slug ?? post.slug}`}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             <article

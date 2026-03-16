@@ -2,6 +2,7 @@ export interface BlogPost {
   id: string;
   title: string;
   slug: string;
+  localized_slug?: string | null;  // per-language SEO slug; falls back to slug
   featured_image_url: string | null;
   featured_image_alt: string | null;
   content: string;

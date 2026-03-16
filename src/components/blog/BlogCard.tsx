@@ -75,7 +75,7 @@ export function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
       {post.featured_image_url && (
-        <LocalizedNavLink to={`/blog/${post.slug}`} className="block overflow-hidden">
+        <LocalizedNavLink to={`/blog/${post.localized_slug ?? post.slug}`} className="block overflow-hidden">
           <img
             src={post.featured_image_url}
             alt={post.featured_image_alt || translatedTitle}
@@ -96,7 +96,7 @@ export function BlogCard({ post }: BlogCardProps) {
         )} */}
         <h2 className="mb-2 text-xl font-bold text-foreground">
           <LocalizedNavLink
-            to={`/blog/${post.slug}`}
+            to={`/blog/${post.localized_slug ?? post.slug}`}
             className="hover:text-primary transition-colors"
           >
             {isLoading ? (
