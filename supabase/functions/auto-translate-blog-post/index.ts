@@ -1,6 +1,6 @@
 // Supabase Edge Function: auto-translate-blog-post
 // ONE language per call. Forced character-based chunking at 1000 chars.
-// Paste this entire file into the Supabase Dashboard editor, then click Deploy.
+// Generates a localized_slug for every translated post for multilingual SEO.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -21,10 +21,91 @@ const LANG_NAMES: Record<Lang, string> = {
 };
 
 // ── Tuneable constants ────────────────────────────────────────────────────
-const CHUNK_SIZE   = 1000;   // chars per chunk — small = fast, reliable OpenAI responses
-const MAX_CHUNKS   = 50;     // generous cap: 50 × 1000 = 50 000 chars max translated
-const CALL_TIMEOUT = 55_000; // 55s per individual call
+const CHUNK_SIZE   = 1000;
+const MAX_CHUNKS   = 50;
+const CALL_TIMEOUT = 55_000;
 // ─────────────────────────────────────────────────────────────────────────
+
+// ═════════════════════════════════════════════════════════════════════════
+// MULTILINGUAL SLUGIFY
+// Handles all 10 target languages without any external library.
+// Strategy:
+//   Latin-script (en,fr,es,pt,it,de,nl): NFD decompose → strip diacritics → ASCII slug
+//   Russian (ru):  Cyrillic → Latin transliteration table → ASCII slug
+//   Arabic  (ar):  Arabic  → Latin transliteration table → ASCII slug
+//   Chinese (zh):  keep Unicode CJK chars + hyphens (valid, SEO-preferred in CN)
+//   Japanese(ja):  keep Unicode Kana/Kanji chars + hyphens (SEO-preferred in JP)
+// ═════════════════════════════════════════════════════════════════════════
+
+const CYRILLIC_MAP: Record<string, string> = {
+  "а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh",
+  "з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o",
+  "п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"kh","ц":"ts",
+  "ч":"ch","ш":"sh","щ":"shch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu",
+  "я":"ya",
+};
+
+const ARABIC_MAP: Record<string, string> = {
+  "ا":"a","أ":"a","إ":"i","آ":"aa","ب":"b","ت":"t","ث":"th","ج":"j",
+  "ح":"h","خ":"kh","د":"d","ذ":"dh","ر":"r","ز":"z","س":"s","ش":"sh",
+  "ص":"s","ض":"d","ط":"t","ظ":"z","ع":"a","غ":"gh","ف":"f","ق":"q",
+  "ك":"k","ل":"l","م":"m","ن":"n","ه":"h","و":"w","ي":"y","ى":"a",
+  "ة":"a","ء":"","ئ":"y","ؤ":"w","ّ":"","َ":"a","ِ":"i","ُ":"u",
+  "ً":"an","ٍ":"in","ٌ":"un","ْ":"","ـ":"",
+};
+
+function transliterateCyrillic(text: string): string {
+  return text.split("").map(ch => {
+    const lower = ch.toLowerCase();
+    if (lower in CYRILLIC_MAP) {
+      const trans = CYRILLIC_MAP[lower];
+      // Preserve capitalisation for the first letter only
+      return ch !== lower ? (trans.charAt(0).toUpperCase() + trans.slice(1)) : trans;
+    }
+    return ch;
+  }).join("");
+}
+
+function transliterateArabic(text: string): string {
+  return text.split("").map(ch => ARABIC_MAP[ch] ?? ch).join("");
+}
+
+export function localizedSlugify(title: string, lang: string): string {
+  if (!title || !title.trim()) return "";
+
+  let s = title.trim();
+
+  // ── Step 1: language-specific character conversion ──────────────────────
+  if (lang === "ru") {
+    s = transliterateCyrillic(s);
+  } else if (lang === "ar") {
+    s = transliterateArabic(s);
+    // Remove any remaining Arabic-script characters after transliteration
+    s = s.replace(/[\u0600-\u06ff\u0750-\u077f\ufb50-\ufdff\ufe70-\ufefc]/g, "");
+  }
+
+  // ── Step 2: lowercase ───────────────────────────────────────────────────
+  s = s.toLowerCase();
+
+  // ── Step 3: for CJK — keep Unicode characters, just clean spaces ────────
+  if (lang === "zh" || lang === "ja") {
+    return s
+      .replace(/[\s\u3000\u00a0]+/g, "-")   // spaces → hyphens (incl. full-width)
+      .replace(/[^\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9fa-z0-9-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "") || "post";
+  }
+
+  // ── Step 4: strip diacritical marks for Latin + transliterated scripts ──
+  s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // ── Step 5: ASCII-safe slug ─────────────────────────────────────────────
+  return s
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "post";
+}
 
 // ── Single OpenAI call ────────────────────────────────────────────────────
 async function callOpenAI(
@@ -77,28 +158,23 @@ async function callOpenAI(
 }
 
 // ── Force-split text into character-based chunks ─────────────────────────
-// Tries to break at the nearest HTML tag boundary or whitespace to avoid
-// cutting mid-word, but always guarantees chunks <= CHUNK_SIZE chars.
 function splitIntoChunks(text: string, maxChars: number): string[] {
   const chunks: string[] = [];
   let pos = 0;
 
   while (pos < text.length) {
     if (pos + maxChars >= text.length) {
-      // Last piece — take everything remaining
       chunks.push(text.slice(pos));
       break;
     }
 
     let end = pos + maxChars;
 
-    // Try to break at a closing HTML tag just after the cut point
     const tagMatch = text.slice(end - 50, end + 100).match(/<\/[a-zA-Z]+>/);
     if (tagMatch && tagMatch.index !== undefined) {
       const tagEnd = end - 50 + tagMatch.index + tagMatch[0].length;
       if (tagEnd > pos) end = tagEnd;
     } else {
-      // Fall back: break at last whitespace before cut point
       const lastSpace = text.lastIndexOf(" ", end);
       if (lastSpace > pos) end = lastSpace + 1;
     }
@@ -124,7 +200,6 @@ async function translateContent(
 ): Promise<string> {
   const system = `You are a professional translator. Translate from English to ${LANG_NAMES[lang]}. Preserve ALL HTML tags exactly as they appear. Output ONLY the translated content, nothing else.`;
 
-  // Short enough for one shot?
   if (content.length <= CHUNK_SIZE) {
     return callOpenAI(apiKey, model, system, content, lang);
   }
@@ -152,7 +227,6 @@ async function translateContent(
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
 
-  // 1. Env vars
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")              ?? "";
   const SERVICE_KEY  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   const OPENAI_KEY   = Deno.env.get("OPENAI_API_KEY")            ?? "";
@@ -170,7 +244,6 @@ serve(async (req) => {
       { status: 500, headers: JSON_HEADERS });
   }
 
-  // 2. Parse body — expects { postId, targetLang, force? }
   let postId: string | undefined;
   let targetLang: Lang | undefined;
   let force = false;
@@ -198,7 +271,6 @@ serve(async (req) => {
 
   console.log("[REQ] postId:", postId, "| lang:", targetLang, "| force:", force);
 
-  // 3. Fetch source post
   const db = createClient(SUPABASE_URL, SERVICE_KEY);
 
   const { data: post, error: postErr } = await db
@@ -215,7 +287,6 @@ serve(async (req) => {
       { headers: JSON_HEADERS });
   }
 
-  // 4. Skip if already translated (unless force=true)
   if (!force) {
     const { data: exists } = await db.from("blog_posts")
       .select("id").eq("slug", post.slug).eq("language", targetLang).maybeSingle();
@@ -227,7 +298,6 @@ serve(async (req) => {
     }
   }
 
-  // 5. Translate
   console.log("[TRANSLATE] Starting", targetLang, "| slug:", post.slug,
     "| content length:", post.content?.length ?? 0);
 
@@ -238,12 +308,20 @@ serve(async (req) => {
     const fAlt    = post.featured_image_alt ? await translateField  (OPENAI_KEY, MODEL, post.featured_image_alt, targetLang) : null;
     const content = post.content            ? await translateContent(OPENAI_KEY, MODEL, post.content,            targetLang) : post.content;
 
+    // ── Generate localized slug from translated title ──────────────────────
+    // Falls back to the English base slug if slugification yields empty string.
+    const rawLocalizedSlug = localizedSlugify(title ?? "", targetLang);
+    const localized_slug   = rawLocalizedSlug || post.slug;
+
+    console.log("[SLUG]", targetLang, "title:", title?.slice(0, 60),
+      "→ localized_slug:", localized_slug);
     console.log("[TRANSLATE] Done for", targetLang, "— upserting...");
 
     const { error: upsertErr } = await db.from("blog_posts").upsert(
       {
-        slug:               post.slug,
+        slug:               post.slug,          // keeps composite PK (slug, language)
         language:           targetLang,
+        localized_slug,                         // ← NEW: SEO-optimised per-language slug
         title,
         content,
         meta_title:         mTitle,
@@ -260,9 +338,15 @@ serve(async (req) => {
 
     if (upsertErr) throw new Error("DB upsert failed: " + upsertErr.message);
 
-    console.log("[DONE] Created:", post.slug, targetLang);
+    console.log("[DONE] Created:", post.slug, targetLang, "→ localized_slug:", localized_slug);
     return new Response(
-      JSON.stringify({ ok: true, postId, slug: post.slug, lang: targetLang, status: "created" }),
+      JSON.stringify({
+        ok: true, postId,
+        slug: post.slug,
+        localized_slug,
+        lang: targetLang,
+        status: "created",
+      }),
       { headers: JSON_HEADERS });
 
   } catch (e: any) {
