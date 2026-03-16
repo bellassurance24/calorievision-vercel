@@ -14,6 +14,7 @@ import HreflangTags from "@/components/HreflangTags";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 import AdminRoute from "./components/AdminRoute";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 // Critical pages - loaded immediately
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -55,11 +56,14 @@ const PageLoader = () => (
   </div>
 );
 
-// Wrapper for lazy loaded components
+// Wrapper for lazy loaded components — includes error boundary so a broken
+// page cannot crash the whole app.
 const LazyPage = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<PageLoader />}>
-    {children}
-  </Suspense>
+  <ErrorBoundary>
+    <Suspense fallback={<PageLoader />}>
+      {children}
+    </Suspense>
+  </ErrorBoundary>
 );
 
 // Generate localized routes for all supported languages

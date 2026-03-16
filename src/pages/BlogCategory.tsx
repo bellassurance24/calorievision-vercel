@@ -9,7 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { usePageMetadata } from '@/hooks/usePageMetadata';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const translations = {
+const translations: Record<string, { back: string; articlesIn: string; notFound: string; noPosts: string }> = {
   en: { back: 'Back to Blog', articlesIn: 'Articles in', notFound: 'Category not found', noPosts: 'No articles in this category yet.' },
   fr: { back: 'Retour au blog', articlesIn: 'Articles dans', notFound: 'Catégorie non trouvée', noPosts: 'Pas encore d\'articles dans cette catégorie.' },
   es: { back: 'Volver al blog', articlesIn: 'Artículos en', notFound: 'Categoría no encontrada', noPosts: 'Aún no hay artículos en esta categoría.' },
@@ -18,13 +18,15 @@ const translations = {
   ar: { back: 'العودة إلى المدونة', articlesIn: 'مقالات في', notFound: 'الفئة غير موجودة', noPosts: 'لا توجد مقالات في هذه الفئة بعد.' },
   it: { back: 'Torna al blog', articlesIn: 'Articoli in', notFound: 'Categoria non trovata', noPosts: 'Nessun articolo in questa categoria.' },
   de: { back: 'Zurück zum Blog', articlesIn: 'Artikel in', notFound: 'Kategorie nicht gefunden', noPosts: 'Noch keine Artikel in dieser Kategorie.' },
-  nl: { back: 'Terug naar blog', articlesIn: 'Artikelen in', notFound: 'Categorie niet gevonden', noPosts: 'Nog geen artikelen in deze categorie.' }
+  nl: { back: 'Terug naar blog', articlesIn: 'Artikelen in', notFound: 'Categorie niet gevonden', noPosts: 'Nog geen artikelen in deze categorie.' },
+  ru: { back: 'Назад в блог', articlesIn: 'Статьи в', notFound: 'Категория не найдена', noPosts: 'В этой категории пока нет статей.' },
+  ja: { back: 'ブログに戻る', articlesIn: 'カテゴリの記事', notFound: 'カテゴリが見つかりません', noPosts: 'このカテゴリにはまだ記事がありません。' },
 };
 
 export default function BlogCategory() {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
-  const t = translations[language];
+  const t = translations[language] ?? translations['en'];
   
   const [category, setCategory] = useState<BlogCategoryType | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);

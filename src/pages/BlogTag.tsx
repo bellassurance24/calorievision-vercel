@@ -9,7 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { usePageMetadata } from '@/hooks/usePageMetadata';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const translations = {
+const translations: Record<string, { back: string; taggedWith: string; notFound: string; noPosts: string }> = {
   en: { back: 'Back to Blog', taggedWith: 'Articles tagged', notFound: 'Tag not found', noPosts: 'No articles with this tag yet.' },
   fr: { back: 'Retour au blog', taggedWith: 'Articles avec le tag', notFound: 'Tag non trouvé', noPosts: 'Pas encore d\'articles avec ce tag.' },
   es: { back: 'Volver al blog', taggedWith: 'Artículos con la etiqueta', notFound: 'Etiqueta no encontrada', noPosts: 'Aún no hay artículos con esta etiqueta.' },
@@ -18,13 +18,15 @@ const translations = {
   ar: { back: 'العودة إلى المدونة', taggedWith: 'مقالات بعلامة', notFound: 'العلامة غير موجودة', noPosts: 'لا توجد مقالات بهذه العلامة بعد.' },
   it: { back: 'Torna al blog', taggedWith: 'Articoli con tag', notFound: 'Tag non trovato', noPosts: 'Nessun articolo con questo tag.' },
   de: { back: 'Zurück zum Blog', taggedWith: 'Artikel mit Tag', notFound: 'Tag nicht gefunden', noPosts: 'Noch keine Artikel mit diesem Tag.' },
-  nl: { back: 'Terug naar blog', taggedWith: 'Artikelen met tag', notFound: 'Tag niet gevonden', noPosts: 'Nog geen artikelen met deze tag.' }
+  nl: { back: 'Terug naar blog', taggedWith: 'Artikelen met tag', notFound: 'Tag niet gevonden', noPosts: 'Nog geen artikelen met deze tag.' },
+  ru: { back: 'Назад в блог', taggedWith: 'Статьи с тегом', notFound: 'Тег не найден', noPosts: 'Статей с этим тегом пока нет.' },
+  ja: { back: 'ブログに戻る', taggedWith: 'タグ付き記事', notFound: 'タグが見つかりません', noPosts: 'このタグの記事はまだありません。' },
 };
 
 export default function BlogTag() {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
-  const t = translations[language];
+  const t = translations[language] ?? translations['en'];
   
   const [tag, setTag] = useState<BlogTagType | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);

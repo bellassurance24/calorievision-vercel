@@ -14,7 +14,7 @@ const supabaseAnonKey = (
 if (import.meta.env.DEV) {
   if (!supabaseUrl) console.warn('[Supabase] VITE_SUPABASE_URL is not set — running in offline mode');
   if (!supabaseAnonKey) console.warn('[Supabase] VITE_SUPABASE_ANON_KEY is not set — running in offline mode');
-  if (supabaseUrl && supabaseAnonKey) console.log('[Supabase client] connecting to:', supabaseUrl);
+  // Connection log removed — URL is non-sensitive but unnecessary in console
 }
 
 export const supabase = createClient<Database>(
