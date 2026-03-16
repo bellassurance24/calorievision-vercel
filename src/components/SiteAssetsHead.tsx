@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const DEFAULT_FAVICON = "/favicon-v4.png";
+const DEFAULT_FAVICON = "/favicon.png";
 
 type PublicSiteAssetsResponse = {
   favicon?: {

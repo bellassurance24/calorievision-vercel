@@ -33,7 +33,7 @@ function applyFavicons(faviconDataUrl: string | null) {
 
   const ids = ["dynamic-favicon-16", "dynamic-favicon-32", "dynamic-apple-touch-icon"];
 
-  const href = faviconDataUrl ?? "/favicon-v4.png";
+  const href = faviconDataUrl ?? "/favicon.png";
 
   const createOrUpdate = (id: string, rel: string, sizes?: string) => {
     let link = document.head.querySelector<HTMLLinkElement>(`link#${id}`);
