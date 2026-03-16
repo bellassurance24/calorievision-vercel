@@ -51,7 +51,7 @@ function rateLimit(req: Request): Response | null {
   return null;
 }
 
-const N8N_WEBHOOK_URL = "https://n8n.srv1109042.hstgr.cloud/webhook/Calorie_Vision";
+const N8N_WEBHOOK_URL = "https://n8n.birdstyl.com/webhook/Calorie_Vision";
 
 // Background task to save scan image
 async function saveScanImage(
