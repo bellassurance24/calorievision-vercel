@@ -55,6 +55,7 @@ const Analyze = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasTriggeredAutoCapture, setHasTriggeredAutoCapture] = useState(false);
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
+  const [rawError, setRawError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const t = (en: string, fr: string, es: string, pt?: string, zh?: string, ar?: string, it?: string, de?: string, nl?: string) => {
@@ -425,6 +426,7 @@ const Analyze = () => {
 
     setIsAnalyzing(true);
     setAnalysis(null);
+    setRawError(null);
 
     try {
       // Build multipart/form-data payload for analyze-meal-proxy → n8n
@@ -451,15 +453,13 @@ const Analyze = () => {
 
       if (!response.ok) {
         const errText = await response.text();
-        // Detailed log so any future error is immediately visible in DevTools
         console.error(
-          `[analyze-meal-proxy] HTTP ${response.status} from Edge Function.\n` +
-          `URL: ${functionUrl}\n` +
-          `Body: ${errText}`
+          `[analyze-meal-proxy] HTTP ${response.status}\nURL: ${functionUrl}\nBody: ${errText}`,
         );
-        // Parse inner message if the edge fn returned JSON
+        // Always show the raw body in the debug panel
+        setRawError(`HTTP ${response.status}\n\n${errText}`);
         let innerMsg = "";
-        try { innerMsg = (JSON.parse(errText) as { error?: string }).error ?? ""; } catch { /* raw text */ }
+        try { innerMsg = (JSON.parse(errText) as { error?: string }).error ?? ""; } catch { /* raw */ }
         throw new Error(`HTTP ${response.status}${innerMsg ? `: ${innerMsg}` : ""}`);
       }
 
@@ -504,16 +504,19 @@ const Analyze = () => {
       };
 
       if (!analysisResult.food?.length) {
+        const debugPayload = JSON.stringify(payload, null, 2);
+        setRawError(`Response received but no food items found.\n\nFull payload:\n${debugPayload}`);
         toast({
           title: t("No response", "Aucune réponse", "Sin respuesta", "Sem resposta", "无响应", "لا توجد استجابة"),
           description: t(
-            "We did not receive a valid response from the analysis service.",
-            "Nous n'avons pas reçu de réponse valable du service d'analyse.",
-            "No hemos recibido una respuesta válida del servicio de análisis.",
-            "Não recebemos uma resposta válida do serviço de análise.",
-            "未从分析服务收到有效响应。",
-            "لم نتلقَّ استجابة صالحة من خدمة التحليل.",
+            "Analysis returned no food items. Check the debug panel below.",
+            "L'analyse n'a retourné aucun aliment. Vérifiez le panneau de débogage ci-dessous.",
+            "El análisis no devolvió alimentos. Revisa el panel de depuración.",
+            "A análise não retornou alimentos. Veja o painel de depuração.",
+            "分析未返回食物项目，请查看下方调试面板。",
+            "لم يُرجع التحليل أي عناصر غذائية. راجع لوحة التصحيح.",
           ),
+          variant: "destructive",
         });
         return;
       }
@@ -533,21 +536,14 @@ const Analyze = () => {
       // Track successful meal analysis
       trackMealAnalysis(true);
     } catch (err) {
-      // Track failed meal analysis
       trackMealAnalysis(false);
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error("[Analyze] meal-analysis error:", errMsg);
+      // Populate debug panel if not already set by the !response.ok branch
+      setRawError((prev) => prev ?? errMsg);
       toast({
         title: t("Analysis error", "Erreur d'analyse", "Error de análisis", "Erro de análise", "分析错误", "خطأ في التحليل"),
-        // Show the real error message so it's immediately actionable
-        description: errMsg || t(
-          "Something went wrong while analyzing your meal. Please try again.",
-          "Une erreur s'est produite lors de l'analyse de votre repas. Veuillez réessayer.",
-          "Se produjo un error al analizar tu comida. Inténtalo de nuevo.",
-          "Ocorreu um erro ao analisar a sua refeição. Por favor, tente novamente.",
-          "分析餐食时出错，请重试。",
-          "حدث خطأ أثناء تحليل وجبتك. يرجى المحاولة مرة أخرى.",
-        ),
+        description: errMsg,
         variant: "destructive",
       });
     } finally {
@@ -827,6 +823,26 @@ const Analyze = () => {
         </div>
       </div>
     </section>
+
+    {/* ── Raw error debug panel (only shown on error) ── */}
+    {rawError && (
+      <div className="mt-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-xs">
+        <div className="flex items-center justify-between mb-2">
+          <p className="font-semibold text-destructive">⚠ Debug — raw proxy response</p>
+          <button
+            type="button"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => setRawError(null)}
+            aria-label="Dismiss debug panel"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <pre className="overflow-x-auto whitespace-pre-wrap break-all text-muted-foreground leading-relaxed">
+          {rawError}
+        </pre>
+      </div>
+    )}
 
     {/* Scan limit modal */}
     <LimitReachedModal
