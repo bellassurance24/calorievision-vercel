@@ -115,31 +115,46 @@ BEGIN
 END
 $$;
 
--- Anyone (including anon) can read image metadata, required for public blogs
-CREATE POLICY "blog-images-public-select"
-ON public.blog_images
-FOR SELECT
-USING (true);
+-- Only create blog_images table policies if the table exists
+-- (It may not exist on all deployments)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'blog_images'
+  ) THEN
+    -- Anyone (including anon) can read image metadata, required for public blogs
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_policies
+      WHERE schemaname = 'public' AND tablename = 'blog_images'
+        AND policyname = 'blog-images-public-select'
+    ) THEN
+      EXECUTE 'CREATE POLICY "blog-images-public-select" ON public.blog_images FOR SELECT USING (true)';
+    END IF;
 
--- Authenticated users can insert metadata rows (used by the admin UI)
-CREATE POLICY "blog-images-authenticated-insert"
-ON public.blog_images
-FOR INSERT
-TO authenticated
-WITH CHECK (true);
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_policies
+      WHERE schemaname = 'public' AND tablename = 'blog_images'
+        AND policyname = 'blog-images-authenticated-insert'
+    ) THEN
+      EXECUTE 'CREATE POLICY "blog-images-authenticated-insert" ON public.blog_images FOR INSERT TO authenticated WITH CHECK (true)';
+    END IF;
 
--- Authenticated users can update metadata rows
-CREATE POLICY "blog-images-authenticated-update"
-ON public.blog_images
-FOR UPDATE
-TO authenticated
-USING (true)
-WITH CHECK (true);
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_policies
+      WHERE schemaname = 'public' AND tablename = 'blog_images'
+        AND policyname = 'blog-images-authenticated-update'
+    ) THEN
+      EXECUTE 'CREATE POLICY "blog-images-authenticated-update" ON public.blog_images FOR UPDATE TO authenticated USING (true) WITH CHECK (true)';
+    END IF;
 
--- Authenticated users can delete metadata rows
-CREATE POLICY "blog-images-authenticated-delete"
-ON public.blog_images
-FOR DELETE
-TO authenticated
-USING (true);
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_policies
+      WHERE schemaname = 'public' AND tablename = 'blog_images'
+        AND policyname = 'blog-images-authenticated-delete'
+    ) THEN
+      EXECUTE 'CREATE POLICY "blog-images-authenticated-delete" ON public.blog_images FOR DELETE TO authenticated USING (true)';
+    END IF;
+  END IF;
+END $$;
 

@@ -1,176 +1,132 @@
+/**
+ * useAnalytics — client-side event tracking
+ *
+ * Sends events to the `track-event` Supabase Edge Function which:
+ *  • uses the service-role key (bypasses RLS / anon restrictions)
+ *  • enriches geo from reliable Cloudflare headers (no 3rd-party IP API)
+ *  • responds in <5 ms — never blocks navigation
+ */
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
+import { isLikelyBotUserAgent } from "@/lib/analyticsBot";
 
-// Get or create a persistent visitor ID
-const getVisitorId = () => {
-  let visitorId = localStorage.getItem("cv_visitor_id");
-  if (!visitorId) {
-    visitorId = crypto.randomUUID();
-    localStorage.setItem("cv_visitor_id", visitorId);
-  }
-  return visitorId;
+// ── Persistent IDs ────────────────────────────────────────────────────────────
+const getVisitorId = (): string => {
+  let id = localStorage.getItem("cv_visitor_id");
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem("cv_visitor_id", id); }
+  return id;
 };
 
-// Get or create session ID (resets each session)
-const getSessionId = () => {
-  let sessionId = sessionStorage.getItem("cv_session_id");
-  if (!sessionId) {
-    sessionId = crypto.randomUUID();
-    sessionStorage.setItem("cv_session_id", sessionId);
-  }
-  return sessionId;
+const getSessionId = (): string => {
+  let id = sessionStorage.getItem("cv_session_id");
+  if (!id) { id = crypto.randomUUID(); sessionStorage.setItem("cv_session_id", id); }
+  return id;
 };
 
-// Parse user agent to get device info
+// ── User-agent parsing ────────────────────────────────────────────────────────
 const parseUserAgent = (ua: string) => {
-  const uaLower = ua.toLowerCase();
-  
-  // Device type
+  const u = ua.toLowerCase();
+
   let deviceType = "desktop";
-  if (/mobile|android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(uaLower)) {
-    deviceType = /tablet|ipad/i.test(uaLower) ? "tablet" : "mobile";
+  if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(u)) {
+    deviceType = /tablet|ipad/i.test(u) ? "tablet" : "mobile";
   }
-  
-  // Browser
+
   let browser = "Other";
-  if (uaLower.includes("chrome") && !uaLower.includes("edg")) browser = "Chrome";
-  else if (uaLower.includes("safari") && !uaLower.includes("chrome")) browser = "Safari";
-  else if (uaLower.includes("firefox")) browser = "Firefox";
-  else if (uaLower.includes("edg")) browser = "Edge";
-  else if (uaLower.includes("opera") || uaLower.includes("opr")) browser = "Opera";
-  
-  // OS
+  if (u.includes("edg"))                                 browser = "Edge";
+  else if (u.includes("chrome"))                         browser = "Chrome";
+  else if (u.includes("safari") && !u.includes("chrome")) browser = "Safari";
+  else if (u.includes("firefox"))                        browser = "Firefox";
+  else if (u.includes("opera") || u.includes("opr"))     browser = "Opera";
+
   let os = "Other";
-  if (uaLower.includes("windows")) os = "Windows";
-  else if (uaLower.includes("mac os") || uaLower.includes("macos")) os = "macOS";
-  else if (uaLower.includes("android")) os = "Android";
-  else if (uaLower.includes("iphone") || uaLower.includes("ipad") || uaLower.includes("ios")) os = "iOS";
-  else if (uaLower.includes("linux")) os = "Linux";
-  
+  if (u.includes("windows"))                                      os = "Windows";
+  else if (u.includes("mac os") || u.includes("macos"))           os = "macOS";
+  else if (u.includes("android"))                                  os = "Android";
+  else if (u.includes("iphone") || u.includes("ipad"))            os = "iOS";
+  else if (u.includes("linux"))                                    os = "Linux";
+
   return { deviceType, browser, os };
 };
 
-// Get UTM parameters from URL
+// ── UTM helpers ───────────────────────────────────────────────────────────────
 const getUtmParams = () => {
-  const params = new URLSearchParams(window.location.search);
+  const p = new URLSearchParams(window.location.search);
   return {
-    utm_source: params.get("utm_source") || null,
-    utm_medium: params.get("utm_medium") || null,
-    utm_campaign: params.get("utm_campaign") || null,
+    utm_source:   p.get("utm_source")   ?? null,
+    utm_medium:   p.get("utm_medium")   ?? null,
+    utm_campaign: p.get("utm_campaign") ?? null,
   };
 };
 
-// Get user's preferred language
-const getUserLanguage = () => {
-  const lang = navigator.language || (navigator as any).userLanguage || "en";
-  return lang.split("-")[0]; // Get base language code
+// ── Edge function URL ─────────────────────────────────────────────────────────
+const getTrackUrl = (): string => {
+  const base =
+    (import.meta.env.VITE_SUPABASE_URL as string) ||
+    "https://ttjcfwspcpnxtxzqnfrh.supabase.co";
+  return `${base}/functions/v1/track-event`;
 };
 
-// Cache for geolocation data (to avoid repeated API calls)
-let geoCache: { country: string | null; city: string | null } | null = null;
+const getAnonKey = (): string =>
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string) ||
+  (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string) ||
+  "";
 
-// Fetch geolocation data from IP with multiple fallback APIs
-const getGeolocation = async (): Promise<{ country: string | null; city: string | null }> => {
-  if (geoCache) return geoCache;
-  
-  // List of geolocation APIs to try (in order of preference)
-  const geoApis = [
-    {
-      url: "https://api.ipgeolocation.io/ipgeo?apiKey=API_KEY_PLACEHOLDER",
-      skip: true, // Skip this one as it requires API key
-    },
-    {
-      url: "https://ipwho.is/",
-      parse: (data: any) => ({ country: data.country || null, city: data.city || null }),
-    },
-    {
-      url: "https://freeipapi.com/api/json",
-      parse: (data: any) => ({ country: data.countryName || null, city: data.cityName || null }),
-    },
-    {
-      url: "https://ipapi.co/json/",
-      parse: (data: any) => ({ country: data.country_name || null, city: data.city || null }),
-    },
-  ];
-  
-  for (const api of geoApis) {
-    if (api.skip) continue;
-    
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
-      
-      const response = await fetch(api.url, {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        signal: controller.signal,
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (api.parse) {
-          const result = api.parse(data);
-          if (result.country) {
-            geoCache = result;
-            return geoCache;
-          }
-        }
-      }
-    } catch (error) {
-      // Try next API
-      console.debug(`Geolocation API ${api.url} failed, trying next...`);
-    }
-  }
-  
-  return { country: null, city: null };
-};
-
-export const trackEvent = async (
+// ── Core tracking function ────────────────────────────────────────────────────
+export const trackEvent = (
   eventType: string,
-  metadata: Record<string, unknown> = {}
-) => {
-  try {
-    const sessionId = getSessionId();
-    const visitorId = getVisitorId();
-    const pagePath = window.location.pathname;
-    const { deviceType, browser, os } = parseUserAgent(navigator.userAgent);
-    const utmParams = getUtmParams();
-    const referrer = document.referrer;
-    const language = getUserLanguage();
-    
-    // Fetch geolocation data
-    const { country, city } = await getGeolocation();
+  metadata: Record<string, unknown> = {},
+): void => {
+  // Skip bots and crawlers
+  if (isLikelyBotUserAgent(navigator.userAgent)) return;
 
-    await supabase.from("analytics_events").insert([{
-      event_type: eventType,
-      page_path: pagePath,
-      session_id: sessionId,
-      visitor_id: visitorId,
-      user_agent: navigator.userAgent,
-      device_type: deviceType,
-      browser: browser,
-      os: os,
-      language: language,
-      referrer: referrer || null,
-      utm_source: utmParams.utm_source,
-      utm_medium: utmParams.utm_medium,
-      utm_campaign: utmParams.utm_campaign,
-      screen_width: window.screen.width,
-      screen_height: window.screen.height,
-      country: country,
-      city: city,
-      metadata: metadata as Json,
-    }]);
-  } catch (err) {
-    console.error("Error tracking event:", err);
-  }
+  const ua = navigator.userAgent;
+  const { deviceType, browser, os } = parseUserAgent(ua);
+  const utm = getUtmParams();
+  const lang = (navigator.language || "en").split("-")[0];
+
+  const payload = {
+    event_type:    eventType,
+    page_path:     window.location.pathname,
+    session_id:    getSessionId(),
+    visitor_id:    getVisitorId(),
+    user_agent:    ua,
+    device_type:   deviceType,
+    browser,
+    os,
+    language:      lang,
+    referrer:      document.referrer || null,
+    utm_source:    utm.utm_source,
+    utm_medium:    utm.utm_medium,
+    utm_campaign:  utm.utm_campaign,
+    screen_width:  window.screen.width,
+    screen_height: window.screen.height,
+    // country / city come from Cloudflare headers on the edge function side
+    metadata,
+  };
+
+  // Fire-and-forget — never blocks the page
+  const url    = getTrackUrl();
+  const anonKey = getAnonKey();
+
+  fetch(url, {
+    method:  "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(anonKey ? { Authorization: `Bearer ${anonKey}` } : {}),
+    },
+    body:      JSON.stringify(payload),
+    keepalive: true, // survives page unload
+  }).catch((err) => {
+    // Silently swallow network errors — tracking must never break the app
+    if (import.meta.env.DEV) {
+      console.debug("[analytics] track-event failed:", err);
+    }
+  });
 };
 
-export const usePageTracking = () => {
+// ── Page tracking hook ────────────────────────────────────────────────────────
+export const usePageTracking = (): void => {
   const location = useLocation();
 
   useEffect(() => {
@@ -178,14 +134,16 @@ export const usePageTracking = () => {
   }, [location.pathname]);
 };
 
-export const trackMealAnalysis = (success: boolean) => {
+// ── Convenience helpers ───────────────────────────────────────────────────────
+export const trackMealAnalysis = (success: boolean): void =>
   trackEvent("meal_analysis", { success });
-};
 
-export const trackButtonClick = (buttonName: string, metadata: Record<string, unknown> = {}) => {
-  trackEvent("button_click", { button: buttonName, ...metadata });
-};
+export const trackButtonClick = (
+  buttonName: string,
+  extra: Record<string, unknown> = {},
+): void => trackEvent("button_click", { button: buttonName, ...extra });
 
-export const trackFormSubmit = (formName: string, metadata: Record<string, unknown> = {}) => {
-  trackEvent("form_submit", { form: formName, ...metadata });
-};
+export const trackFormSubmit = (
+  formName: string,
+  extra: Record<string, unknown> = {},
+): void => trackEvent("form_submit", { form: formName, ...extra });
