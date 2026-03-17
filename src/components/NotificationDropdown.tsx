@@ -110,6 +110,24 @@ const translations = {
     enableNotifications: "Schakel meldingen in voor updates",
     enableButton: "Inschakelen",
   },
+  ru: {
+    notifications: "Уведомления",
+    noNotifications: "Нет уведомлений",
+    markAllRead: "Отметить все как прочитанные",
+    viewAll: "Все настройки",
+    justNow: "Только что",
+    enableNotifications: "Включите уведомления, чтобы получать обновления",
+    enableButton: "Включить",
+  },
+  ja: {
+    notifications: "通知",
+    noNotifications: "通知はありません",
+    markAllRead: "すべて既読にする",
+    viewAll: "すべての設定を見る",
+    justNow: "たった今",
+    enableNotifications: "更新を受け取るために通知を有効にしてください",
+    enableButton: "有効にする",
+  },
 } as const;
 
 const dateLocales: Record<string, typeof enUS> = {
@@ -122,6 +140,8 @@ const dateLocales: Record<string, typeof enUS> = {
   it: it,
   de: de,
   nl: nl,
+  ru: enUS, // date-fns doesn't export ru/ja directly from this path; fallback to enUS
+  ja: enUS,
 };
 
 const categoryIcons: Record<string, string> = {

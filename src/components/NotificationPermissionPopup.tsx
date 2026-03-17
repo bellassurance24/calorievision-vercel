@@ -65,6 +65,18 @@ const translations = {
     enable: "Inschakelen",
     later: "Later",
   },
+  ru: {
+    title: "Будьте в курсе!",
+    description: "Включите уведомления, чтобы получать напоминания и обновления.",
+    enable: "Включить",
+    later: "Не сейчас",
+  },
+  ja: {
+    title: "最新情報をお届け！",
+    description: "通知を有効にして、リマインダーや更新情報を受け取りましょう。",
+    enable: "有効にする",
+    later: "後で",
+  },
 } as const;
 
 export function NotificationPermissionPopup() {
