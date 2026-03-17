@@ -51,7 +51,10 @@ function rateLimit(req: Request): Response | null {
   return null;
 }
 
-const N8N_WEBHOOK_URL = "https://n8n.birdstyl.com/webhook/Calorie_Vision";
+const DEFAULT_N8N_WEBHOOK_URL = "https://n8n.birdstyl.com/webhook/Calorie_Vision";
+function getN8nWebhookUrl(): string {
+  return Deno.env.get("N8N_WEBHOOK_URL") || DEFAULT_N8N_WEBHOOK_URL;
+}
 
 // Background task to save scan image
 async function saveScanImage(
@@ -221,13 +224,14 @@ serve(async (req) => {
       forwardFormData.append("language", language);
     }
 
+    const webhookUrl = getN8nWebhookUrl();
     console.log("analyze-meal-proxy: forwarding to n8n webhook");
 
     // Forward to the n8n webhook with timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutes timeout
 
-    const response = await fetch(N8N_WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: "POST",
       body: forwardFormData,
       signal: controller.signal,
@@ -250,10 +254,53 @@ serve(async (req) => {
     }
 
     const responseText = await response.text();
-    console.log("analyze-meal-proxy: webhook response received");
+    console.log(`analyze-meal-proxy: n8n response body (${responseText.length} bytes):`, responseText.slice(0, 300));
 
-    // Return the response as-is
-    return new Response(responseText, {
+    // ── Validate & normalise the n8n response ────────────────────────────
+    // Guard: n8n "Respond: Immediately" mode returns empty body
+    if (!responseText || responseText.trim() === "") {
+      console.error("analyze-meal-proxy: n8n returned empty body — webhook is in 'Respond Immediately' mode. " +
+        "Fix: open the Webhook node → set Respond = 'Using Respond to Webhook Node'.");
+      return new Response(
+        JSON.stringify({
+          error: "n8n returned an empty response. The Webhook node must be set to 'Respond: Using Respond to Webhook Node'.",
+        }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // Parse JSON
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(responseText);
+    } catch {
+      console.error("analyze-meal-proxy: n8n returned non-JSON:", responseText.slice(0, 200));
+      return new Response(
+        JSON.stringify({ error: "Analysis service returned invalid JSON." }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // n8n wraps outputs in arrays by default: [{...}] or [{json:{...}}]
+    // Unwrap if needed so the frontend always receives a plain object.
+    let normalized: unknown = parsed;
+    if (Array.isArray(parsed)) {
+      if (parsed.length === 0) {
+        console.error("analyze-meal-proxy: n8n returned empty array");
+        return new Response(
+          JSON.stringify({ error: "Analysis service returned no data." }),
+          { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      const first = parsed[0] as Record<string, unknown>;
+      // Standard n8n item wrapper: { json: { ... } }
+      normalized = (first["json"] !== undefined) ? first["json"] : first;
+    }
+
+    const keys = normalized && typeof normalized === "object" ? Object.keys(normalized as object) : [];
+    console.log("analyze-meal-proxy: normalized payload keys:", keys.join(", ") || "(none)");
+
+    return new Response(JSON.stringify(normalized), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
