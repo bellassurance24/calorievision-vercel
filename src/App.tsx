@@ -76,7 +76,9 @@ const LocalizedRoutes = () => (
           index
           element={
             <MainLayout>
-              <Index />
+              <ErrorBoundary>
+                <Index />
+              </ErrorBoundary>
             </MainLayout>
           }
         />
@@ -85,7 +87,9 @@ const LocalizedRoutes = () => (
           path="analyze"
           element={
             <MainLayout>
-              <Analyze />
+              <ErrorBoundary>
+                <Analyze />
+              </ErrorBoundary>
             </MainLayout>
           }
         />

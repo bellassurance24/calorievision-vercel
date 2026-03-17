@@ -350,9 +350,72 @@ const Analyze = () => {
       carbs: "Koolhydraten",
       fat: "Vet",
     },
-  } as const;
+    ru: {
+      eyebrow: "Демонстрация ИИ в реальном времени",
+      title: "Анализ фото блюда",
+      intro:
+        "Загрузите чёткое фото вашей еды, и CalorieVision с помощью ИИ определит видимые продукты, приблизительные калории и макронутриенты. Результаты носят исключительно образовательный характер и основаны на том, что видно на изображении.",
+      uploadTitle: "Загрузите фото блюда",
+      uploadDescription:
+        "Выберите яркое чёткое изображение, на котором видна вся тарелка, для наилучшего качества анализа.",
+      mealPhotoLabel: "Фото блюда",
+      analyzeButton: "Загрузить фото",
+      analyzePhotoButton: "Анализировать фото",
+      reminderTitle: "Напоминание",
+      reminderText:
+        "CalorieVision — только образовательный инструмент. Оценки приблизительны и не должны использоваться в качестве медицинской или диетологической консультации.",
+      previewTitle: "Предпросмотр блюда",
+      previewDescription: "Убедитесь, что фото чёткое, прежде чем запускать анализ.",
+      previewPlaceholder: "Здесь появится предпросмотр вашего фото.",
+      analysisTitle: "Анализ ИИ",
+      analysisDescription:
+        "Посмотрите приблизительную разбивку калорий и макронутриентов на основе видимых продуктов.",
+      emptyState:
+        "Загрузите фото блюда и выберите «Анализировать блюдо», чтобы увидеть результаты ИИ здесь.",
+      generating: "Создание анализа...",
+      totalLabel: "Итого",
+      protein: "Белки",
+      carbs: "Углеводы",
+      fat: "Жиры",
+    },
+    ja: {
+      eyebrow: "ライブAIデモ",
+      title: "食事の写真を分析",
+      intro:
+        "食事の鮮明な写真をアップロードすると、CalorieVisionのAIが見える食品、おおよそのカロリー、マクロ栄養素を推定します。結果は教育目的のみであり、画像から判断できる内容に基づいています。",
+      uploadTitle: "食事の写真をアップロード",
+      uploadDescription:
+        "皿全体が見える、明るくピントの合った画像を選ぶと、最高の分析品質が得られます。",
+      mealPhotoLabel: "食事の写真",
+      analyzeButton: "写真をアップロード",
+      analyzePhotoButton: "写真を分析",
+      reminderTitle: "注意事項",
+      reminderText:
+        "CalorieVisionは教育ツールです。推定値はおおよそのものであり、医療または食事アドバイスの代わりとして使用しないでください。",
+      previewTitle: "食事のプレビュー",
+      previewDescription: "分析を実行する前に写真が鮮明であることを確認してください。",
+      previewPlaceholder: "食事の写真プレビューがここに表示されます。",
+      analysisTitle: "AI分析",
+      analysisDescription: "見える食品に基づいておおよそのカロリーとマクロの内訳を確認してください。",
+      emptyState:
+        "食事の写真をアップロードして「食事を分析」を選択すると、AIが生成した結果がここに表示されます。",
+      generating: "分析を生成中...",
+      totalLabel: "合計",
+      protein: "タンパク質",
+      carbs: "炭水化物",
+      fat: "脂質",
+    },
+  } satisfies Record<string, {
+    eyebrow: string; title: string; intro: string; uploadTitle: string;
+    uploadDescription: string; mealPhotoLabel: string; analyzeButton: string;
+    analyzePhotoButton: string; reminderTitle: string; reminderText: string;
+    previewTitle: string; previewDescription: string; previewPlaceholder: string;
+    analysisTitle: string; analysisDescription: string; emptyState: string;
+    generating: string; totalLabel: string; protein: string; carbs: string; fat: string;
+  }>;
 
-  const copy = contentByLang[language];
+  // Fallback to English so an unsupported future locale never crashes the page
+  const copy = contentByLang[language as keyof typeof contentByLang] ?? contentByLang["en"];
 
   const handleFileChange = (event: FormEvent<HTMLInputElement>) => {
     const target = event.currentTarget;
