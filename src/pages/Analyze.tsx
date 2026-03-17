@@ -13,7 +13,7 @@ import { useSearchParams } from "react-router-dom";
 import { translateFoodName, isEnglishFoodName } from "@/utils/foodTranslations";
 import { supabase } from "@/integrations/supabase/client";
 import { trackMealAnalysis } from "@/hooks/useAnalytics";
-import { getDeviceInfo, getGeolocation } from "@/hooks/useDeviceInfo";
+import { getDeviceInfo } from "@/hooks/useDeviceInfo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription, incrementGuestScans } from "@/hooks/useSubscription";
 import { LimitReachedModal } from "@/components/LimitReachedModal";
@@ -427,45 +427,65 @@ const Analyze = () => {
     setAnalysis(null);
 
     try {
-      // Convert image file to base64 data URL for meal-analysis edge function
-      const reader = new FileReader();
-      const imageDataUrl = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(imageFile);
-      });
-
-      // Get device info and geolocation for scan capture
+      // Build multipart/form-data payload for analyze-meal-proxy → n8n
       const deviceInfo = await getDeviceInfo();
-      const geoInfo = await getGeolocation();
-      
-      const deviceType = deviceInfo.deviceType;
-      const browser = deviceInfo.browser;
-      const deviceBrand = deviceInfo.deviceBrand;
-      const country = geoInfo.country;
-      const city = geoInfo.city;
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      formData.append("language", language);
+      if (deviceInfo.deviceType) formData.append("device_type", deviceInfo.deviceType);
+      if (deviceInfo.browser) formData.append("browser", deviceInfo.browser);
+      if (deviceInfo.deviceBrand) formData.append("device_brand", deviceInfo.deviceBrand);
 
-      // Use native meal-analysis edge function with Lovable AI
-      const { data: functionData, error: functionError } = await supabase.functions.invoke("meal-analysis", {
-        body: { imageDataUrl, language, deviceType, browser, country, city, deviceBrand },
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const anonKey =
+        (import.meta.env.VITE_SUPABASE_ANON_KEY as string) ||
+        (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string) ||
+        "";
+      const functionUrl = `${supabaseUrl}/functions/v1/analyze-meal-proxy`;
+
+      const response = await fetch(functionUrl, {
+        method: "POST",
+        headers: anonKey ? { Authorization: `Bearer ${anonKey}` } : undefined,
+        body: formData,
       });
 
-      if (functionError) {
-        console.error("Edge function error:", functionError);
-        throw new Error(functionError.message || "Analysis failed");
+      if (!response.ok) {
+        const errText = await response.text();
+        // Detailed log so any future error is immediately visible in DevTools
+        console.error(
+          `[analyze-meal-proxy] HTTP ${response.status} from Edge Function.\n` +
+          `URL: ${functionUrl}\n` +
+          `Body: ${errText}`
+        );
+        // Parse inner message if the edge fn returned JSON
+        let innerMsg = "";
+        try { innerMsg = (JSON.parse(errText) as { error?: string }).error ?? ""; } catch { /* raw text */ }
+        throw new Error(`HTTP ${response.status}${innerMsg ? `: ${innerMsg}` : ""}`);
       }
 
-      console.log("Edge function response:", functionData);
+      let payload: { analysis?: { items?: unknown[]; totalCalories?: number; totalProtein?: number; totalCarbs?: number; totalFat?: number } };
+      try {
+        payload = (await response.json()) as typeof payload;
+      } catch {
+        console.error("[analyze-meal-proxy] Response was not valid JSON");
+        throw new Error("Invalid response from analysis service");
+      }
 
-      // Parse the response from meal-analysis (Lovable AI format)
-      let analysisResult: MealAnalysis | null = null;
-      
-      if (functionData?.analysis) {
-        // Convert from Lovable AI format to our MealAnalysis format
-        const aiAnalysis = functionData.analysis;
-        analysisResult = {
-          status: "success",
-          food: (aiAnalysis.items || []).map((item: { name: string; calories: number; protein: number; carbs: number; fat: number; confidence: number; notes?: string }) => ({
+      // n8n flow should return { analysis: { items, totalCalories, ... } } like the Lovable format
+      const aiAnalysis = payload.analysis ?? payload;
+
+      const analysisResult: MealAnalysis = {
+        status: "success",
+        food: (aiAnalysis.items || []).map(
+          (item: {
+            name: string;
+            calories: number;
+            protein: number;
+            carbs: number;
+            fat: number;
+            confidence: number;
+            notes?: string;
+          }) => ({
             name: item.name,
             quantity: item.notes || "1 portion",
             calories: item.calories,
@@ -473,17 +493,17 @@ const Analyze = () => {
             carbs: item.carbs || 0,
             fat: item.fat || 0,
             confidence: item.confidence || 0,
-          })),
-          total: {
-            calories: aiAnalysis.totalCalories || 0,
-            protein: aiAnalysis.totalProtein || 0,
-            carbs: aiAnalysis.totalCarbs || 0,
-            fat: aiAnalysis.totalFat || 0,
-          },
-        };
-      }
+          }),
+        ),
+        total: {
+          calories: aiAnalysis.totalCalories || 0,
+          protein: aiAnalysis.totalProtein || 0,
+          carbs: aiAnalysis.totalCarbs || 0,
+          fat: aiAnalysis.totalFat || 0,
+        },
+      };
 
-      if (!analysisResult || !analysisResult.food) {
+      if (!analysisResult.food?.length) {
         toast({
           title: t("No response", "Aucune réponse", "Sin respuesta", "Sem resposta", "无响应", "لا توجد استجابة"),
           description: t(
@@ -515,10 +535,12 @@ const Analyze = () => {
     } catch (err) {
       // Track failed meal analysis
       trackMealAnalysis(false);
-      console.error("meal-analysis unexpected client error", err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error("[Analyze] meal-analysis error:", errMsg);
       toast({
-        title: t("Unexpected error", "Erreur inattendue", "Error inesperado", "Erro inesperado", "意外错误", "خطأ غير متوقع"),
-        description: t(
+        title: t("Analysis error", "Erreur d'analyse", "Error de análisis", "Erro de análise", "分析错误", "خطأ في التحليل"),
+        // Show the real error message so it's immediately actionable
+        description: errMsg || t(
           "Something went wrong while analyzing your meal. Please try again.",
           "Une erreur s'est produite lors de l'analyse de votre repas. Veuillez réessayer.",
           "Se produjo un error al analizar tu comida. Inténtalo de nuevo.",
@@ -526,6 +548,7 @@ const Analyze = () => {
           "分析餐食时出错，请重试。",
           "حدث خطأ أثناء تحليل وجبتك. يرجى المحاولة مرة أخرى.",
         ),
+        variant: "destructive",
       });
     } finally {
       setIsAnalyzing(false);
