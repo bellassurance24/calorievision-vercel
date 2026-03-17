@@ -35,38 +35,7 @@ function rateLimit(req: Request): Response | null {
   return null;
 }
 
-// ── Background scan save ──────────────────────────────────────────────────────
-async function saveScanImage(
-  imageBytes: Uint8Array,
-  mimeType: string,
-  deviceType: string | null,
-  browser: string | null,
-  language: string | null,
-  country: string | null,
-  city: string | null,
-  deviceBrand: string | null,
-) {
-  try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (!supabaseUrl || !supabaseServiceKey) return;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: setting } = await supabase
-      .from("settings").select("value").eq("key", "capture_user_scans_enabled").single();
-    if (!setting || setting.value !== "true") return;
-    const ext = mimeType.split("/")[1] || "jpg";
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("user-scans").upload(`scans/${fileName}`, imageBytes, { contentType: mimeType, upsert: false });
-    if (uploadError) { console.error("saveScanImage: upload error", uploadError); return; }
-    await supabase.from("user_scans").insert({
-      storage_path: `scans/${fileName}`, device_type: deviceType,
-      browser, language, country, city, device_brand: deviceBrand,
-    });
-  } catch (e) { console.error("saveScanImage: unexpected error", e); }
-}
-
-// ── OpenAI Vision (direct — no n8n) ──────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 interface AnalysisItem {
   name: string; calories: number; protein: number;
   carbs: number; fat: number; confidence: number; notes: string;
@@ -77,6 +46,102 @@ interface AnalysisPayload {
   totalCarbs: number; totalFat: number;
 }
 
+// ── Supabase admin client ─────────────────────────────────────────────────────
+function getAdminClient() {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+  return createClient(url, key);
+}
+
+// ── Check if scan capture is enabled (reads from site_settings table) ─────────
+async function isCaptureEnabled(): Promise<boolean> {
+  try {
+    const sb = getAdminClient();
+    const { data } = await sb
+      .from("site_settings")
+      .select("value")
+      .eq("key", "capture_user_scans_enabled")
+      .single();
+    // value is jsonb: either true (boolean) or the string "true"
+    return data?.value === true || data?.value === "true";
+  } catch {
+    return false;
+  }
+}
+
+// ── Upload image to Supabase Storage ─────────────────────────────────────────
+async function uploadScanImage(
+  imageBytes: Uint8Array,
+  mimeType: string,
+): Promise<string | null> {
+  try {
+    const sb = getAdminClient();
+    const ext = mimeType.split("/")[1] || "jpg";
+    const fileName = `scans/${crypto.randomUUID()}.${ext}`;
+    const { error } = await sb.storage
+      .from("user-scans")
+      .upload(fileName, imageBytes, { contentType: mimeType, upsert: false });
+    if (error) {
+      console.error("uploadScanImage: error", error.message);
+      return null;
+    }
+    return fileName;
+  } catch (e) {
+    console.error("uploadScanImage: unexpected", e);
+    return null;
+  }
+}
+
+// ── Save full scan record (image + analysis) after successful analysis ─────────
+async function saveScanRecord(
+  imageBytes: Uint8Array,
+  mimeType: string,
+  analysis: AnalysisPayload,
+  deviceType: string | null,
+  browser: string | null,
+  language: string | null,
+  country: string | null,
+  city: string | null,
+  deviceBrand: string | null,
+): Promise<void> {
+  try {
+    const enabled = await isCaptureEnabled();
+    if (!enabled) {
+      console.log("saveScanRecord: capture disabled — skipping");
+      return;
+    }
+
+    // Upload image (optional — scan record is saved even if image upload fails)
+    const storagePath = await uploadScanImage(imageBytes, mimeType);
+
+    const sb = getAdminClient();
+    const { error } = await sb.from("user_scans").insert({
+      storage_path:    storagePath,
+      device_type:     deviceType,
+      browser,
+      language,
+      country,
+      city,
+      device_brand:    deviceBrand,
+      total_calories:  Math.round(analysis.totalCalories),
+      analysis_result: analysis,
+    });
+
+    if (error) {
+      console.error("saveScanRecord: insert error", error.message);
+    } else {
+      console.log(
+        `saveScanRecord: saved — ${analysis.items.length} items, ` +
+        `${analysis.totalCalories} kcal, image=${storagePath ?? "none"}`,
+      );
+    }
+  } catch (e) {
+    console.error("saveScanRecord: unexpected error", e);
+  }
+}
+
+// ── OpenAI Vision (direct — no n8n) ──────────────────────────────────────────
 async function analyzeWithOpenAI(
   imageBytes: Uint8Array,
   mimeType: string,
@@ -85,7 +150,7 @@ async function analyzeWithOpenAI(
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) throw new Error("OPENAI_API_KEY secret is not set in Supabase Edge Function secrets.");
 
-  // Convert to base64 without spreading large arrays (stack-safe)
+  // Stack-safe base64 encoding
   let binary = "";
   const chunkSize = 8192;
   for (let i = 0; i < imageBytes.length; i += chunkSize) {
@@ -129,56 +194,51 @@ async function analyzeWithOpenAI(
     additionalProperties: false,
   };
 
-  const body = {
-    model: "gpt-4o-mini",
-    response_format: {
-      type: "json_schema",
-      json_schema: { name: "meal_analysis", strict: true, schema },
-    },
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "image_url",
-            image_url: { url: `data:${mimeType};base64,${base64Image}`, detail: "high" },
-          },
-          {
-            type: "text",
-            text:
-              `You are a certified nutrition analyst. Examine this meal photo carefully.\n\n` +
-              `For EACH visible food item:\n` +
-              `- name: write in ${outputLang}\n` +
-              `- calories: kcal (realistic portion estimate)\n` +
-              `- protein / carbs / fat: grams\n` +
-              `- confidence: 0.0–1.0 (how certain you are about this item)\n` +
-              `- notes: brief portion size or cooking method note\n\n` +
-              `Also provide totals (sum of all items).\n` +
-              `If an item is ambiguous, estimate conservatively. Do NOT refuse — always return at least one item.`,
-          },
-        ],
-      },
-    ],
-    max_tokens: 2000,
-  };
-
-  console.log("analyze-meal-proxy: calling OpenAI gpt-4o-mini vision directly");
-
   const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      response_format: {
+        type: "json_schema",
+        json_schema: { name: "meal_analysis", strict: true, schema },
+      },
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${base64Image}`, detail: "high" },
+            },
+            {
+              type: "text",
+              text:
+                `You are a certified nutrition analyst. Examine this meal photo carefully.\n\n` +
+                `For EACH visible food item:\n` +
+                `- name: write in ${outputLang}\n` +
+                `- calories: kcal (realistic portion estimate)\n` +
+                `- protein / carbs / fat: grams\n` +
+                `- confidence: 0.0–1.0 (how certain you are about this item)\n` +
+                `- notes: brief portion size or cooking method note\n\n` +
+                `Also provide totals (sum of all items).\n` +
+                `If an item is ambiguous, estimate conservatively. Do NOT refuse — always return at least one item.`,
+            },
+          ],
+        },
+      ],
+      max_tokens: 2000,
+    }),
   });
 
   const rawText = await oaRes.text();
-  console.log(`analyze-meal-proxy: OpenAI HTTP ${oaRes.status}, body (first 400):`, rawText.slice(0, 400));
+  console.log(`analyzeWithOpenAI: HTTP ${oaRes.status}, body[:400]:`, rawText.slice(0, 400));
 
   if (!oaRes.ok) {
-    // Expose the real OpenAI error code + message to the caller
     let oaErr = rawText;
     try {
-      const parsed = JSON.parse(rawText) as { error?: { message?: string; code?: string } };
-      oaErr = parsed.error?.message ?? rawText;
+      const p = JSON.parse(rawText) as { error?: { message?: string } };
+      oaErr = p.error?.message ?? rawText;
     } catch { /* keep raw */ }
     throw new Error(`OpenAI ${oaRes.status}: ${oaErr}`);
   }
@@ -190,84 +250,25 @@ async function analyzeWithOpenAI(
   const content = oaData.choices?.[0]?.message?.content;
   if (!content) throw new Error("OpenAI returned empty message content");
 
-  // Attempt strict parse; fall back to regex extraction if model adds prose
   let result: AnalysisPayload;
   try {
     result = JSON.parse(content) as AnalysisPayload;
   } catch {
-    console.warn("analyze-meal-proxy: strict JSON parse failed, trying regex extraction");
     const match = content.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error(`OpenAI content is not parseable JSON:\n${content.slice(0, 300)}`);
+    if (!match) throw new Error(`OpenAI content unparseable: ${content.slice(0, 300)}`);
     result = JSON.parse(match[0]) as AnalysisPayload;
   }
 
   if (!Array.isArray(result.items)) {
-    throw new Error(`Unexpected OpenAI schema — 'items' is not an array. Keys: ${Object.keys(result).join(", ")}`);
+    throw new Error(`Unexpected schema — 'items' not an array. Keys: ${Object.keys(result).join(", ")}`);
   }
 
   return result;
 }
 
-// ── n8n fallback (kept for optional use) ─────────────────────────────────────
-async function analyzeWithN8n(
-  imageBytes: Uint8Array,
-  mimeType: string,
-  imageName: string,
-  language: string,
-): Promise<AnalysisPayload> {
-  const webhookUrl = Deno.env.get("N8N_WEBHOOK_URL") ?? "https://n8n.birdstyl.com/webhook/Calorie_Vision";
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120_000);
-
-  const fwd = new FormData();
-  fwd.append("image", new Blob([imageBytes], { type: mimeType }), imageName);
-  if (language) fwd.append("language", language);
-
-  const res = await fetch(webhookUrl, { method: "POST", body: fwd, signal: controller.signal });
-  clearTimeout(timeoutId);
-
-  console.log(`analyze-meal-proxy: n8n HTTP ${res.status}`);
-  const rawText = await res.text();
-  console.log(`analyze-meal-proxy: n8n body (${rawText.length} bytes):`, rawText.slice(0, 400));
-
-  if (!res.ok) throw new Error(`n8n HTTP ${res.status}: ${rawText.slice(0, 200)}`);
-  if (!rawText.trim()) throw new Error("n8n returned empty body. Webhook node must use 'Respond to Webhook' node.");
-
-  // ── Parse & normalise ──────────────────────────────────────────────────────
-  let parsed: unknown;
-  try { parsed = JSON.parse(rawText); }
-  catch {
-    // Regex fallback: extract first {...} block
-    const match = rawText.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error(`n8n returned non-JSON: ${rawText.slice(0, 200)}`);
-    parsed = JSON.parse(match[0]);
-  }
-
-  // Unwrap n8n array wrapper
-  if (Array.isArray(parsed)) {
-    if (parsed.length === 0) throw new Error("n8n returned empty array");
-    const first = parsed[0] as Record<string, unknown>;
-    parsed = first["json"] !== undefined ? first["json"] : first;
-  }
-
-  const obj = parsed as Record<string, unknown>;
-  // Unwrap { analysis: { output: {...} } }
-  const analysisRaw = obj["analysis"] as Record<string, unknown> | undefined;
-  if (analysisRaw && "output" in analysisRaw && !("items" in analysisRaw)) {
-    obj["analysis"] = analysisRaw["output"];
-  }
-
-  const analysis = (obj["analysis"] ?? obj) as Record<string, unknown>;
-  if (!Array.isArray(analysis["items"])) {
-    throw new Error(`n8n wrong schema — expected 'items' array, got keys: ${Object.keys(analysis).join(", ")}`);
-  }
-
-  return analysis as unknown as AnalysisPayload;
-}
-
 // ── Main handler ──────────────────────────────────────────────────────────────
 serve(async (req) => {
-  console.log("analyze-meal-proxy: received request", req.method);
+  console.log("analyze-meal-proxy: received", req.method);
 
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -279,12 +280,14 @@ serve(async (req) => {
   }
 
   try {
-    const formData = await req.formData();
-    const image    = formData.get("image") as File | null;
-    const language = (formData.get("language") as string | null) ?? "en";
-    const deviceType  = formData.get("device_type") as string | null;
-    const browser     = formData.get("browser") as string | null;
+    const formData   = await req.formData();
+    const image      = formData.get("image") as File | null;
+    const language   = (formData.get("language") as string | null) ?? "en";
+    const deviceType = formData.get("device_type") as string | null;
+    const browser    = formData.get("browser") as string | null;
     const deviceBrand = formData.get("device_brand") as string | null;
+
+    // Geographic headers (set by Cloudflare/Deno Deploy)
     const country = req.headers.get("cf-ipcountry") ?? req.headers.get("x-country") ?? null;
     const city    = req.headers.get("cf-ipcity")    ?? req.headers.get("x-city")    ?? null;
 
@@ -309,37 +312,36 @@ serve(async (req) => {
     }
 
     const imageBytes = new Uint8Array(await image.arrayBuffer());
-    console.log(`analyze-meal-proxy: image ${image.name} ${image.type} ${imageBytes.length} bytes`);
+    console.log(`analyze-meal-proxy: image "${image.name}" ${image.type} ${imageBytes.length}B`);
 
-    // Background save
-    const runtime = globalThis as { EdgeRuntime?: { waitUntil: (p: Promise<void>) => void } };
-    if (runtime.EdgeRuntime?.waitUntil) {
-      runtime.EdgeRuntime.waitUntil(
-        saveScanImage(imageBytes, image.type, deviceType, browser, language, country, city, deviceBrand),
-      );
-    } else {
-      saveScanImage(imageBytes, image.type, deviceType, browser, language, country, city, deviceBrand).catch(console.error);
-    }
-
-    // ── Strategy: OpenAI direct (preferred) → n8n (fallback) ─────────────
-    const hasOpenAiKey = Boolean(Deno.env.get("OPENAI_API_KEY"));
-    console.log(`analyze-meal-proxy: strategy = ${hasOpenAiKey ? "OpenAI direct" : "n8n fallback"}`);
-
+    // ── 1. Analyse with OpenAI ────────────────────────────────────────────────
     let result: AnalysisPayload;
     try {
-      result = hasOpenAiKey
-        ? await analyzeWithOpenAI(imageBytes, image.type, language)
-        : await analyzeWithN8n(imageBytes, image.type, image.name, language);
+      result = await analyzeWithOpenAI(imageBytes, image.type, language);
     } catch (innerErr) {
       const msg = innerErr instanceof Error ? innerErr.message : String(innerErr);
-      console.error("analyze-meal-proxy: analysis failed:", msg);
+      console.error("analyze-meal-proxy: OpenAI error:", msg);
       return new Response(
         JSON.stringify({ error: msg }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    console.log(`analyze-meal-proxy: success — ${result.items.length} items, ${result.totalCalories} kcal`);
+    console.log(`analyze-meal-proxy: analysis OK — ${result.items.length} items, ${result.totalCalories} kcal`);
+
+    // ── 2. Save scan record in background (non-blocking) ──────────────────────
+    const savePromise = saveScanRecord(
+      imageBytes, image.type, result,
+      deviceType, browser, language, country, city, deviceBrand,
+    );
+    const runtime = globalThis as { EdgeRuntime?: { waitUntil: (p: Promise<void>) => void } };
+    if (runtime.EdgeRuntime?.waitUntil) {
+      runtime.EdgeRuntime.waitUntil(savePromise);
+    } else {
+      savePromise.catch(console.error);
+    }
+
+    // ── 3. Return analysis to client ──────────────────────────────────────────
     return new Response(JSON.stringify({ analysis: result }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -347,7 +349,7 @@ serve(async (req) => {
 
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error("analyze-meal-proxy: unexpected top-level error:", msg);
+    console.error("analyze-meal-proxy: top-level error:", msg);
 
     if (error instanceof Error && error.name === "AbortError") {
       return new Response(JSON.stringify({ error: "Analysis timed out. Please try again." }), {
