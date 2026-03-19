@@ -293,11 +293,7 @@ const MainLayout = ({
           </LocalizedNavLink>
         </nav>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {/* Notification Dropdown - Always visible, behavior depends on login state */}
-          <div className="flex items-center">
-            <NotificationDropdown />
-          </div>
+        <div className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "")}>
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -374,6 +370,12 @@ const MainLayout = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+        </div>
+
+        {/* Notification Bell - separate flex child, pushed to far right on mobile */}
+        <div className={cn("flex items-center shrink-0", isRTL ? "mr-auto" : "ml-auto md:ml-0")}>
+          <NotificationDropdown />
         </div>
       </header>
 
@@ -388,7 +390,8 @@ const MainLayout = ({
 
       <footer className={cn("mt-8 border-t border-primary/40 bg-gradient-to-r from-primary to-accent px-3 py-3 text-[11px] text-primary-foreground md:mt-12 md:px-6 md:py-4 md:text-xs lg:mt-16 lg:py-5 lg:text-sm rounded-2xl md:rounded-full", isRTL && "text-right")}>
         <div className={cn("flex w-full flex-wrap items-center justify-between gap-y-2 text-[11px] md:text-xs lg:text-sm", isRTL && "flex-row-reverse")}>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <img src="/gauge-logo.webp" className="h-5 w-5 md:h-6 md:w-6 object-contain" alt="CalorieVision" />
             <p className="font-medium text-primary-foreground/90">
               © 2025 CalorieVision – All Rights Reserved.
             </p>
