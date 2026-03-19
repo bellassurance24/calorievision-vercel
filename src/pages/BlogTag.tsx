@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { LocalizedNavLink } from '@/components/LocalizedNavLink';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,11 +26,20 @@ const translations: Record<string, { back: string; taggedWith: string; notFound:
 export default function BlogTag() {
   const { tagSlug: slug } = useParams<{ tagSlug: string }>();
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const t = translations[language] ?? translations['en'];
-  
+
   const [tag, setTag] = useState<BlogTagType | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // No slug provided (bare /blog/tag route) → redirect immediately
+    if (!slug) {
+      navigate(`/${language}/blog`, { replace: true });
+      return;
+    }
+  }, [slug, language, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,16 +138,15 @@ export default function BlogTag() {
     );
   }
 
+  // Tag not found → redirect to blog (better for SEO than a dead page)
+  useEffect(() => {
+    if (!loading && !tag) {
+      navigate(`/${language}/blog`, { replace: true });
+    }
+  }, [loading, tag, language, navigate]);
+
   if (!tag) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">{t.notFound}</p>
-        <LocalizedNavLink to="/blog" className="mt-4 inline-flex items-center gap-2 text-primary hover:underline">
-          <ArrowLeft className="h-4 w-4" />
-          {t.back}
-        </LocalizedNavLink>
-      </div>
-    );
+    return null;
   }
 
   return (

@@ -1,5 +1,16 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://calorievision.online/sitemap.xml
+# Block generic category/tag routes without valid slugs
+Disallow: /*/blog/category$
+Disallow: /*/blog/tag$
+Disallow: /blog/category$
+Disallow: /blog/tag$
 
+# Block admin and internal routes
+Disallow: /admin
+Disallow: /*/admin
+Disallow: /notification-settings
+Disallow: /*/notification-settings
+
+Sitemap: https://calorievision.online/sitemap.xml
