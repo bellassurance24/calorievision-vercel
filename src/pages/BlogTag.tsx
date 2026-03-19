@@ -32,94 +32,112 @@ export default function BlogTag() {
   const [tag, setTag] = useState<BlogTagType | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
+  // ALL hooks declared at the top — no hooks after conditional returns
+  usePageMetadata({
+    title: tag ? `${tag.name} | CalorieVision Blog` : 'Tag | CalorieVision Blog',
+    description: tag ? `Read articles tagged with ${tag.name} on CalorieVision blog.` : '',
+    path: `/blog/tag/${slug}`
+  });
+
+  // Single effect: handles no-slug redirect, data fetching, and not-found redirect
   useEffect(() => {
-    // No slug provided (bare /blog/tag route) → redirect immediately
+    // No slug → redirect to blog
     if (!slug) {
       navigate(`/${language}/blog`, { replace: true });
       return;
     }
-  }, [slug, language, navigate]);
 
-  useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
-      if (!slug) return;
-      
       setLoading(true);
+      setNotFound(false);
       try {
-        // Fetch tag
         const { data: tagData, error: tagError } = await supabase
           .from('blog_tags')
           .select('*')
           .eq('slug', slug)
           .maybeSingle();
 
+        if (cancelled) return;
         if (tagError) throw tagError;
+
+        if (!tagData) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
         setTag(tagData);
 
-        if (tagData) {
-          // Fetch post IDs with this tag
-          const { data: postTagData, error: postTagError } = await supabase
-            .from('blog_post_tags')
-            .select('post_id')
-            .eq('tag_id', tagData.id);
+        // Fetch post IDs with this tag
+        const { data: postTagData, error: postTagError } = await supabase
+          .from('blog_post_tags')
+          .select('post_id')
+          .eq('tag_id', tagData.id);
 
-          if (postTagError) throw postTagError;
+        if (cancelled) return;
+        if (postTagError) throw postTagError;
 
-          if (postTagData && postTagData.length > 0) {
-            const postIds = postTagData.map(pt => pt.post_id);
-            
-            // Fetch posts
-            const { data: postsData, error: postsError } = await supabase
-              .from('blog_posts')
-              .select(`
-                *,
-                category:blog_categories(*)
-              `)
-              .in('id', postIds)
-              .eq('status', 'published')
-              .order('published_at', { ascending: false });
+        if (postTagData && postTagData.length > 0) {
+          const postIds = postTagData.map(pt => pt.post_id);
 
-            if (postsError) throw postsError;
+          // Fetch posts filtered by current language
+          const { data: postsData, error: postsError } = await supabase
+            .from('blog_posts')
+            .select(`*, category:blog_categories(*)`)
+            .in('id', postIds)
+            .eq('status', 'published')
+            .eq('language', language)
+            .order('published_at', { ascending: false });
 
-            // Fetch tags for posts
-            const postsWithTags = await Promise.all(
-              (postsData || []).map(async (post) => {
-                const { data: tagData } = await supabase
-                  .from('blog_post_tags')
-                  .select('tag_id')
-                  .eq('post_id', post.id);
+          if (cancelled) return;
+          if (postsError) throw postsError;
 
-                if (tagData && tagData.length > 0) {
-                  const tagIds = tagData.map(t => t.tag_id);
-                  const { data: tagsData } = await supabase
-                    .from('blog_tags')
-                    .select('*')
-                    .in('id', tagIds);
-                  return { ...post, tags: tagsData || [] };
-                }
-                return { ...post, tags: [] };
-              })
-            );
+          // Fetch tags for posts
+          const postsWithTags = await Promise.all(
+            (postsData || []).map(async (post) => {
+              const { data: ptData } = await supabase
+                .from('blog_post_tags')
+                .select('tag_id')
+                .eq('post_id', post.id);
 
+              if (ptData && ptData.length > 0) {
+                const tagIds = ptData.map(t => t.tag_id);
+                const { data: tagsData } = await supabase
+                  .from('blog_tags')
+                  .select('*')
+                  .in('id', tagIds);
+                return { ...post, tags: tagsData || [] };
+              }
+              return { ...post, tags: [] };
+            })
+          );
+
+          if (!cancelled) {
             setPosts(postsWithTags as BlogPost[]);
           }
         }
       } catch (error) {
         console.error('Error fetching tag data:', error);
+        if (!cancelled) setNotFound(true);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
-  }, [slug]);
+    return () => { cancelled = true; };
+  }, [slug, language, navigate]);
 
-  usePageMetadata({
-    title: tag ? `${tag.name} | CalorieVision Blog` : 'Tag | CalorieVision Blog',
-    description: tag ? `Read articles tagged with ${tag.name} on CalorieVision blog.` : '',
-    path: `/blog/tag/${slug}`
-  });
+  // Redirect when not found (after loading completes)
+  useEffect(() => {
+    if (notFound && !loading) {
+      navigate(`/${language}/blog`, { replace: true });
+    }
+  }, [notFound, loading, language, navigate]);
 
   if (loading) {
     return (
@@ -138,15 +156,8 @@ export default function BlogTag() {
     );
   }
 
-  // Tag not found → redirect to blog (better for SEO than a dead page)
-  useEffect(() => {
-    if (!loading && !tag) {
-      navigate(`/${language}/blog`, { replace: true });
-    }
-  }, [loading, tag, language, navigate]);
-
   if (!tag) {
-    return null;
+    return null; // Will redirect via the useEffect above
   }
 
   return (
