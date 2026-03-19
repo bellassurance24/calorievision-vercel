@@ -24,7 +24,7 @@ const translations: Record<string, { back: string; articlesIn: string; notFound:
 };
 
 export default function BlogCategory() {
-  const { slug } = useParams<{ slug: string }>();
+  const { categorySlug: slug } = useParams<{ categorySlug: string }>();
   const { language } = useLanguage();
   const t = translations[language] ?? translations['en'];
   

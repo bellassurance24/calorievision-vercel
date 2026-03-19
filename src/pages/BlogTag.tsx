@@ -24,7 +24,7 @@ const translations: Record<string, { back: string; taggedWith: string; notFound:
 };
 
 export default function BlogTag() {
-  const { slug } = useParams<{ slug: string }>();
+  const { tagSlug: slug } = useParams<{ tagSlug: string }>();
   const { language } = useLanguage();
   const t = translations[language] ?? translations['en'];
   
