@@ -63,6 +63,32 @@ interface TocItem {
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 /**
+ * Strip document-level tags that would break the React layout if they
+ * leaked from the CMS/database content (e.g. OpenAI translation wrapping
+ * output in full HTML documents or markdown code fences).
+ *
+ * Removes: <!DOCTYPE>, <html>, <head>, <body>, <meta>, <link>, <title>,
+ * <base>, <style>, <script> blocks, and markdown ```html fences.
+ */
+function sanitizeArticleHtml(raw: string): string {
+  let html = raw;
+  // Strip markdown code fences that OpenAI sometimes wraps around HTML
+  html = html.replace(/^```(?:html)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+  // Remove full-document tags that break React's DOM tree
+  html = html.replace(/<!DOCTYPE[^>]*>/gi, '');
+  // Remove <head>…</head> block entirely (may contain <style>/<meta>/<title>)
+  html = html.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
+  // Remove opening/closing document-level tags
+  html = html.replace(/<\/?(html|body|base)[^>]*>/gi, '');
+  // Remove any remaining <meta>, <link>, <title> tags
+  html = html.replace(/<(meta|link|title)\b[^>]*\/?>/gi, '');
+  // Remove <style> and <script> blocks
+  html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  html = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  return html.trim();
+}
+
+/**
  * Walk every <h2> and <h3> in the HTML string, inject an id="" attribute so
  * the TOC can link to it, and return both the mutated HTML and the item list.
  */
@@ -245,7 +271,7 @@ export default function BlogPost() {
 
   // ── derived values ──────────────────────────────────────────────────────────
   const { processedHtml, tocItems } = useMemo(
-    () => injectHeadingIds(post?.content ?? ''),
+    () => injectHeadingIds(sanitizeArticleHtml(post?.content ?? '')),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [post?.content],
   );
@@ -264,7 +290,7 @@ export default function BlogPost() {
   // ── loading ─────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="section-card max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
         <p className="text-gray-500 text-lg">{t.loading}</p>
       </div>
@@ -274,7 +300,7 @@ export default function BlogPost() {
   // ── not found ───────────────────────────────────────────────────────────────
   if (!post) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-6 text-center">
+      <div className="section-card max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] gap-4 px-6 text-center">
         <Link to={blogPath} className="text-teal-600 font-semibold hover:underline">
           {t.back}
         </Link>
@@ -288,7 +314,7 @@ export default function BlogPost() {
   // ── render ──────────────────────────────────────────────────────────────────
   return (
     <div
-      className="max-w-4xl mx-auto px-4 sm:px-6 py-10"
+      className="section-card max-w-4xl mx-auto px-4 sm:px-6 md:px-10 py-10"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {/* Back link */}
@@ -307,13 +333,41 @@ export default function BlogPost() {
         <p className="text-sm text-gray-400 mb-6">{publishedAt}</p>
       )}
 
-      {/* Hero image */}
+      {/* Hero image — padding-bottom percentage trick for 3:2 aspect ratio */}
       {coverImage && (
-        <img
-          src={coverImage}
-          alt={post.title}
-          className="w-full rounded-3xl object-cover max-h-[480px] shadow-2xl mt-4 mb-8"
-        />
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingBottom: '66.67%',
+            overflow: 'hidden',
+            borderRadius: '24px',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            marginTop: '16px',
+            marginBottom: '32px',
+            background: '#f3f4f6',
+            direction: 'ltr',
+          }}
+        >
+          <img
+            src={coverImage}
+            alt={post.title}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center',
+              display: 'block',
+              maxWidth: 'none',
+              margin: 0,
+              padding: 0,
+              border: 'none',
+            }}
+          />
+        </div>
       )}
 
       {/* Translation fallback banner */}

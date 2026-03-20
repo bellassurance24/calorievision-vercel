@@ -143,8 +143,18 @@ async function callOpenAI(
       throw new Error(`OpenAI ${res.status}: ${raw.slice(0, 200)}`);
     }
     const json = JSON.parse(raw);
-    const out  = json?.choices?.[0]?.message?.content;
+    let out  = json?.choices?.[0]?.message?.content;
     if (!out) throw new Error(`Empty response from OpenAI (lang=${lang})`);
+    // Strip markdown code fences and document-level tags that OpenAI
+    // sometimes wraps around translated HTML content.
+    out = out.trim();
+    out = out.replace(/^```(?:html)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    out = out.replace(/<!DOCTYPE[^>]*>/gi, '');
+    out = out.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
+    out = out.replace(/<\/?(html|body|base)[^>]*>/gi, '');
+    out = out.replace(/<(meta|link|title)\b[^>]*\/?>/gi, '');
+    out = out.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    out = out.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
     return out.trim();
 
   } catch (e: any) {
@@ -287,16 +297,8 @@ serve(async (req) => {
       { headers: JSON_HEADERS });
   }
 
-  if (!force) {
-    const { data: exists } = await db.from("blog_posts")
-      .select("id").eq("slug", post.slug).eq("language", targetLang).maybeSingle();
-    if (exists) {
-      console.log("[SKIP] Already exists:", post.slug, targetLang);
-      return new Response(
-        JSON.stringify({ ok: true, skipped: true, reason: "already_exists", lang: targetLang }),
-        { headers: JSON_HEADERS });
-    }
-  }
+  // NOTE: We no longer skip existing translations.
+  // Every call re-translates and upserts so edits always propagate.
 
   console.log("[TRANSLATE] Starting", targetLang, "| slug:", post.slug,
     "| content length:", post.content?.length ?? 0);
@@ -333,7 +335,7 @@ serve(async (req) => {
         category_id:        post.category_id   ?? null,
         featured_image_url: post.featured_image_url ?? null,
       },
-      { onConflict: "slug,language", ignoreDuplicates: !force },
+      { onConflict: "slug,language", ignoreDuplicates: false },
     );
 
     if (upsertErr) throw new Error("DB upsert failed: " + upsertErr.message);
