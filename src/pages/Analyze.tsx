@@ -534,7 +534,7 @@ const Analyze = () => {
         throw new Error("Invalid response from analysis service");
       }
 
-      // n8n flow should return { analysis: { items, totalCalories, ... } } like the Lovable format
+      // n8n flow should return { analysis: { items, totalCalories, ... } } in the expected format
       const aiAnalysis = payload.analysis ?? payload;
 
       const analysisResult: MealAnalysis = {

@@ -317,17 +317,17 @@ const Index = () => {
               </CardTitle>
               <CardDescription>
                 {t(
-                  "This is a preview of what a CalorieVision analysis card could look like. AI meal analysis is now powered by Lovable AI.",
-                  "Voici un aperçu de ce à quoi peut ressembler une carte d'analyse CalorieVision. L'analyse de repas par IA est désormais propulsée par Lovable AI.",
-                  "Este es un ejemplo de cómo podría verse una tarjeta de análisis de CalorieVision. El análisis de comidas con IA ahora funciona gracias a Lovable AI.",
-                  "Este é um exemplo de como pode ser um cartão de análise do CalorieVision. A análise de refeições com IA é agora alimentada pelo Lovable AI.",
-                  "这是一个 CalorieVision 分析卡片的示例展示。餐食分析由 Lovable AI 提供支持。",
-                  "هذه معاينة لما يمكن أن تبدو عليه بطاقة تحليل CalorieVision. تحليل الوجبات بالذكاء الاصطناعي مدعوم الآن بـ Lovable AI.",
-                  "Questa è un'anteprima di come potrebbe apparire una scheda di analisi CalorieVision. L'analisi dei pasti con IA è ora alimentata da Lovable AI.",
-                  "Dies ist eine Vorschau, wie eine CalorieVision-Analysekarte aussehen könnte. Die KI-Mahlzeitanalyse wird jetzt von Lovable AI unterstützt.",
-                  "Dit is een voorbeeld van hoe een CalorieVision analysekaart eruit zou kunnen zien. AI-maaltijdanalyse wordt nu aangedreven door Lovable AI.",
-                  "Это пример того, как может выглядеть карточка анализа CalorieVision. ИИ-анализ блюд теперь работает на базе Lovable AI.",
-                  "これはCalorieVisionの分析カードのプレビューです。AI食事分析はLovable AIによって提供されています。",
+                  "This is a preview of what a CalorieVision analysis card could look like. AI meal analysis is powered by advanced vision technology.",
+                  "Voici un aperçu de ce à quoi peut ressembler une carte d'analyse CalorieVision. L'analyse de repas par IA est propulsée par une technologie de vision avancée.",
+                  "Este es un ejemplo de cómo podría verse una tarjeta de análisis de CalorieVision. El análisis de comidas con IA funciona gracias a tecnología de visión avanzada.",
+                  "Este é um exemplo de como pode ser um cartão de análise do CalorieVision. A análise de refeições com IA é alimentada por tecnologia de visão avançada.",
+                  "这是一个 CalorieVision 分析卡片的示例展示。餐食分析由先进的视觉技术提供支持。",
+                  "هذه معاينة لما يمكن أن تبدو عليه بطاقة تحليل CalorieVision. تحليل الوجبات بالذكاء الاصطناعي مدعوم بتقنية رؤية متقدمة.",
+                  "Questa è un'anteprima di come potrebbe apparire una scheda di analisi CalorieVision. L'analisi dei pasti con IA è alimentata da tecnologia di visione avanzata.",
+                  "Dies ist eine Vorschau, wie eine CalorieVision-Analysekarte aussehen könnte. Die KI-Mahlzeitanalyse wird von fortschrittlicher Bilderkennungstechnologie unterstützt.",
+                  "Dit is een voorbeeld van hoe een CalorieVision analysekaart eruit zou kunnen zien. AI-maaltijdanalyse wordt aangedreven door geavanceerde vision-technologie.",
+                  "Это пример того, как может выглядеть карточка анализа CalorieVision. ИИ-анализ блюд работает на базе передовой технологии компьютерного зрения.",
+                  "これはCalorieVisionの分析カードのプレビューです。AI食事分析は高度なビジョン技術によって提供されています。",
                 )}
               </CardDescription>
             </CardHeader>

@@ -277,9 +277,9 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      console.error("meal-analysis: LOVABLE_API_KEY is not configured");
+    const VISION_PROVIDER_API_KEY = Deno.env.get("VISION_PROVIDER_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
+    if (!VISION_PROVIDER_API_KEY) {
+      console.error("meal-analysis: VISION_PROVIDER_API_KEY is not configured");
       return new Response(
         JSON.stringify({ error: "AI backend is not configured" }),
         {
@@ -419,7 +419,7 @@ serve(async (req) => {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${VISION_PROVIDER_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
@@ -450,7 +450,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({
             error:
-              "Payment required, please add funds to your Lovable AI workspace.",
+              "Payment required, please add funds to your AI provider workspace.",
           }),
           {
             status: 402,

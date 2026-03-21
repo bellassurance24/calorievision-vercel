@@ -131,10 +131,10 @@ serve(async (req) => {
 
     // Cache miss or stale - perform translation
     const targetLangName = languageNames[targetLanguage] || 'English';
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    const visionProviderApiKey = Deno.env.get('VISION_PROVIDER_API_KEY') || Deno.env.get('LOVABLE_API_KEY');
 
-    if (!lovableApiKey) {
-      console.error('LOVABLE_API_KEY not configured');
+    if (!visionProviderApiKey) {
+      console.error('VISION_PROVIDER_API_KEY not configured');
       return new Response(
         JSON.stringify({ translatedText: text, cached: false }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -162,7 +162,7 @@ Only output the translated text, nothing else. Do not add explanations or notes.
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
+        'Authorization': `Bearer ${visionProviderApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
