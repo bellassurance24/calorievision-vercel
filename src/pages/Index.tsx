@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
 
 import HomeVideo from "@/components/HomeVideo";
+import UGCHeroVideo from "@/components/UGCHeroVideo";
 import MediaShowcaseSection from "@/components/MediaShowcaseSection";
 
 import howItWorks1 from "@/assets/how-it-works-1.jpg";
@@ -491,6 +492,62 @@ const Index = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+      </section>
+      </ScrollAnimation>
+
+      {/* AI UGC Spokesperson Video — autoplays muted when visible */}
+      <ScrollAnimation animation="fade-up" delay={50} duration={700}>
+      <section className="section-card relative overflow-hidden" aria-label="AI Spokesperson Video">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-2xl font-bold md:text-3xl lg:text-4xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t(
+                "See How CalorieVision Works",
+                "Découvrez comment fonctionne CalorieVision",
+                "Vea cómo funciona CalorieVision",
+                "Veja como o CalorieVision funciona",
+                "了解 CalorieVision 如何运作",
+                "شاهد كيف يعمل CalorieVision",
+                "Scopri come funziona CalorieVision",
+                "Erfahren Sie, wie CalorieVision funktioniert",
+                "Ontdek hoe CalorieVision werkt",
+                "Узнайте, как работает CalorieVision",
+                "CalorieVisionの使い方をご覧ください",
+              )}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
+              {t(
+                "Watch our quick overview to see AI-powered meal analysis in action.",
+                "Regardez notre aperçu rapide pour voir l'analyse de repas par IA en action.",
+                "Mire nuestro breve resumen para ver el análisis de comidas con IA en acción.",
+                "Assista ao nosso resumo rápido para ver a análise de refeições com IA em ação.",
+                "观看我们的快速概览，了解AI驱动的餐食分析。",
+                "شاهد نظرة عامة سريعة لترى تحليل الوجبات بالذكاء الاصطناعي أثناء العمل.",
+                "Guarda la nostra rapida panoramica per vedere l'analisi dei pasti con IA in azione.",
+                "Sehen Sie sich unsere kurze Übersicht an, um die KI-gestützte Mahlzeitanalyse in Aktion zu erleben.",
+                "Bekijk ons korte overzicht om AI-gestuurde maaltijdanalyse in actie te zien.",
+                "Посмотрите наш краткий обзор, чтобы увидеть анализ блюд с помощью ИИ в действии.",
+                "AIによる食事分析の様子を短い動画でご覧ください。",
+              )}
+            </p>
+          </div>
+          <UGCHeroVideo
+            ctaText={t(
+              "Try It Free — Upload a Photo Now",
+              "Essayez gratuitement — Téléchargez une photo",
+              "Pruébelo gratis — Suba una foto ahora",
+              "Experimente grátis — Envie uma foto agora",
+              "免费试用 — 立即上传照片",
+              "جرّبه مجانًا — ارفع صورة الآن",
+              "Provalo gratis — Carica una foto ora",
+              "Kostenlos testen — Laden Sie jetzt ein Foto hoch",
+              "Probeer het gratis — Upload nu een foto",
+              "Попробуйте бесплатно — Загрузите фото сейчас",
+              "無料で試す — 今すぐ写真をアップロード",
+            )}
+            onCtaClick={() => navigate("/app")}
+          />
         </div>
       </section>
       </ScrollAnimation>

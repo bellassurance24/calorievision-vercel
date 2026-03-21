@@ -13,6 +13,8 @@ import { useNotifications } from "@/contexts/NotificationContext";
 
 import { WavingFlag } from "@/components/WavingFlag";
 import CookieConsentBanner, { reopenCookieConsent } from "@/components/CookieConsentBanner";
+import { getBlogLangSlugMap } from "@/utils/blogLangSlugStore";
+import { supabase } from "@/integrations/supabase/client";
 import { removeLanguagePrefix } from "@/hooks/useLocalizedPath";
 import { NotificationPermissionPopup } from "@/components/NotificationPermissionPopup";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
@@ -250,8 +252,78 @@ const MainLayout = ({
   }, [language]);
 
   // Handle language change - update URL with new language prefix
-  const handleLanguageChange = (newLang: Language) => {
+  const handleLanguageChange = async (newLang: Language) => {
     const cleanPath = removeLanguagePrefix(location.pathname);
+
+    // On blog post pages, resolve the correct slug for the target language
+    const blogPostMatch = cleanPath.match(/^\/blog\/(.+)$/);
+    if (blogPostMatch) {
+      const currentSlug = decodeURIComponent(blogPostMatch[1]);
+
+      // Fast path: use the cached langSlugMap from BlogPost (stores base slugs)
+      const slugMap = getBlogLangSlugMap();
+      const cachedSlug = slugMap[newLang];
+      if (cachedSlug) {
+        setLanguage(newLang);
+        navigate(`/${newLang}/blog/${encodeURIComponent(cachedSlug)}`, { replace: true });
+        return;
+      }
+
+      // Slow path: query DB to find base slug, then check if target language exists
+      // Step 1: resolve currentSlug → base slug
+      let baseSlug: string | null = null;
+
+      // Try slug column first (most URLs now use the base slug)
+      const { data: bySlug } = await supabase
+        .from("blog_posts")
+        .select("slug")
+        .eq("slug", currentSlug)
+        .eq("status", "published")
+        .limit(1)
+        .maybeSingle();
+      baseSlug = bySlug?.slug ?? null;
+
+      if (!baseSlug) {
+        // Fallback: maybe the URL still has a localized_slug
+        const { data: byLocalized } = await supabase
+          .from("blog_posts")
+          .select("slug")
+          .eq("localized_slug", currentSlug)
+          .eq("status", "published")
+          .limit(1)
+          .maybeSingle();
+        baseSlug = byLocalized?.slug ?? null;
+      }
+
+      // Step 2: check if target language translation exists
+      if (baseSlug) {
+        const { data: target } = await supabase
+          .from("blog_posts")
+          .select("slug")
+          .eq("slug", baseSlug)
+          .eq("language", newLang)
+          .eq("status", "published")
+          .maybeSingle();
+
+        if (target) {
+          // Translation exists — navigate using the base slug (BlogPost finds it)
+          setLanguage(newLang);
+          navigate(`/${newLang}/blog/${encodeURIComponent(baseSlug)}`, { replace: true });
+          return;
+        } else {
+          // No translation for this language — redirect to blog home
+          setLanguage(newLang);
+          navigate(`/${newLang}/blog`, { replace: true });
+          return;
+        }
+      }
+
+      // Couldn't resolve slug at all — navigate with current slug, let BlogPost handle it
+      setLanguage(newLang);
+      navigate(`/${newLang}/blog/${encodeURIComponent(currentSlug)}`, { replace: true });
+      return;
+    }
+
     const newPath = `/${newLang}${cleanPath === "/" ? "" : cleanPath}`;
     setLanguage(newLang);
     navigate(newPath + location.search + location.hash, { replace: true });
@@ -388,15 +460,15 @@ const MainLayout = ({
         {children}
       </main>
 
-      <footer className={cn("mt-8 border-t border-primary/40 bg-gradient-to-r from-primary to-accent px-3 py-3 text-[11px] text-primary-foreground md:mt-12 md:px-6 md:py-4 md:text-xs lg:mt-16 lg:py-5 lg:text-sm rounded-2xl md:rounded-full", isRTL && "text-right")}>
-        <div className={cn("flex w-full flex-wrap items-center justify-between gap-y-2 text-[11px] md:text-xs lg:text-sm", isRTL && "flex-row-reverse")}>
+      <footer className={cn("mt-8 border-t border-primary/40 bg-gradient-to-r from-primary to-accent px-3 py-3 text-[11px] text-primary-foreground md:mt-12 md:px-6 md:py-4 md:text-xs lg:mt-16 lg:py-5 lg:text-sm", language === "ru" ? "rounded-2xl" : "rounded-2xl md:rounded-full", isRTL && "text-right")}>
+        <div className={cn("flex w-full flex-wrap gap-y-2 text-[11px] md:text-xs lg:text-sm", language === "ru" ? "flex-col items-center text-center" : "items-center justify-between", isRTL && "flex-row-reverse")}>
           <div className="flex items-center gap-2">
             <img src="/gauge-logo.webp" className="h-5 w-5 md:h-6 md:w-6 object-contain" alt="CalorieVision" />
             <p className="font-medium text-primary-foreground/90">
               © 2025 CalorieVision – All Rights Reserved.
             </p>
           </div>
-          <div className={cn("flex flex-wrap items-center justify-end gap-x-3 gap-y-1 md:gap-x-4", isRTL && "flex-row-reverse")}>
+          <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 md:gap-x-4", language === "ru" ? "justify-center" : "justify-end", isRTL && "flex-row-reverse")}>
             <LocalizedNavLink to="/contact" className="transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
               {current.contact}
             </LocalizedNavLink>
