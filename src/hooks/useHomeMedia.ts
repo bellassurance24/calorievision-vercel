@@ -13,8 +13,8 @@ interface HomeMedia {
 // Video hosted on Supabase Storage (home-videos bucket)
 const SUPABASE_VIDEO_URL =
   'https://ttjcfwspcpnxtxzqnfrh.supabase.co/storage/v1/object/public/home-videos/calorievision-video.mp4';
-const DEFAULT_POSTER_URL = '/videos/poster-v3-final.webp';
-const DEFAULT_POSTER_JPG = '/videos/poster-v3-final.jpg';
+const DEFAULT_POSTER_URL = '/videos/poster-v5-perfect.webp';
+const DEFAULT_POSTER_JPG = '/videos/poster-v5-perfect.jpg';
 
 export function useHomeMedia() {
   const [media, setMedia] = useState<HomeMedia>({
