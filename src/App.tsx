@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import { LanguageProvider, SUPPORTED_LANGUAGES } from "@/contexts/LanguageContext";
 import { BrandingProvider } from "@/contexts/BrandingContext";
@@ -234,6 +234,11 @@ const LocalizedRoutes = () => (
             </MainLayout>
           }
         />
+        {/* Redirect /:lang/admin* to /admin* (admin is not localized) */}
+        <Route path="admin" element={<Navigate to="/admin" replace />} />
+        <Route path="admin/*" element={<Navigate to="/admin" replace />} />
+        {/* Redirect /:lang/auth to /auth */}
+        <Route path="auth" element={<Navigate to="/auth" replace />} />
         {/* 404 for this language */}
         <Route
           path="*"
