@@ -6,7 +6,7 @@ interface HomeVideoProps {
 }
 
 // Optimized local poster for best LCP performance
-const OPTIMIZED_POSTER = '/videos/poster-v5-perfect.webp';
+const OPTIMIZED_POSTER = '/videos/poster-master-canva.webp';
 
 // Memoized video component
 // Portrait (9/16) on desktop + mobile, with visible native controls.
