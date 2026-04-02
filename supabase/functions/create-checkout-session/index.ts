@@ -11,7 +11,7 @@
  *
  * Request body (JSON):
  *   { planType: "pro"|"ultimate", billingCycle: "monthly"|"yearly",
- *     userId: string, email?: string, origin: string }
+ *     userId: string, email?: string, origin: string, locale?: string }
  *
  *  `origin` is window.location.origin sent by the frontend.
  *  This means success/cancel URLs automatically work on localhost AND production
@@ -45,7 +45,16 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16", httpClient: Stripe.createFetchHttpClient() });
 
-    const { planType, billingCycle, priceId: clientPriceId, userId, email, origin } = await req.json();
+    const { planType, billingCycle, priceId: clientPriceId, userId, email, origin, locale } = await req.json();
+
+    // Map app language codes to Stripe-supported locale codes.
+    // Arabic has no Stripe locale — fall back to English.
+    const STRIPE_LOCALE_MAP: Record<string, string> = {
+      en: "en", fr: "fr", es: "es", pt: "pt", zh: "zh",
+      it: "it", de: "de", nl: "nl", ru: "ru", ja: "ja",
+      ar: "en",
+    };
+    const stripeLocale = STRIPE_LOCALE_MAP[locale ?? ""] ?? "auto";
 
     // Use the origin sent by the browser (works on localhost:8080, localhost:5173,
     // staging URLs, and production — no code changes ever needed).
@@ -82,12 +91,25 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
+      locale: stripeLocale,              // ← dynamic: matches user's app language
+      allow_promotion_codes: false,      // ← hides the promo / coupon code field
       line_items: [{ price: priceId, quantity: 1 }],
       // Stripe replaces {CHECKOUT_SESSION_ID} with the real session ID.
       // The frontend reads it on redirect and calls verify-checkout-session.
       success_url: `${baseUrl}/pricing?checkout=success&plan=${planType}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/pricing?checkout=canceled`,
+      // client_reference_id is a top-level Stripe field — visible in the Stripe
+      // Dashboard and included in ALL webhook events for this session.
+      // It is the single source of truth linking a Stripe payment to a Supabase user,
+      // regardless of device or country.
+      client_reference_id: userId || undefined,
+      // Session-level metadata: used by checkout.session.completed webhook
       metadata: { userId: userId ?? "", planType, billingCycle },
+      // subscription_data.metadata: copied onto the Stripe Subscription object so
+      // customer.subscription.updated / deleted webhooks also carry the userId.
+      subscription_data: {
+        metadata: { userId: userId ?? "", planType, billingCycle },
+      },
       ...(email ? { customer_email: email } : {}),
     });
 

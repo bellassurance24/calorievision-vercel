@@ -107,18 +107,18 @@ serve(async (req) => {
 
     log("INFO", "Processing contact form submission", { from: email, name });
 
-    // Get recipient email from settings table
+    // Get recipient email from site_settings table
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: setting } = await supabase
-      .from("settings")
+      .from("site_settings")
       .select("value")
       .eq("key", "contact_email")
       .single();
 
-    const recipientEmail = setting?.value || "support@calorievision.online";
+    const recipientEmail = (typeof setting?.value === "string" ? setting.value : setting?.value?.email) || "bellassurance24@gmail.com";
 
     log("INFO", "Sending email via Resend", { to: recipientEmail });
 

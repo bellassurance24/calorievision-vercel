@@ -355,7 +355,7 @@ export default function AdminBlog() {
     const results = await Promise.allSettled(
       TRANSLATION_LANGS.map(async (lang) => {
         const { error } = await supabase.functions.invoke('auto-translate-blog-post', {
-          body: { postId, targetLang: lang, force: false },
+          body: { postId, targetLang: lang, force: true },
         });
         if (error) throw new Error(error.message || 'Translation failed');
         setLangProgress((prev) => ({ ...prev, [lang]: 'done' }));
@@ -368,6 +368,17 @@ export default function AdminBlog() {
         setLangProgress((prev) => ({ ...prev, [TRANSLATION_LANGS[i]]: 'error' }));
       }
     });
+
+    // ── Step 3: sync featured_image_url to all translated versions ────────
+    // Belt-and-suspenders: the Edge Function already sets the image URL, but
+    // if any translation fails we still want the image on partial results.
+    if (postForm.featured_image_url) {
+      await supabase
+        .from('blog_posts')
+        .update({ featured_image_url: postForm.featured_image_url })
+        .eq('slug', slug)
+        .neq('language', 'en');
+    }
 
     const failedCount = results.filter((r) => r.status === 'rejected').length;
     const doneCount   = 10 - failedCount;
@@ -615,8 +626,7 @@ export default function AdminBlog() {
                         {!translating && Object.values(langProgress).some((s) => s === 'error') && (
                           <p className="mt-3 text-sm text-red-600">
                             Some languages failed. The English post is live. Re-open the editor and click
-                            "Generate & Publish Multilingual" again to retry — it skips already-translated
-                            languages automatically.
+                            "Generate & Publish Multilingual" again to retry all translations.
                           </p>
                         )}
                       </div>

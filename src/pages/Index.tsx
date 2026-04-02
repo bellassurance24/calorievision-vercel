@@ -265,7 +265,7 @@ const Index = () => {
       <ScrollAnimation animation="fade-up" duration={700}>
       <section className="section-card relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 -top-40 hidden h-80 w-80 rounded-full bg-gradient-to-b from-primary/40 via-accent/40 to-transparent opacity-70 blur-3xl md:block" aria-hidden="true" />
-        <div className="relative grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-center">
+        <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] xl:items-center">
           <div className="space-y-5 md:space-y-6">
             <p className="eyebrow">{copy.heroEyebrow}</p>
             <h1 className="text-balance text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
@@ -950,7 +950,7 @@ const Index = () => {
             )}
           </h2>
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4">
             <img
               src={howItWorks1}
@@ -1114,7 +1114,7 @@ const Index = () => {
             </LocalizedNavLink>
           </Button>
         </div>
-        <div className="grid gap-4 md:grid-cols-4 md:gap-6">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 md:gap-5 xl:gap-6">
           <article className="rounded-2xl bg-secondary/60 p-4">
             <h3 className="mb-1 text-sm font-semibold">
               {t(

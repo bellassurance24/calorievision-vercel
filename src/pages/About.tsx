@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const About = () => {
   const { language } = useLanguage();
-  
+
   usePageMetadata({
     title: "About CalorieVision - Our Mission & Story",
     description: "Learn about CalorieVision's mission to make nutrition awareness simple and accessible through AI-powered food photo analysis."
@@ -46,7 +46,9 @@ const About = () => {
             "حول CalorieVision",
             "Informazioni su CalorieVision",
             "Über CalorieVision",
-            "Over CalorieVision"
+            "Over CalorieVision",
+            "О CalorieVision",
+            "CalorieVisionについて",
           )}
         </h1>
         <p className="text-xl text-center text-muted-foreground mb-8">
@@ -60,7 +62,9 @@ const About = () => {
               "جعل الوعي الغذائي بسيطًا ومتاحًا وتعليميًا للجميع.",
               "Rendere la consapevolezza nutrizionale semplice, accessibile ed educativa per tutti.",
               "Ernährungsbewusstsein einfach, zugänglich und lehrreich für alle machen.",
-              "Voedingsbewustzijn eenvoudig, toegankelijk en leerzaam maken voor iedereen."
+              "Voedingsbewustzijn eenvoudig, toegankelijk en leerzaam maken voor iedereen.",
+              "Делаем осведомлённость о питании простой, доступной и образовательной для всех.",
+              "栄養への意識をすべての人にとってシンプルで、身近で、学びのあるものにします。",
             )}
           </strong>
         </p>
@@ -69,7 +73,7 @@ const About = () => {
 
         {/* Our Mission */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Our Mission", "Notre Mission", "Nuestra Misión", "Nossa Missão", "我们的使命", "مهمتنا", "La Nostra Missione", "Unsere Mission", "Onze Missie")}
+          {t("Our Mission", "Notre Mission", "Nuestra Misión", "Nossa Missão", "我们的使命", "مهمتنا", "La Nostra Missione", "Unsere Mission", "Onze Missie", "Наша миссия", "私たちの使命")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -81,7 +85,9 @@ const About = () => {
             "في CalorieVision، نؤمن أن فهم ما تأكله لا ينبغي أن يكون معقدًا. مهمتنا هي جعل الوعي الغذائي متاحًا للجميع من خلال قوة الذكاء الاصطناعي، دون متاعب تسجيل الطعام يدويًا أو تطبيقات التتبع المعقدة.",
             "Noi di CalorieVision crediamo che capire cosa mangi non dovrebbe essere complicato. La nostra missione è rendere la consapevolezza nutrizionale accessibile a tutti attraverso l'intelligenza artificiale, senza il fastidio della registrazione manuale degli alimenti o delle app di tracciamento complicate.",
             "Bei CalorieVision glauben wir, dass das Verständnis dessen, was Sie essen, nicht kompliziert sein sollte. Unsere Mission ist es, das Ernährungsbewusstsein durch künstliche Intelligenz für alle zugänglich zu machen, ohne den Aufwand manueller Lebensmittelprotokollierung oder komplizierter Tracking-Apps.",
-            "Bij CalorieVision geloven we dat begrijpen wat je eet niet ingewikkeld hoeft te zijn. Onze missie is om voedingsbewustzijn toegankelijk te maken voor iedereen door middel van kunstmatige intelligentie, zonder het gedoe van handmatige voedselregistratie of ingewikkelde tracking-apps."
+            "Bij CalorieVision geloven we dat begrijpen wat je eet niet ingewikkeld hoeft te zijn. Onze missie is om voedingsbewustzijn toegankelijk te maken voor iedereen door middel van kunstmatige intelligentie, zonder het gedoe van handmatige voedselregistratie of ingewikkelde tracking-apps.",
+            "В CalorieVision мы убеждены, что понимать, что вы едите, не должно быть сложным. Наша миссия — сделать осведомлённость о питании доступной для каждого с помощью искусственного интеллекта, без необходимости вести ручные записи или использовать сложные трекеры.",
+            "CalorieVisionでは、食べ物を理解することが複雑である必要はないと考えています。私たちの使命は、人工知能の力を通じて、手動の食事記録や複雑なトラッキングアプリの手間なく、すべての人が栄養を意識できるようにすることです。",
           )}
         </p>
         <p className="text-muted-foreground mb-4">
@@ -94,7 +100,9 @@ const About = () => {
             "نحن هنا لمساعدتك في بناء علاقة أكثر صحة مع الطعام — ليس من خلال الحكم على ما تأكله، ولكن من خلال إعطائك المعلومات لاتخاذ خياراتك المستنيرة.",
             "Siamo qui per aiutarti a costruire un rapporto più sano con il cibo — non giudicando cosa mangi, ma dandoti le informazioni per fare le tue scelte consapevoli.",
             "Wir sind hier, um Ihnen zu helfen, eine gesündere Beziehung zum Essen aufzubauen — nicht indem wir beurteilen, was Sie essen, sondern indem wir Ihnen die Informationen geben, um Ihre eigenen fundierten Entscheidungen zu treffen.",
-            "We zijn hier om je te helpen een gezondere relatie met eten op te bouwen — niet door te oordelen over wat je eet, maar door je de informatie te geven om je eigen geïnformeerde keuzes te maken."
+            "We zijn hier om je te helpen een gezondere relatie met eten op te bouwen — niet door te oordelen over wat je eet, maar door je de informatie te geven om je eigen geïnformeerde keuzes te maken.",
+            "Мы здесь, чтобы помочь вам построить более здоровые отношения с едой — не осуждая то, что вы едите, а давая вам информацию для принятия собственных осознанных решений.",
+            "私たちは、食事を判断するのではなく、情報を提供することで、あなたが食べ物とより健全な関係を築けるようサポートします。",
           )}
         </p>
 
@@ -102,7 +110,7 @@ const About = () => {
 
         {/* Our Story */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Our Story", "Notre Histoire", "Nuestra Historia", "Nossa História", "我们的故事", "قصتنا", "La Nostra Storia", "Unsere Geschichte", "Ons Verhaal")}
+          {t("Our Story", "Notre Histoire", "Nuestra Historia", "Nossa História", "我们的故事", "قصتنا", "La Nostra Storia", "Unsere Geschichte", "Ons Verhaal", "Наша история", "私たちのストーリー")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -114,7 +122,9 @@ const About = () => {
             "ولدت CalorieVision من إحباط بسيط: حساب السعرات الحرارية التقليدي ممل ويستغرق وقتًا طويلاً وغالبًا ما يكون غير دقيق.",
             "CalorieVision è nato da una semplice frustrazione: il conteggio tradizionale delle calorie è noioso, richiede tempo e spesso è impreciso.",
             "CalorieVision entstand aus einer einfachen Frustration: Traditionelles Kalorienzählen ist mühsam, zeitaufwendig und oft ungenau.",
-            "CalorieVision ontstond uit een simpele frustratie: traditioneel calorieën tellen is vervelend, tijdrovend en vaak onnauwkeurig."
+            "CalorieVision ontstond uit een simpele frustratie: traditioneel calorieën tellen is vervelend, tijdrovend en vaak onnauwkeurig.",
+            "CalorieVision родился из простого разочарования: традиционный подсчёт калорий утомителен, отнимает много времени и нередко неточен.",
+            "CalorieVisionは、シンプルな不満から生まれました：従来のカロリー計算は面倒で時間がかかり、しばしば不正確です。",
           )}
         </p>
         <p className="text-muted-foreground mb-4">
@@ -128,7 +138,9 @@ const About = () => {
               "ماذا لو كان بإمكانك فقط التقاط صورة لوجبتك والحصول على تقدير غذائي فوري؟",
               "E se potessi semplicemente scattare una foto del tuo pasto e ottenere istantaneamente una stima nutrizionale?",
               "Was wäre, wenn Sie einfach ein Foto Ihrer Mahlzeit machen und sofort eine Nährwertschätzung erhalten könnten?",
-              "Wat als je gewoon een foto van je maaltijd kon maken en direct een voedingsschatting kon krijgen?"
+              "Wat als je gewoon een foto van je maaltijd kon maken en direct een voedingsschatting kon krijgen?",
+              "Что если бы вы могли просто сфотографировать блюдо и мгновенно получить оценку его питательной ценности?",
+              "食事の写真を撮るだけで、すぐに栄養推定が得られたら？",
             )}
           </em>
         </p>
@@ -142,7 +154,9 @@ const About = () => {
             "هذا السؤال قادنا لبناء CalorieVision — أداة مدعومة بالذكاء الاصطناعي تحلل صور الطعام وتوفر تقديرات السعرات الحرارية التعليمية في ثوانٍ. لا حسابات، لا تسجيل معقد، لا حكم. فقط وعي غذائي سريع وبسيط.",
             "Quella domanda ci ha portato a creare CalorieVision — uno strumento basato sull'IA che analizza le foto del cibo e fornisce stime caloriche educative in pochi secondi. Nessun account, nessuna registrazione complicata, nessun giudizio. Solo una consapevolezza nutrizionale rapida e semplice.",
             "Diese Frage führte uns dazu, CalorieVision zu entwickeln — ein KI-gestütztes Tool, das Lebensmittelfotos analysiert und in Sekunden lehrreiche Kalorienschätzungen liefert. Keine Konten, keine komplizierte Protokollierung, kein Urteil. Nur schnelles, einfaches Ernährungsbewusstsein.",
-            "Die vraag bracht ons ertoe CalorieVision te bouwen — een door AI aangedreven tool die voedselfoto's analyseert en in seconden educatieve calorieënschattingen geeft. Geen accounts, geen ingewikkelde registratie, geen oordeel. Gewoon snel, eenvoudig voedingsbewustzijn."
+            "Die vraag bracht ons ertoe CalorieVision te bouwen — een door AI aangedreven tool die voedselfoto's analyseert en in seconden educatieve calorieënschattingen geeft. Geen accounts, geen ingewikkelde registratie, geen oordeel. Gewoon snel, eenvoudig voedingsbewustzijn.",
+            "Этот вопрос привёл нас к созданию CalorieVision — инструмента на базе ИИ, анализирующего фотографии блюд и предоставляющего образовательные оценки калорий за несколько секунд. Без аккаунтов, без сложного ведения дневника, без осуждения. Просто быстрое и простое понимание питания.",
+            "その疑問が私たちをCalorieVision作りへと導きました — AIを活用したツールで、食事の写真を分析し、数秒で教育的なカロリー推定を提供します。アカウント不要、複雑な記録不要、判断もなし。ただ素早くシンプルに栄養を意識できます。",
           )}
         </p>
 
@@ -150,7 +164,7 @@ const About = () => {
 
         {/* Who We Are */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Who We Are", "Qui Nous Sommes", "Quiénes Somos", "Quem Somos", "我们是谁", "من نحن", "Chi Siamo", "Wer Wir Sind", "Wie We Zijn")}
+          {t("Who We Are", "Qui Nous Sommes", "Quiénes Somos", "Quem Somos", "我们是谁", "من نحن", "Chi Siamo", "Wer Wir Sind", "Wie We Zijn", "Кто мы", "私たちについて")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -162,12 +176,14 @@ const About = () => {
             "يتم تطوير وصيانة CalorieVision بواسطة فريق مشروع رقمي مستقل متحمس لتكنولوجيا الصحة والذكاء الاصطناعي.",
             "CalorieVision è sviluppato e mantenuto da un team di progetto digitale indipendente appassionato di tecnologia sanitaria e intelligenza artificiale.",
             "CalorieVision wird von einem unabhängigen digitalen Projektteam entwickelt und gepflegt, das sich für Gesundheitstechnologie und künstliche Intelligenz begeistert.",
-            "CalorieVision wordt ontwikkeld en onderhouden door een onafhankelijk digitaal projectteam dat gepassioneerd is door gezondheidstechnologie en kunstmatige intelligentie."
+            "CalorieVision wordt ontwikkeld en onderhouden door een onafhankelijk digitaal projectteam dat gepassioneerd is door gezondheidstechnologie en kunstmatige intelligentie.",
+            "CalorieVision разрабатывается и поддерживается независимой командой цифрового проекта, увлечённой технологиями здоровья и искусственным интеллектом.",
+            "CalorieVisionは、ヘルステクノロジーと人工知能に情熱を持つ独立したデジタルプロジェクトチームによって開発・維持されています。",
           )}
         </p>
 
         <h3 className="text-xl font-semibold mt-6 mb-3 text-foreground">
-          {t("Meet Our Founder", "Rencontrez Notre Fondateur", "Conoce a Nuestro Fundador", "Conheça Nosso Fundador", "认识我们的创始人", "تعرف على مؤسسنا", "Incontra il Nostro Fondatore", "Lernen Sie Unseren Gründer Kennen", "Ontmoet Onze Oprichter")}
+          {t("Meet Our Founder", "Rencontrez Notre Fondateur", "Conoce a Nuestro Fundador", "Conheça Nosso Fundador", "认识我们的创始人", "تعرف على مؤسسنا", "Incontra il Nostro Fondatore", "Lernen Sie Unseren Gründer Kennen", "Ontmoet Onze Oprichter", "Познакомьтесь с нашим основателем", "創設者について")}
         </h3>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -179,26 +195,28 @@ const About = () => {
             "تأسست CalorieVision من قبل فريق من عشاق التكنولوجيا ومناصري التغذية الذين رأوا فجوة في كيفية تفاعل الناس مع معلومات الطعام. بعد سنوات من المعاناة مع تطبيقات تتبع السعرات الحرارية المعقدة وقواعد بيانات الطعام غير الدقيقة، تصور مؤسسنا حلاً أبسط: فقط التقط صورة وتعلم.",
             "CalorieVision è stato fondato da un team di appassionati di tecnologia e sostenitori della nutrizione che hanno visto una lacuna nel modo in cui le persone interagiscono con le informazioni alimentari. Dopo anni di lotta con app complicate per il conteggio delle calorie e database alimentari imprecisi, il nostro fondatore ha immaginato una soluzione più semplice: basta scattare una foto e imparare.",
             "CalorieVision wurde von einem Team von Technologie-Enthusiasten und Ernährungsbefürwortern gegründet, die eine Lücke in der Art und Weise sahen, wie Menschen mit Lebensmittelinformationen umgehen. Nach Jahren des Kampfes mit komplizierten Kalorienzähl-Apps und ungenauen Lebensmitteldatenbanken stellte sich unser Gründer eine einfachere Lösung vor: Einfach ein Foto machen und lernen.",
-            "CalorieVision werd opgericht door een team van technologie-enthousiastelingen en voedingsadvocaten die een kloof zagen in hoe mensen omgaan met voedselinformatie. Na jaren van worstelen met ingewikkelde calorieëntelling-apps en onnauwkeurige voedseldatabases, bedacht onze oprichter een eenvoudigere oplossing: maak gewoon een foto en leer."
+            "CalorieVision werd opgericht door een team van technologie-enthousiastelingen en voedingsadvocaten die een kloof zagen in hoe mensen omgaan met voedselinformatie. Na jaren van worstelen met ingewikkelde calorieëntelling-apps en onnauwkeurige voedseldatabases, bedacht onze oprichter een eenvoudigere oplossing: maak gewoon een foto en leer.",
+            "CalorieVision был основан командой технологических энтузиастов и сторонников здорового питания, которые увидели пробел в том, как люди взаимодействуют с информацией о питании. После многих лет борьбы со сложными приложениями для подсчёта калорий и неточными базами данных продуктов, наш основатель представил более простое решение: просто сфотографируй и узнай.",
+            "CalorieVisionは、人々が食品情報と接する方法にギャップを見つけた、テクノロジー愛好家と栄養推進者のチームによって設立されました。複雑なカロリー追跡アプリや不正確な食品データベースと何年も格闘した末に、創設者はよりシンプルなソリューションを構想しました：写真を撮るだけで学べる。",
           )}
         </p>
 
         <h3 className="text-xl font-semibold mt-6 mb-3 text-foreground">
-          {t("Our Core Values", "Nos Valeurs Fondamentales", "Nuestros Valores Fundamentales", "Nossos Valores Fundamentais", "我们的核心价值观", "قيمنا الأساسية", "I Nostri Valori Fondamentali", "Unsere Kernwerte", "Onze Kernwaarden")}
+          {t("Our Core Values", "Nos Valeurs Fondamentales", "Nuestros Valores Fundamentales", "Nossos Valores Fundamentais", "我们的核心价值观", "قيمنا الأساسية", "I Nostri Valori Fondamentali", "Unsere Kernwerte", "Onze Kernwaarden", "Наши основные ценности", "私たちのコアバリュー")}
         </h3>
         <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-1">
-          <li><strong>{t("Tech Enthusiasts:", "Passionnés de Tech :", "Entusiastas de la Tecnología:", "Entusiastas de Tecnologia:", "技术爱好者：", "عشاق التكنولوجيا:", "Appassionati di Tecnologia:", "Tech-Enthusiasten:", "Tech Enthousiastelingen:")}</strong> {t("We love building tools that make life easier", "Nous adorons créer des outils qui simplifient la vie", "Nos encanta crear herramientas que facilitan la vida", "Adoramos criar ferramentas que facilitam a vida", "我们喜欢创建让生活更轻松的工具", "نحب بناء أدوات تجعل الحياة أسهل", "Amiamo creare strumenti che rendono la vita più facile", "Wir lieben es, Werkzeuge zu bauen, die das Leben erleichtern", "We houden van het bouwen van tools die het leven gemakkelijker maken")}</li>
-          <li><strong>{t("Privacy Advocates:", "Défenseurs de la Vie Privée :", "Defensores de la Privacidad:", "Defensores da Privacidade:", "隐私倡导者：", "مناصرو الخصوصية:", "Sostenitori della Privacy:", "Datenschutz-Befürworter:", "Privacy Voorvechters:")}</strong> {t("We believe your data should stay yours", "Nous croyons que vos données doivent rester les vôtres", "Creemos que tus datos deben seguir siendo tuyos", "Acreditamos que seus dados devem permanecer seus", "我们相信您的数据应该属于您", "نؤمن أن بياناتك يجب أن تبقى ملكك", "Crediamo che i tuoi dati debbano rimanere tuoi", "Wir glauben, dass Ihre Daten Ihnen gehören sollten", "We geloven dat je gegevens van jou moeten blijven")}</li>
-          <li><strong>{t("Health-Conscious:", "Soucieux de la Santé :", "Conscientes de la Salud:", "Conscientes da Saúde:", "健康意识：", "واعون صحياً:", "Attenti alla Salute:", "Gesundheitsbewusst:", "Gezondheidsbewust:")}</strong> {t("We care about making nutrition accessible", "Nous nous soucions de rendre la nutrition accessible", "Nos importa hacer la nutrición accesible", "Nos importamos em tornar a nutrição acessível", "我们关心让营养变得易于获取", "نهتم بجعل التغذية متاحة", "Ci preoccupiamo di rendere la nutrizione accessibile", "Wir sorgen dafür, dass Ernährung zugänglich ist", "We geven om het toegankelijk maken van voeding")}</li>
-          <li><strong>{t("Global Team:", "Équipe Mondiale :", "Equipo Global:", "Equipe Global:", "全球团队：", "فريق عالمي:", "Team Globale:", "Globales Team:", "Globaal Team:")}</strong> {t("We serve users worldwide, across all devices", "Nous servons des utilisateurs dans le monde entier, sur tous les appareils", "Servimos a usuarios en todo el mundo, en todos los dispositivos", "Servimos usuários em todo o mundo, em todos os dispositivos", "我们为全球用户提供服务，支持所有设备", "نخدم المستخدمين في جميع أنحاء العالم، عبر جميع الأجهزة", "Serviamo utenti in tutto il mondo, su tutti i dispositivi", "Wir bedienen Benutzer weltweit, auf allen Geräten", "We bedienen gebruikers wereldwijd, op alle apparaten")}</li>
-          <li><strong>{t("Continuous Learners:", "Apprenants Continus :", "Aprendices Continuos:", "Aprendizes Contínuos:", "持续学习者：", "متعلمون مستمرون:", "Apprendisti Continui:", "Kontinuierliche Lernende:", "Continue Leerlingen:")}</strong> {t("We stay updated with the latest in AI and nutrition research", "Nous restons à jour avec les dernières avancées en IA et en recherche nutritionnelle", "Nos mantenemos actualizados con lo último en investigación de IA y nutrición", "Mantemo-nos atualizados com as últimas pesquisas em IA e nutrição", "我们紧跟 AI 和营养研究的最新进展", "نبقى على اطلاع بأحدث أبحاث الذكاء الاصطناعي والتغذية", "Rimaniamo aggiornati con le ultime ricerche in IA e nutrizione", "Wir bleiben auf dem neuesten Stand der KI- und Ernährungsforschung", "We blijven op de hoogte van het laatste onderzoek in AI en voeding")}</li>
+          <li><strong>{t("Tech Enthusiasts:", "Passionnés de Tech :", "Entusiastas de la Tecnología:", "Entusiastas de Tecnologia:", "技术爱好者：", "عشاق التكنولوجيا:", "Appassionati di Tecnologia:", "Tech-Enthusiasten:", "Tech Enthousiastelingen:", "Технологические энтузиасты:", "テクノロジー愛好家：")}</strong> {t("We love building tools that make life easier", "Nous adorons créer des outils qui simplifient la vie", "Nos encanta crear herramientas que facilitan la vida", "Adoramos criar ferramentas que facilitam a vida", "我们喜欢创建让生活更轻松的工具", "نحب بناء أدوات تجعل الحياة أسهل", "Amiamo creare strumenti che rendono la vita più facile", "Wir lieben es, Werkzeuge zu bauen, die das Leben erleichtern", "We houden van het bouwen van tools die het leven gemakkelijker maken", "Мы любим создавать инструменты, которые делают жизнь проще", "私たちは生活を楽にするツールを作ることが大好きです")}</li>
+          <li><strong>{t("Privacy Advocates:", "Défenseurs de la Vie Privée :", "Defensores de la Privacidad:", "Defensores da Privacidade:", "隐私倡导者：", "مناصرو الخصوصية:", "Sostenitori della Privacy:", "Datenschutz-Befürworter:", "Privacy Voorvechters:", "Защитники конфиденциальности:", "プライバシー擁護者：")}</strong> {t("We believe your data should stay yours", "Nous croyons que vos données doivent rester les vôtres", "Creemos que tus datos deben seguir siendo tuyos", "Acreditamos que seus dados devem permanecer seus", "我们相信您的数据应该属于您", "نؤمن أن بياناتك يجب أن تبقى ملكك", "Crediamo che i tuoi dati debbano rimanere tuoi", "Wir glauben, dass Ihre Daten Ihnen gehören sollten", "We geloven dat je gegevens van jou moeten blijven", "Мы считаем, что ваши данные должны оставаться вашими", "あなたのデータはあなたのものであるべきだと考えています")}</li>
+          <li><strong>{t("Health-Conscious:", "Soucieux de la Santé :", "Conscientes de la Salud:", "Conscientes da Saúde:", "健康意识：", "واعون صحياً:", "Attenti alla Salute:", "Gesundheitsbewusst:", "Gezondheidsbewust:", "Заботимся о здоровье:", "健康意識：")}</strong> {t("We care about making nutrition accessible", "Nous nous soucions de rendre la nutrition accessible", "Nos importa hacer la nutrición accesible", "Nos importamos em tornar a nutrição acessível", "我们关心让营养变得易于获取", "نهتم بجعل التغذية متاحة", "Ci preoccupiamo di rendere la nutrizione accessibile", "Wir sorgen dafür, dass Ernährung zugänglich ist", "We geven om het toegankelijk maken van voeding", "Нам важно сделать информацию о питании доступной", "栄養情報をアクセスしやすくすることを大切にしています")}</li>
+          <li><strong>{t("Global Team:", "Équipe Mondiale :", "Equipo Global:", "Equipe Global:", "全球团队：", "فريق عالمي:", "Team Globale:", "Globales Team:", "Globaal Team:", "Глобальная команда:", "グローバルチーム：")}</strong> {t("We serve users worldwide, across all devices", "Nous servons des utilisateurs dans le monde entier, sur tous les appareils", "Servimos a usuarios en todo el mundo, en todos los dispositivos", "Servimos usuários em todo o mundo, em todos os dispositivos", "我们为全球用户提供服务，支持所有设备", "نخدم المستخدمين في جميع أنحاء العالم، عبر جميع الأجهزة", "Serviamo utenti in tutto il mondo, su tutti i dispositivi", "Wir bedienen Benutzer weltweit, auf allen Geräten", "We bedienen gebruikers wereldwijd, op alle apparaten", "Мы обслуживаем пользователей по всему миру на любых устройствах", "あらゆるデバイスで、世界中のユーザーにサービスを提供しています")}</li>
+          <li><strong>{t("Continuous Learners:", "Apprenants Continus :", "Aprendices Continuos:", "Aprendizes Contínuos:", "持续学习者：", "متعلمون مستمرون:", "Apprendisti Continui:", "Kontinuierliche Lernende:", "Continue Leerlingen:", "Постоянно обучаемся:", "継続的な学習者：")}</strong> {t("We stay updated with the latest in AI and nutrition research", "Nous restons à jour avec les dernières avancées en IA et en recherche nutritionnelle", "Nos mantenemos actualizados con lo último en investigación de IA y nutrición", "Mantemo-nos atualizados com as últimas pesquisas em IA e nutrição", "我们紧跟 AI 和营养研究的最新进展", "نبقى على اطلاع بأحدث أبحاث الذكاء الاصطناعي والتغذية", "Rimaniamo aggiornati con le ultime ricerche in IA e nutrizione", "Wir bleiben auf dem neuesten Stand der KI- und Ernährungsforschung", "We blijven op de hoogte van het laatste onderzoek in AI en voeding", "Мы следим за новейшими разработками в области ИИ и исследованиями питания", "AIと栄養研究の最新情報を常に把握しています")}</li>
         </ul>
 
         <hr className="my-8 border-border" />
 
         {/* Our Expertise */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Our Expertise", "Notre Expertise", "Nuestra Experiencia", "Nossa Expertise", "我们的专业知识", "خبرتنا", "La Nostra Competenza", "Unsere Expertise", "Onze Expertise")}
+          {t("Our Expertise", "Notre Expertise", "Nuestra Experiencia", "Nossa Expertise", "我们的专业知识", "خبرتنا", "La Nostra Competenza", "Unsere Expertise", "Onze Expertise", "Наша экспертиза", "私たちの専門知識")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -210,7 +228,9 @@ const About = () => {
             "وراء CalorieVision فريق متخصص يتمتع بخبرة عميقة في الذكاء الاصطناعي وتطوير البرمجيات والتعليم الغذائي.",
             "Dietro CalorieVision c'è un team dedicato con profonda competenza in intelligenza artificiale, sviluppo software ed educazione nutrizionale.",
             "Hinter CalorieVision steht ein engagiertes Team mit tiefgreifender Expertise in künstlicher Intelligenz, Softwareentwicklung und Ernährungsbildung.",
-            "Achter CalorieVision staat een toegewijd team met diepgaande expertise in kunstmatige intelligentie, softwareontwikkeling en voedingseducatie."
+            "Achter CalorieVision staat een toegewijd team met diepgaande expertise in kunstmatige intelligentie, softwareontwikkeling en voedingseducatie.",
+            "За CalorieVision стоит преданная команда с глубокой экспертизой в области искусственного интеллекта, разработки программного обеспечения и образования в сфере питания.",
+            "CalorieVisionの背後には、人工知能、ソフトウェア開発、栄養教育に深い専門知識を持つ献身的なチームがあります。",
           )}
         </p>
 
@@ -218,46 +238,46 @@ const About = () => {
           <table className="w-full border-collapse border border-border text-sm">
             <thead>
               <tr className="bg-muted">
-                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Area", "Domaine", "Área", "Área", "领域", "المجال", "Area", "Bereich", "Gebied")}</th>
-                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Our Expertise", "Notre Expertise", "Nuestra Experiencia", "Nossa Expertise", "我们的专业知识", "خبرتنا", "La Nostra Competenza", "Unsere Expertise", "Onze Expertise")}</th>
+                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Area", "Domaine", "Área", "Área", "领域", "المجال", "Area", "Bereich", "Gebied", "Область", "分野")}</th>
+                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Our Expertise", "Notre Expertise", "Nuestra Experiencia", "Nossa Expertise", "我们的专业知识", "خبرتنا", "La Nostra Competenza", "Unsere Expertise", "Onze Expertise", "Наша экспертиза", "私たちの専門知識")}</th>
               </tr>
             </thead>
             <tbody className="text-muted-foreground">
               <tr>
-                <td className="border border-border px-4 py-2">🤖 <strong>{t("Artificial Intelligence", "Intelligence Artificielle", "Inteligencia Artificial", "Inteligência Artificial", "人工智能", "الذكاء الاصطناعي", "Intelligenza Artificiale", "Künstliche Intelligenz", "Kunstmatige Intelligentie")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Advanced image recognition and machine learning models trained on diverse food datasets", "Reconnaissance d'images avancée et modèles d'apprentissage automatique entraînés sur des ensembles de données alimentaires diversifiés", "Reconocimiento de imágenes avanzado y modelos de aprendizaje automático entrenados en diversos conjuntos de datos alimentarios", "Reconhecimento de imagem avançado e modelos de aprendizado de máquina treinados em diversos conjuntos de dados alimentares", "先进的图像识别和在多样化食品数据集上训练的机器学习模型", "التعرف المتقدم على الصور ونماذج التعلم الآلي المدربة على مجموعات بيانات غذائية متنوعة", "Riconoscimento avanzato delle immagini e modelli di machine learning addestrati su diversi dataset alimentari", "Fortschrittliche Bilderkennung und maschinelle Lernmodelle, die auf vielfältigen Lebensmitteldatensätzen trainiert wurden", "Geavanceerde beeldherkenning en machine learning-modellen getraind op diverse voedingsdatasets")}</td>
+                <td className="border border-border px-4 py-2">🤖 <strong>{t("Artificial Intelligence", "Intelligence Artificielle", "Inteligencia Artificial", "Inteligência Artificial", "人工智能", "الذكاء الاصطناعي", "Intelligenza Artificiale", "Künstliche Intelligenz", "Kunstmatige Intelligentie", "Искусственный интеллект", "人工知能")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Advanced image recognition and machine learning models trained on diverse food datasets", "Reconnaissance d'images avancée et modèles d'apprentissage automatique entraînés sur des ensembles de données alimentaires diversifiés", "Reconocimiento de imágenes avanzado y modelos de aprendizaje automático entrenados en diversos conjuntos de datos alimentarios", "Reconhecimento de imagem avançado e modelos de aprendizado de máquina treinados em diversos conjuntos de dados alimentares", "先进的图像识别和在多样化食品数据集上训练的机器学习模型", "التعرف المتقدم على الصور ونماذج التعلم الآلي المدربة على مجموعات بيانات غذائية متنوعة", "Riconoscimento avanzato delle immagini e modelli di machine learning addestrati su diversi dataset alimentari", "Fortschrittliche Bilderkennung und maschinelle Lernmodelle, die auf vielfältigen Lebensmitteldatensätzen trainiert wurden", "Geavanceerde beeldherkenning en machine learning-modellen getraind op diverse voedingsdatasets", "Передовое распознавание изображений и модели машинного обучения, обученные на разнообразных наборах данных о продуктах питания", "多様な食品データセットで学習した高度な画像認識と機械学習モデル")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">💻 <strong>{t("Software Development", "Développement Logiciel", "Desarrollo de Software", "Desenvolvimento de Software", "软件开发", "تطوير البرمجيات", "Sviluppo Software", "Softwareentwicklung", "Softwareontwikkeling")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Modern web technologies ensuring fast, reliable, and secure user experiences", "Technologies web modernes assurant des expériences utilisateur rapides, fiables et sécurisées", "Tecnologías web modernas que garantizan experiencias de usuario rápidas, confiables y seguras", "Tecnologias web modernas garantindo experiências de usuário rápidas, confiáveis e seguras", "现代网络技术确保快速、可靠和安全的用户体验", "تقنيات الويب الحديثة التي تضمن تجارب مستخدم سريعة وموثوقة وآمنة", "Tecnologie web moderne che garantiscono esperienze utente veloci, affidabili e sicure", "Moderne Webtechnologien, die schnelle, zuverlässige und sichere Benutzererfahrungen gewährleisten", "Moderne webtechnologieën die snelle, betrouwbare en veilige gebruikerservaringen garanderen")}</td>
+                <td className="border border-border px-4 py-2">💻 <strong>{t("Software Development", "Développement Logiciel", "Desarrollo de Software", "Desenvolvimento de Software", "软件开发", "تطوير البرمجيات", "Sviluppo Software", "Softwareentwicklung", "Softwareontwikkeling", "Разработка программного обеспечения", "ソフトウェア開発")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Modern web technologies ensuring fast, reliable, and secure user experiences", "Technologies web modernes assurant des expériences utilisateur rapides, fiables et sécurisées", "Tecnologías web modernas que garantizan experiencias de usuario rápidas, confiables y seguras", "Tecnologias web modernas garantindo experiências de usuário rápidas, confiáveis e seguras", "现代网络技术确保快速、可靠和安全的用户体验", "تقنيات الويب الحديثة التي تضمن تجارب مستخدم سريعة وموثوقة وآمنة", "Tecnologie web moderne che garantiscono esperienze utente veloci, affidabili e sicure", "Moderne Webtechnologien, die schnelle, zuverlässige und sichere Benutzererfahrungen gewährleisten", "Moderne webtechnologieën die snelle, betrouwbare en veilige gebruikerservaringen garanderen", "Современные веб-технологии, обеспечивающие быстрый, надёжный и безопасный пользовательский опыт", "高速で信頼性が高く安全なユーザー体験を保証するモダンなウェブ技術")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">📊 <strong>{t("Data Science", "Science des Données", "Ciencia de Datos", "Ciência de Dados", "数据科学", "علم البيانات", "Scienza dei Dati", "Datenwissenschaft", "Data Science")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Statistical analysis and continuous model improvement based on real-world usage", "Analyse statistique et amélioration continue des modèles basée sur l'utilisation réelle", "Análisis estadístico y mejora continua del modelo basada en el uso del mundo real", "Análise estatística e melhoria contínua do modelo com base no uso do mundo real", "基于真实使用情况的统计分析和持续模型改进", "التحليل الإحصائي والتحسين المستمر للنماذج بناءً على الاستخدام الفعلي", "Analisi statistica e miglioramento continuo del modello basato sull'uso reale", "Statistische Analyse und kontinuierliche Modellverbesserung basierend auf der realen Nutzung", "Statistische analyse en continue modelverbetering op basis van gebruik in de echte wereld")}</td>
+                <td className="border border-border px-4 py-2">📊 <strong>{t("Data Science", "Science des Données", "Ciencia de Datos", "Ciência de Dados", "数据科学", "علم البيانات", "Scienza dei Dati", "Datenwissenschaft", "Data Science", "Наука о данных", "データサイエンス")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Statistical analysis and continuous model improvement based on real-world usage", "Analyse statistique et amélioration continue des modèles basée sur l'utilisation réelle", "Análisis estadístico y mejora continua del modelo basada en el uso del mundo real", "Análise estatística e melhoria contínua do modelo com base no uso do mundo real", "基于真实使用情况的统计分析和持续模型改进", "التحليل الإحصائي والتحسين المستمر للنماذج بناءً على الاستخدام الفعلي", "Analisi statistica e miglioramento continuo del modello basato sull'uso reale", "Statistische Analyse und kontinuierliche Modellverbesserung basierend auf der realen Nutzung", "Statistische analyse en continue modelverbetering op basis van gebruik in de echte wereld", "Статистический анализ и непрерывное улучшение моделей на основе реального использования", "実際の使用状況に基づく統計分析と継続的なモデル改善")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">🥗 <strong>{t("Nutrition Knowledge", "Connaissances Nutritionnelles", "Conocimiento Nutricional", "Conhecimento Nutricional", "营养知识", "المعرفة الغذائية", "Conoscenza Nutrizionale", "Ernährungswissen", "Voedingskennis")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Collaboration with nutritional databases and research-backed information sources", "Collaboration avec des bases de données nutritionnelles et des sources d'information fondées sur la recherche", "Colaboración con bases de datos nutricionales y fuentes de información respaldadas por investigación", "Colaboração com bancos de dados nutricionais e fontes de informação baseadas em pesquisas", "与营养数据库和以研究为基础的信息来源合作", "التعاون مع قواعد البيانات الغذائية ومصادر المعلومات المدعومة بالأبحاث", "Collaborazione con database nutrizionali e fonti di informazione basate sulla ricerca", "Zusammenarbeit mit Nährwertdatenbanken und forschungsgestützten Informationsquellen", "Samenwerking met voedingsdatabases en op onderzoek gebaseerde informatiebronnen")}</td>
+                <td className="border border-border px-4 py-2">🥗 <strong>{t("Nutrition Knowledge", "Connaissances Nutritionnelles", "Conocimiento Nutricional", "Conhecimento Nutricional", "营养知识", "المعرفة الغذائية", "Conoscenza Nutrizionale", "Ernährungswissen", "Voedingskennis", "Знания о питании", "栄養知識")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Collaboration with nutritional databases and research-backed information sources", "Collaboration avec des bases de données nutritionnelles et des sources d'information fondées sur la recherche", "Colaboración con bases de datos nutricionales y fuentes de información respaldadas por investigación", "Colaboração com bancos de dados nutricionais e fontes de informação baseadas em pesquisas", "与营养数据库和以研究为基础的信息来源合作", "التعاون مع قواعد البيانات الغذائية ومصادر المعلومات المدعومة بالأبحاث", "Collaborazione con database nutrizionali e fonti di informazione basate sulla ricerca", "Zusammenarbeit mit Nährwertdatenbanken und forschungsgestützten Informationsquellen", "Samenwerking met voedingsdatabases en op onderzoek gebaseerde informatiebronnen", "Сотрудничество с базами данных о питании и источниками информации, подкреплёнными исследованиями", "栄養データベースと研究に裏付けられた情報源との連携")}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <h3 className="text-xl font-semibold mt-6 mb-3 text-foreground">
-          {t("Our Commitment to Accuracy", "Notre Engagement envers la Précision", "Nuestro Compromiso con la Precisión", "Nosso Compromisso com a Precisão", "我们对准确性的承诺", "التزامنا بالدقة", "Il Nostro Impegno per la Precisione", "Unser Engagement für Genauigkeit", "Onze Toewijding aan Nauwkeurigheid")}
+          {t("Our Commitment to Accuracy", "Notre Engagement envers la Précision", "Nuestro Compromiso con la Precisión", "Nosso Compromisso com a Precisão", "我们对准确性的承诺", "التزامنا بالدقة", "Il Nostro Impegno per la Precisione", "Unser Engagement für Genauigkeit", "Onze Toewijding aan Nauwkeurigheid", "Наше обязательство по точности", "精度へのコミットメント")}
         </h3>
         <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-1">
-          <li><strong>{t("Research-Based Approach:", "Approche Fondée sur la Recherche :", "Enfoque Basado en Investigación:", "Abordagem Baseada em Pesquisa:", "基于研究的方法：", "نهج قائم على البحث:", "Approccio Basato sulla Ricerca:", "Forschungsbasierter Ansatz:", "Onderzoeksgerichte Aanpak:")}</strong> {t("All nutritional information is sourced from reputable databases and scientific research", "Toutes les informations nutritionnelles proviennent de bases de données réputées et de recherches scientifiques", "Toda la información nutricional proviene de bases de datos acreditadas e investigación científica", "Todas as informações nutricionais são provenientes de bancos de dados confiáveis e pesquisas científicas", "所有营养信息均来自权威数据库和科学研究", "جميع المعلومات الغذائية مصدرها قواعد بيانات موثوقة وأبحاث علمية", "Tutte le informazioni nutrizionali provengono da database affidabili e ricerche scientifiche", "Alle Nährwertinformationen stammen aus seriösen Datenbanken und wissenschaftlicher Forschung", "Alle voedingsinformatie is afkomstig uit gerenommeerde databases en wetenschappelijk onderzoek")}</li>
-          <li><strong>{t("Continuous Improvement:", "Amélioration Continue :", "Mejora Continua:", "Melhoria Contínua:", "持续改进：", "التحسين المستمر:", "Miglioramento Continuo:", "Kontinuierliche Verbesserung:", "Continue Verbetering:")}</strong> {t("Our AI models are regularly updated and refined based on user feedback and new data", "Nos modèles d'IA sont régulièrement mis à jour et affinés en fonction des commentaires des utilisateurs et des nouvelles données", "Nuestros modelos de IA se actualizan y refinan regularmente en función de los comentarios de los usuarios y nuevos datos", "Nossos modelos de IA são regularmente atualizados e refinados com base no feedback dos usuários e novos dados", "我们的 AI 模型根据用户反馈和新数据定期更新和优化", "يتم تحديث وتحسين نماذج الذكاء الاصطناعي لدينا بانتظام بناءً على ملاحظات المستخدمين والبيانات الجديدة", "I nostri modelli di IA vengono regolarmente aggiornati e perfezionati in base al feedback degli utenti e ai nuovi dati", "Unsere KI-Modelle werden regelmäßig aktualisiert und basierend auf Benutzerfeedback und neuen Daten verfeinert", "Onze AI-modellen worden regelmatig bijgewerkt en verfijnd op basis van gebruikersfeedback en nieuwe gegevens")}</li>
-          <li><strong>{t("Quality Assurance:", "Assurance Qualité :", "Garantía de Calidad:", "Garantia de Qualidade:", "质量保证：", "ضمان الجودة:", "Garanzia di Qualità:", "Qualitätssicherung:", "Kwaliteitsborging:")}</strong> {t("We implement rigorous testing to ensure consistent and reliable results", "Nous mettons en œuvre des tests rigoureux pour garantir des résultats cohérents et fiables", "Implementamos pruebas rigurosas para garantizar resultados consistentes y confiables", "Implementamos testes rigorosos para garantir resultados consistentes e confiáveis", "我们实施严格的测试以确保一致和可靠的结果", "نطبق اختبارات صارمة لضمان نتائج متسقة وموثوقة", "Implementiamo test rigorosi per garantire risultati coerenti e affidabili", "Wir führen rigorose Tests durch, um konsistente und zuverlässige Ergebnisse zu gewährleisten", "We implementeren rigoureuze tests om consistente en betrouwbare resultaten te garanderen")}</li>
-          <li><strong>{t("Transparent Limitations:", "Limitations Transparentes :", "Limitaciones Transparentes:", "Limitações Transparentes:", "透明的局限性：", "قيود شفافة:", "Limitazioni Trasparenti:", "Transparente Einschränkungen:", "Transparante Beperkingen:")}</strong> {t("We clearly communicate what our AI can and cannot do", "Nous communiquons clairement ce que notre IA peut et ne peut pas faire", "Comunicamos claramente lo que nuestra IA puede y no puede hacer", "Comunicamos claramente o que nossa IA pode e não pode fazer", "我们清楚地说明我们的 AI 能做什么和不能做什么", "نوضح بوضوح ما يمكن وما لا يمكن للذكاء الاصطناعي لدينا فعله", "Comunichiamo chiaramente cosa la nostra IA può e non può fare", "Wir kommunizieren klar, was unsere KI kann und was nicht", "We communiceren duidelijk wat onze AI wel en niet kan doen")}</li>
+          <li><strong>{t("Research-Based Approach:", "Approche Fondée sur la Recherche :", "Enfoque Basado en Investigación:", "Abordagem Baseada em Pesquisa:", "基于研究的方法：", "نهج قائم على البحث:", "Approccio Basato sulla Ricerca:", "Forschungsbasierter Ansatz:", "Onderzoeksgerichte Aanpak:", "Подход, основанный на исследованиях:", "研究ベースのアプローチ：")}</strong> {t("All nutritional information is sourced from reputable databases and scientific research", "Toutes les informations nutritionnelles proviennent de bases de données réputées et de recherches scientifiques", "Toda la información nutricional proviene de bases de datos acreditadas e investigación científica", "Todas as informações nutricionais são provenientes de bancos de dados confiáveis e pesquisas científicas", "所有营养信息均来自权威数据库和科学研究", "جميع المعلومات الغذائية مصدرها قواعد بيانات موثوقة وأبحاث علمية", "Tutte le informazioni nutrizionali provengono da database affidabili e ricerche scientifiche", "Alle Nährwertinformationen stammen aus seriösen Datenbanken und wissenschaftlicher Forschung", "Alle voedingsinformatie is afkomstig uit gerenommeerde databases en wetenschappelijk onderzoek", "Вся информация о питании получена из авторитетных баз данных и научных исследований", "すべての栄養情報は信頼できるデータベースと科学的研究から取得されています")}</li>
+          <li><strong>{t("Continuous Improvement:", "Amélioration Continue :", "Mejora Continua:", "Melhoria Contínua:", "持续改进：", "التحسين المستمر:", "Miglioramento Continuo:", "Kontinuierliche Verbesserung:", "Continue Verbetering:", "Непрерывное улучшение:", "継続的な改善：")}</strong> {t("Our AI models are regularly updated and refined based on user feedback and new data", "Nos modèles d'IA sont régulièrement mis à jour et affinés en fonction des commentaires des utilisateurs et des nouvelles données", "Nuestros modelos de IA se actualizan y refinan regularmente en función de los comentarios de los usuarios y nuevos datos", "Nossos modelos de IA são regularmente atualizados e refinados com base no feedback dos usuários e novos dados", "我们的 AI 模型根据用户反馈和新数据定期更新和优化", "يتم تحديث وتحسين نماذج الذكاء الاصطناعي لدينا بانتظام بناءً على ملاحظات المستخدمين والبيانات الجديدة", "I nostri modelli di IA vengono regolarmente aggiornati e perfezionati in base al feedback degli utenti e ai nuovi dati", "Unsere KI-Modelle werden regelmäßig aktualisiert und basierend auf Benutzerfeedback und neuen Daten verfeinert", "Onze AI-modellen worden regelmatig bijgewerkt en verfijnd op basis van gebruikersfeedback en nieuwe gegevens", "Наши модели ИИ регулярно обновляются и совершенствуются на основе отзывов пользователей и новых данных", "私たちのAIモデルは、ユーザーフィードバックと新しいデータに基づいて定期的に更新・改善されています")}</li>
+          <li><strong>{t("Quality Assurance:", "Assurance Qualité :", "Garantía de Calidad:", "Garantia de Qualidade:", "质量保证：", "ضمان الجودة:", "Garanzia di Qualità:", "Qualitätssicherung:", "Kwaliteitsborging:", "Контроль качества:", "品質保証：")}</strong> {t("We implement rigorous testing to ensure consistent and reliable results", "Nous mettons en œuvre des tests rigoureux pour garantir des résultats cohérents et fiables", "Implementamos pruebas rigurosas para garantizar resultados consistentes y confiables", "Implementamos testes rigorosos para garantir resultados consistentes e confiáveis", "我们实施严格的测试以确保一致和可靠的结果", "نطبق اختبارات صارمة لضمان نتائج متسقة وموثوقة", "Implementiamo test rigorosi per garantire risultati coerenti e affidabili", "Wir führen rigorose Tests durch, um konsistente und zuverlässige Ergebnisse zu gewährleisten", "We implementeren rigoureuze tests om consistente en betrouwbare resultaten te garanderen", "Мы проводим тщательное тестирование для обеспечения стабильных и надёжных результатов", "一貫性のある信頼性の高い結果を確保するために厳格なテストを実施しています")}</li>
+          <li><strong>{t("Transparent Limitations:", "Limitations Transparentes :", "Limitaciones Transparentes:", "Limitações Transparentes:", "透明的局限性：", "قيود شفافة:", "Limitazioni Trasparenti:", "Transparente Einschränkungen:", "Transparante Beperkingen:", "Прозрачные ограничения:", "透明な制限：")}</strong> {t("We clearly communicate what our AI can and cannot do", "Nous communiquons clairement ce que notre IA peut et ne peut pas faire", "Comunicamos claramente lo que nuestra IA puede y no puede hacer", "Comunicamos claramente o que nossa IA pode e não pode fazer", "我们清楚地说明我们的 AI 能做什么和不能做什么", "نوضح بوضوح ما يمكن وما لا يمكن للذكاء الاصطناعي لدينا فعله", "Comunichiamo chiaramente cosa la nostra IA può e non può fare", "Wir kommunizieren klar, was unsere KI kann und was nicht", "We communiceren duidelijk wat onze AI wel en niet kan doen", "Мы чётко сообщаем, что наш ИИ может и чего не может делать", "AIができることとできないことを明確に伝えています")}</li>
         </ul>
 
         <hr className="my-8 border-border" />
 
         {/* Our Content Promise */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Our Content Promise", "Notre Promesse de Contenu", "Nuestra Promesa de Contenido", "Nossa Promessa de Conteúdo", "我们的内容承诺", "وعد المحتوى لدينا", "La Nostra Promessa sui Contenuti", "Unser Inhaltsversprechen", "Onze Content Belofte")}
+          {t("Our Content Promise", "Notre Promesse de Contenu", "Nuestra Promesa de Contenido", "Nossa Promessa de Conteúdo", "我们的内容承诺", "وعد المحتوى لدينا", "La Nostra Promessa sui Contenuti", "Unser Inhaltsversprechen", "Onze Content Belofte", "Наше обязательство по контенту", "コンテンツへの約束")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -269,38 +289,40 @@ const About = () => {
             "نحن نأخذ مسؤوليتنا كمورد تعليمي على محمل الجد. إليك ما يمكنك توقعه من CalorieVision:",
             "Prendiamo sul serio la nostra responsabilità come risorsa educativa. Ecco cosa puoi aspettarti da CalorieVision:",
             "Wir nehmen unsere Verantwortung als Bildungsressource ernst. Hier ist, was Sie von CalorieVision erwarten können:",
-            "We nemen onze verantwoordelijkheid als educatieve bron serieus. Dit is wat je van CalorieVision kunt verwachten:"
+            "We nemen onze verantwoordelijkheid als educatieve bron serieus. Dit is wat je van CalorieVision kunt verwachten:",
+            "Мы серьёзно относимся к своей ответственности как образовательного ресурса. Вот чего вы можете ожидать от CalorieVision:",
+            "私たちは教育リソースとしての責任を真剣に受け止めています。CalorieVisionに期待できることをご紹介します：",
           )}
         </p>
 
         <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4 text-foreground">
-            📝 {t("Original & Well-Researched Content", "Contenu Original et Bien Documenté", "Contenido Original y Bien Investigado", "Conteúdo Original e Bem Pesquisado", "原创且深入研究的内容", "محتوى أصلي ومدروس جيداً", "Contenuti Originali e Ben Documentati", "Originelle und gut recherchierte Inhalte", "Originele en Goed Onderzochte Content")}
+            📝 {t("Original & Well-Researched Content", "Contenu Original et Bien Documenté", "Contenido Original y Bien Investigado", "Conteúdo Original e Bem Pesquisado", "原创且深入研究的内容", "محتوى أصلي ومدروس جيداً", "Contenuti Originali e Ben Documentati", "Originelle und gut recherchierte Inhalte", "Originele en Goed Onderzochte Content", "Оригинальный и хорошо исследованный контент", "オリジナルで十分に調査されたコンテンツ")}
           </h3>
           <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-            <li>{t("All articles and educational materials are 100% original, created by our team", "Tous les articles et matériels éducatifs sont 100% originaux, créés par notre équipe", "Todos los artículos y materiales educativos son 100% originales, creados por nuestro equipo", "Todos os artigos e materiais educacionais são 100% originais, criados pela nossa equipe", "所有文章和教育材料均为我们团队 100% 原创", "جميع المقالات والمواد التعليمية أصلية 100%، أنشأها فريقنا", "Tutti gli articoli e i materiali educativi sono originali al 100%, creati dal nostro team", "Alle Artikel und Bildungsmaterialien sind zu 100% original und von unserem Team erstellt", "Alle artikelen en educatieve materialen zijn 100% origineel, gemaakt door ons team")}</li>
-            <li>{t("Content is thoroughly researched using reputable sources and nutritional databases", "Le contenu est minutieusement recherché à partir de sources réputées et de bases de données nutritionnelles", "El contenido está minuciosamente investigado utilizando fuentes acreditadas y bases de datos nutricionales", "O conteúdo é minuciosamente pesquisado usando fontes confiáveis e bancos de dados nutricionais", "使用权威来源和营养数据库进行深入研究", "يتم البحث في المحتوى بدقة باستخدام مصادر موثوقة وقواعد بيانات غذائية", "I contenuti sono accuratamente ricercati utilizzando fonti affidabili e database nutrizionali", "Inhalte werden gründlich recherchiert unter Verwendung seriöser Quellen und Nährwertdatenbanken", "Content wordt grondig onderzocht met behulp van gerenommeerde bronnen en voedingsdatabases")}</li>
-            <li>{t("We never copy or plagiarize content from other sources", "Nous ne copions ni ne plagions jamais le contenu d'autres sources", "Nunca copiamos ni plagiamos contenido de otras fuentes", "Nunca copiamos ou plagiamos conteúdo de outras fontes", "我们从不复制或剽窃其他来源的内容", "لا ننسخ أو نسرق أبداً محتوى من مصادر أخرى", "Non copiamo mai né plagiamo contenuti da altre fonti", "Wir kopieren oder plagiieren niemals Inhalte aus anderen Quellen", "We kopiëren of plagiëren nooit content van andere bronnen")}</li>
+            <li>{t("All articles and educational materials are 100% original, created by our team", "Tous les articles et matériels éducatifs sont 100% originaux, créés par notre équipe", "Todos los artículos y materiales educativos son 100% originales, creados por nuestro equipo", "Todos os artigos e materiais educacionais são 100% originais, criados pela nossa equipe", "所有文章和教育材料均为我们团队 100% 原创", "جميع المقالات والمواد التعليمية أصلية 100%، أنشأها فريقنا", "Tutti gli articoli e i materiali educativi sono originali al 100%, creati dal nostro team", "Alle Artikel und Bildungsmaterialien sind zu 100% original und von unserem Team erstellt", "Alle artikelen en educatieve materialen zijn 100% origineel, gemaakt door ons team", "Все статьи и образовательные материалы на 100% оригинальны и созданы нашей командой", "すべての記事と教育資料はチームが作成した100%オリジナルです")}</li>
+            <li>{t("Content is thoroughly researched using reputable sources and nutritional databases", "Le contenu est minutieusement recherché à partir de sources réputées et de bases de données nutritionnelles", "El contenido está minuciosamente investigado utilizando fuentes acreditadas y bases de datos nutricionales", "O conteúdo é minuciosamente pesquisado usando fontes confiáveis e bancos de dados nutricionais", "使用权威来源和营养数据库进行深入研究", "يتم البحث في المحتوى بدقة باستخدام مصادر موثوقة وقواعد بيانات غذائية", "I contenuti sono accuratamente ricercati utilizzando fonti affidabili e database nutrizionali", "Inhalte werden gründlich recherchiert unter Verwendung seriöser Quellen und Nährwertdatenbanken", "Content wordt grondig onderzocht met behulp van gerenommeerde bronnen en voedingsdatabases", "Контент тщательно исследуется с использованием авторитетных источников и баз данных о питании", "コンテンツは信頼できるソースと栄養データベースを使って徹底的に調査されています")}</li>
+            <li>{t("We never copy or plagiarize content from other sources", "Nous ne copions ni ne plagions jamais le contenu d'autres sources", "Nunca copiamos ni plagiamos contenido de otras fuentes", "Nunca copiamos ou plagiamos conteúdo de outras fontes", "我们从不复制或剽窃其他来源的内容", "لا ننسخ أو نسرق أبداً محتوى من مصادر أخرى", "Non copiamo mai né plagiamo contenuti da altre fonti", "Wir kopieren oder plagiieren niemals Inhalte aus anderen Quellen", "We kopiëren of plagiëren nooit content van andere bronnen", "Мы никогда не копируем и не плагиаируем контент из других источников", "他のソースからコンテンツをコピーまたは盗用することは一切ありません")}</li>
           </ul>
         </div>
 
         <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4 text-foreground">
-            📚 {t("Educational Purpose", "But Éducatif", "Propósito Educativo", "Propósito Educacional", "教育目的", "الغرض التعليمي", "Scopo Educativo", "Bildungszweck", "Educatief Doel")}
+            📚 {t("Educational Purpose", "But Éducatif", "Propósito Educativo", "Propósito Educacional", "教育目的", "الغرض التعليمي", "Scopo Educativo", "Bildungszweck", "Educatief Doel", "Образовательная цель", "教育目的")}
           </h3>
           <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-            <li>{t("Our content is designed to educate and inform, not to provide medical advice", "Notre contenu est conçu pour éduquer et informer, pas pour fournir des conseils médicaux", "Nuestro contenido está diseñado para educar e informar, no para proporcionar consejos médicos", "Nosso conteúdo é projetado para educar e informar, não para fornecer aconselhamento médico", "我们的内容旨在教育和提供信息，而非提供医疗建议", "تم تصميم محتوانا للتعليم والإعلام، وليس لتقديم نصائح طبية", "I nostri contenuti sono progettati per educare e informare, non per fornire consigli medici", "Unsere Inhalte sind dazu gedacht, zu bilden und zu informieren, nicht um medizinische Ratschläge zu geben", "Onze content is ontworpen om te onderwijzen en te informeren, niet om medisch advies te geven")}</li>
-            <li>{t("We encourage users to consult healthcare professionals for personalized advice", "Nous encourageons les utilisateurs à consulter des professionnels de santé pour des conseils personnalisés", "Animamos a los usuarios a consultar a profesionales de la salud para obtener consejos personalizados", "Encorajamos os usuários a consultar profissionais de saúde para aconselhamento personalizado", "我们鼓励用户咨询医疗专业人员以获得个性化建议", "نشجع المستخدمين على استشارة متخصصي الرعاية الصحية للحصول على نصائح شخصية", "Incoraggiamo gli utenti a consultare professionisti sanitari per consigli personalizzati", "Wir ermutigen Benutzer, Gesundheitsfachleute für persönliche Beratung zu konsultieren", "We moedigen gebruikers aan om zorgprofessionals te raadplegen voor persoonlijk advies")}</li>
+            <li>{t("Our content is designed to educate and inform, not to provide medical advice", "Notre contenu est conçu pour éduquer et informer, pas pour fournir des conseils médicaux", "Nuestro contenido está diseñado para educar e informar, no para proporcionar consejos médicos", "Nosso conteúdo é projetado para educar e informar, não para fornecer aconselhamento médico", "我们的内容旨在教育和提供信息，而非提供医疗建议", "تم تصميم محتوانا للتعليم والإعلام، وليس لتقديم نصائح طبية", "I nostri contenuti sono progettati per educare e informare, non per fornire consigli medici", "Unsere Inhalte sind dazu gedacht, zu bilden und zu informieren, nicht um medizinische Ratschläge zu geben", "Onze content is ontworpen om te onderwijzen en te informeren, niet om medisch advies te geven", "Наш контент разработан для обучения и информирования, а не для предоставления медицинских советов", "私たちのコンテンツは、医療アドバイスではなく、教育と情報提供を目的として設計されています")}</li>
+            <li>{t("We encourage users to consult healthcare professionals for personalized advice", "Nous encourageons les utilisateurs à consulter des professionnels de santé pour des conseils personnalisés", "Animamos a los usuarios a consultar a profesionales de la salud para obtener consejos personalizados", "Encorajamos os usuários a consultar profissionais de saúde para aconselhamento personalizado", "我们鼓励用户咨询医疗专业人员以获得个性化建议", "نشجع المستخدمين على استشارة متخصصي الرعاية الصحية للحصول على نصائح شخصية", "Incoraggiamo gli utenti a consultare professionisti sanitari per consigli personalizzati", "Wir ermutigen Benutzer, Gesundheitsfachleute für persönliche Beratung zu konsultieren", "We moedigen gebruikers aan om zorgprofessionals te raadplegen voor persoonlijk advies", "Мы рекомендуем пользователям обращаться к медицинским специалистам за персональными советами", "パーソナライズされたアドバイスのために、医療専門家に相談することをお勧めします")}</li>
           </ul>
         </div>
 
         <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4 text-foreground">
-            🔄 {t("Regular Updates & Accuracy", "Mises à Jour Régulières et Précision", "Actualizaciones Regulares y Precisión", "Atualizações Regulares e Precisão", "定期更新和准确性", "تحديثات منتظمة ودقة", "Aggiornamenti Regolari e Precisione", "Regelmäßige Updates und Genauigkeit", "Regelmatige Updates en Nauwkeurigheid")}
+            🔄 {t("Regular Updates & Accuracy", "Mises à Jour Régulières et Précision", "Actualizaciones Regulares y Precisión", "Atualizações Regulares e Precisão", "定期更新和准确性", "تحديثات منتظمة ودقة", "Aggiornamenti Regolari e Precisione", "Regelmäßige Updates und Genauigkeit", "Regelmatige Updates en Nauwkeurigheid", "Регулярные обновления и точность", "定期的な更新と精度")}
           </h3>
           <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-            <li>{t("We regularly review and update our content to ensure ongoing accuracy", "Nous révisons et mettons à jour régulièrement notre contenu pour garantir une précision continue", "Revisamos y actualizamos regularmente nuestro contenido para garantizar la precisión continua", "Revisamos e atualizamos regularmente nosso conteúdo para garantir precisão contínua", "我们定期审查和更新内容以确保持续的准确性", "نراجع ونحدث محتوانا بانتظام لضمان الدقة المستمرة", "Rivediamo e aggiorniamo regolarmente i nostri contenuti per garantire una precisione continua", "Wir überprüfen und aktualisieren regelmäßig unsere Inhalte, um kontinuierliche Genauigkeit zu gewährleisten", "We herzien en updaten regelmatig onze content om voortdurende nauwkeurigheid te garanderen")}</li>
-            <li>{t("AI models are continuously improved based on the latest research and user feedback", "Les modèles d'IA sont continuellement améliorés en fonction des dernières recherches et des commentaires des utilisateurs", "Los modelos de IA se mejoran continuamente en función de las últimas investigaciones y comentarios de los usuarios", "Os modelos de IA são continuamente melhorados com base nas últimas pesquisas e feedback dos usuários", "AI 模型根据最新研究和用户反馈不断改进", "يتم تحسين نماذج الذكاء الاصطناعي باستمرار بناءً على أحدث الأبحاث وملاحظات المستخدمين", "I modelli di IA vengono continuamente migliorati in base alle ultime ricerche e al feedback degli utenti", "KI-Modelle werden kontinuierlich basierend auf der neuesten Forschung und Benutzerfeedback verbessert", "AI-modellen worden continu verbeterd op basis van het nieuwste onderzoek en gebruikersfeedback")}</li>
+            <li>{t("We regularly review and update our content to ensure ongoing accuracy", "Nous révisons et mettons à jour régulièrement notre contenu pour garantir une précision continue", "Revisamos y actualizamos regularmente nuestro contenido para garantizar la precisión continua", "Revisamos e atualizamos regularmente nosso conteúdo para garantir precisão contínua", "我们定期审查和更新内容以确保持续的准确性", "نراجع ونحدث محتوانا بانتظام لضمان الدقة المستمرة", "Rivediamo e aggiorniamo regolarmente i nostri contenuti per garantire una precisione continua", "Wir überprüfen und aktualisieren regelmäßig unsere Inhalte, um kontinuierliche Genauigkeit zu gewährleisten", "We herzien en updaten regelmatig onze content om voortdurende nauwkeurigheid te garanderen", "Мы регулярно проверяем и обновляем контент для обеспечения постоянной точности", "継続的な精度を確保するために、コンテンツを定期的に見直し・更新しています")}</li>
+            <li>{t("AI models are continuously improved based on the latest research and user feedback", "Les modèles d'IA sont continuellement améliorés en fonction des dernières recherches et des commentaires des utilisateurs", "Los modelos de IA se mejoran continuamente en función de las últimas investigaciones y comentarios de los usuarios", "Os modelos de IA são continuamente melhorados com base nas últimas pesquisas e feedback dos usuários", "AI 模型根据最新研究和用户反馈不断改进", "يتم تحسين نماذج الذكاء الاصطناعي باستمرار بناءً على أحدث الأبحاث وملاحظات المستخدمين", "I modelli di IA vengono continuamente migliorati in base alle ultime ricerche e al feedback degli utenti", "KI-Modelle werden kontinuierlich basierend auf der neuesten Forschung und Benutzerfeedback verbessert", "AI-modellen worden continu verbeterd op basis van het nieuwste onderzoek en gebruikersfeedback", "Модели ИИ постоянно улучшаются на основе последних исследований и отзывов пользователей", "AIモデルは最新の研究とユーザーフィードバックに基づいて継続的に改善されています")}</li>
           </ul>
         </div>
 
@@ -308,7 +330,7 @@ const About = () => {
 
         {/* What CalorieVision Does */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("What CalorieVision Does", "Ce que fait CalorieVision", "Lo que hace CalorieVision", "O que o CalorieVision faz", "CalorieVision 的功能", "ماذا يفعل CalorieVision", "Cosa fa CalorieVision", "Was CalorieVision macht", "Wat CalorieVision doet")}
+          {t("What CalorieVision Does", "Ce que fait CalorieVision", "Lo que hace CalorieVision", "O que o CalorieVision faz", "CalorieVision 的功能", "ماذا يفعل CalorieVision", "Cosa fa CalorieVision", "Was CalorieVision macht", "Wat CalorieVision doet", "Что делает CalorieVision", "CalorieVisionの機能")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -320,7 +342,9 @@ const About = () => {
             "CalorieVision هو تطبيق ويب مجاني مدعوم بالذكاء الاصطناعي يساعدك على فهم المحتوى الغذائي لوجباتك من خلال تحليل الصور.",
             "CalorieVision è un'applicazione web gratuita basata sull'IA che ti aiuta a comprendere il contenuto nutrizionale dei tuoi pasti attraverso l'analisi delle foto.",
             "CalorieVision ist eine kostenlose, KI-gestützte Webanwendung, die Ihnen hilft, den Nährwertgehalt Ihrer Mahlzeiten durch Fotoanalyse zu verstehen.",
-            "CalorieVision is een gratis, door AI aangedreven webapplicatie die je helpt de voedingswaarde van je maaltijden te begrijpen door middel van foto-analyse."
+            "CalorieVision is een gratis, door AI aangedreven webapplicatie die je helpt de voedingswaarde van je maaltijden te begrijpen door middel van foto-analyse.",
+            "CalorieVision — это бесплатное веб-приложение на базе ИИ, которое помогает вам понять питательный состав ваших блюд с помощью анализа фотографий.",
+            "CalorieVisionは、写真分析を通じて食事の栄養成分を理解するのに役立つ無料のAI搭載ウェブアプリケーションです。",
           )}
         </p>
 
@@ -328,30 +352,30 @@ const About = () => {
           <table className="w-full border-collapse border border-border text-sm">
             <thead>
               <tr className="bg-muted">
-                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Feature", "Fonctionnalité", "Característica", "Recurso", "功能", "الميزة", "Funzionalità", "Funktion", "Functie")}</th>
-                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Description", "Description", "Descripción", "Descrição", "描述", "الوصف", "Descrizione", "Beschreibung", "Beschrijving")}</th>
+                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Feature", "Fonctionnalité", "Característica", "Recurso", "功能", "الميزة", "Funzionalità", "Funktion", "Functie", "Функция", "機能")}</th>
+                <th className="border border-border px-4 py-2 text-left text-foreground">{t("Description", "Description", "Descripción", "Descrição", "描述", "الوصف", "Descrizione", "Beschreibung", "Beschrijving", "Описание", "説明")}</th>
               </tr>
             </thead>
             <tbody className="text-muted-foreground">
               <tr>
-                <td className="border border-border px-4 py-2">📸 <strong>{t("Photo Upload", "Téléchargement de Photo", "Subida de Foto", "Upload de Foto", "照片上传", "تحميل الصورة", "Caricamento Foto", "Foto-Upload", "Foto Uploaden")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Upload or capture a photo of any meal", "Téléchargez ou capturez une photo de n'importe quel repas", "Sube o captura una foto de cualquier comida", "Faça upload ou capture uma foto de qualquer refeição", "上传或拍摄任何餐食的照片", "حمّل أو التقط صورة لأي وجبة", "Carica o scatta una foto di qualsiasi pasto", "Laden Sie ein Foto einer beliebigen Mahlzeit hoch oder machen Sie eines", "Upload of maak een foto van elke maaltijd")}</td>
+                <td className="border border-border px-4 py-2">📸 <strong>{t("Photo Upload", "Téléchargement de Photo", "Subida de Foto", "Upload de Foto", "照片上传", "تحميل الصورة", "Caricamento Foto", "Foto-Upload", "Foto Uploaden", "Загрузка фото", "写真アップロード")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Upload or capture a photo of any meal", "Téléchargez ou capturez une photo de n'importe quel repas", "Sube o captura una foto de cualquier comida", "Faça upload ou capture uma foto de qualquer refeição", "上传或拍摄任何餐食的照片", "حمّل أو التقط صورة لأي وجبة", "Carica o scatta una foto di qualsiasi pasto", "Laden Sie ein Foto einer beliebigen Mahlzeit hoch oder machen Sie eines", "Upload of maak een foto van elke maaltijd", "Загрузите или сделайте фото любого блюда", "任意の食事の写真をアップロードまたは撮影")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">🤖 <strong>{t("AI Analysis", "Analyse IA", "Análisis IA", "Análise IA", "AI 分析", "تحليل الذكاء الاصطناعي", "Analisi IA", "KI-Analyse", "AI Analyse")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Our AI identifies foods and estimates portions", "Notre IA identifie les aliments et estime les portions", "Nuestra IA identifica los alimentos y estima las porciones", "Nossa IA identifica alimentos e estima porções", "我们的 AI 识别食物并估算份量", "يحدد الذكاء الاصطناعي لدينا الأطعمة ويقدر الحصص", "La nostra IA identifica i cibi e stima le porzioni", "Unsere KI identifiziert Lebensmittel und schätzt Portionen", "Onze AI identificeert voedsel en schat porties")}</td>
+                <td className="border border-border px-4 py-2">🤖 <strong>{t("AI Analysis", "Analyse IA", "Análisis IA", "Análise IA", "AI 分析", "تحليل الذكاء الاصطناعي", "Analisi IA", "KI-Analyse", "AI Analyse", "ИИ-анализ", "AI分析")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Our AI identifies foods and estimates portions", "Notre IA identifie les aliments et estime les portions", "Nuestra IA identifica los alimentos y estima las porciones", "Nossa IA identifica alimentos e estima porções", "我们的 AI 识别食物并估算份量", "يحدد الذكاء الاصطناعي لدينا الأطعمة ويقدر الحصص", "La nostra IA identifica i cibi e stima le porzioni", "Unsere KI identifiziert Lebensmittel und schätzt Portionen", "Onze AI identificeert voedsel en schat porties", "Наш ИИ определяет продукты и оценивает порции", "AIが食品を識別し、分量を推定します")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">📊 <strong>{t("Calorie Estimates", "Estimations Caloriques", "Estimaciones de Calorías", "Estimativas de Calorias", "卡路里估算", "تقديرات السعرات الحرارية", "Stime Caloriche", "Kalorienschätzungen", "Calorieën Schattingen")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Get approximate calories for your meal", "Obtenez des calories approximatives pour votre repas", "Obtén calorías aproximadas para tu comida", "Obtenha calorias aproximadas para sua refeição", "获取您餐食的大致卡路里", "احصل على السعرات الحرارية التقريبية لوجبتك", "Ottieni calorie approssimative per il tuo pasto", "Erhalten Sie ungefähre Kalorien für Ihre Mahlzeit", "Krijg geschatte calorieën voor je maaltijd")}</td>
+                <td className="border border-border px-4 py-2">📊 <strong>{t("Calorie Estimates", "Estimations Caloriques", "Estimaciones de Calorías", "Estimativas de Calorias", "卡路里估算", "تقديرات السعرات الحرارية", "Stime Caloriche", "Kalorienschätzungen", "Calorieën Schattingen", "Оценка калорий", "カロリー推定")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Get approximate calories for your meal", "Obtenez des calories approximatives pour votre repas", "Obtén calorías aproximadas para tu comida", "Obtenha calorias aproximadas para sua refeição", "获取您餐食的大致卡路里", "احصل على السعرات الحرارية التقريبية لوجبتك", "Ottieni calorie approssimative per il tuo pasto", "Erhalten Sie ungefähre Kalorien für Ihre Mahlzeit", "Krijg geschatte calorieën voor je maaltijd", "Получите приблизительное количество калорий для вашего блюда", "食事のおおよそのカロリーを取得")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">🌍 <strong>{t("Multi-Language", "Multi-Langues", "Multi-Idioma", "Multi-Idioma", "多语言", "متعدد اللغات", "Multi-Lingua", "Mehrsprachig", "Meertalig")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("Available in multiple languages", "Disponible en plusieurs langues", "Disponible en varios idiomas", "Disponível em vários idiomas", "支持多种语言", "متاح بعدة لغات", "Disponibile in più lingue", "In mehreren Sprachen verfügbar", "Beschikbaar in meerdere talen")}</td>
+                <td className="border border-border px-4 py-2">🌍 <strong>{t("Multi-Language", "Multi-Langues", "Multi-Idioma", "Multi-Idioma", "多语言", "متعدد اللغات", "Multi-Lingua", "Mehrsprachig", "Meertalig", "Мультиязычность", "多言語対応")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("Available in multiple languages", "Disponible en plusieurs langues", "Disponible en varios idiomas", "Disponível em vários idiomas", "支持多种语言", "متاح بعدة لغات", "Disponibile in più lingue", "In mehreren Sprachen verfügbar", "Beschikbaar in meerdere talen", "Доступно на нескольких языках", "複数の言語で利用可能")}</td>
               </tr>
               <tr>
-                <td className="border border-border px-4 py-2">🔒 <strong>{t("Privacy-First", "Confidentialité d'abord", "Privacidad Primero", "Privacidade em Primeiro", "隐私优先", "الخصوصية أولاً", "Privacy al Primo Posto", "Datenschutz zuerst", "Privacy Eerst")}</strong></td>
-                <td className="border border-border px-4 py-2">{t("No account required, photos not stored", "Aucun compte requis, photos non stockées", "No se requiere cuenta, las fotos no se almacenan", "Sem necessidade de conta, fotos não armazenadas", "无需账户，照片不会被存储", "لا حاجة لحساب، الصور لا تُخزّن", "Nessun account richiesto, foto non memorizzate", "Kein Konto erforderlich, Fotos werden nicht gespeichert", "Geen account nodig, foto's worden niet opgeslagen")}</td>
+                <td className="border border-border px-4 py-2">🔒 <strong>{t("Privacy-First", "Confidentialité d'abord", "Privacidad Primero", "Privacidade em Primeiro", "隐私优先", "الخصوصية أولاً", "Privacy al Primo Posto", "Datenschutz zuerst", "Privacy Eerst", "Приоритет конфиденциальности", "プライバシー優先")}</strong></td>
+                <td className="border border-border px-4 py-2">{t("No account required, photos not stored", "Aucun compte requis, photos non stockées", "No se requiere cuenta, las fotos no se almacenan", "Sem necessidade de conta, fotos não armazenadas", "无需账户，照片不会被存储", "لا حاجة لحساب، الصور لا تُخزّن", "Nessun account richiesto, foto non memorizzate", "Kein Konto erforderlich, Fotos werden nicht gespeichert", "Geen account nodig, foto's worden niet opgeslagen", "Аккаунт не требуется, фото не сохраняются", "アカウント不要、写真は保存されません")}</td>
               </tr>
             </tbody>
           </table>
@@ -361,7 +385,7 @@ const About = () => {
 
         {/* Privacy & Data Usage */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Privacy & Data Usage", "Confidentialité et Utilisation des Données", "Privacidad y Uso de Datos", "Privacidade e Uso de Dados", "隐私和数据使用", "الخصوصية واستخدام البيانات", "Privacy e Utilizzo dei Dati", "Datenschutz und Datennutzung", "Privacy en Datagebruik")}
+          {t("Privacy & Data Usage", "Confidentialité et Utilisation des Données", "Privacidad y Uso de Datos", "Privacidade e Uso de Dados", "隐私和数据使用", "الخصوصية واستخدام البيانات", "Privacy e Utilizzo dei Dati", "Datenschutz und Datennutzung", "Privacy en Datagebruik", "Конфиденциальность и использование данных", "プライバシーとデータ利用")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -373,7 +397,9 @@ const About = () => {
             "خصوصية المستخدم هي أولوية أساسية في CalorieVision. تتم معالجة صورك في الوقت الفعلي ولا يتم تخزينها بشكل دائم على خوادمنا.",
             "La privacy degli utenti è una priorità fondamentale in CalorieVision. Le tue foto vengono elaborate in tempo reale e non vengono memorizzate permanentemente sui nostri server.",
             "Die Privatsphäre der Benutzer hat bei CalorieVision oberste Priorität. Ihre Fotos werden in Echtzeit verarbeitet und nicht dauerhaft auf unseren Servern gespeichert.",
-            "Privacy van gebruikers is een kernprioriteit bij CalorieVision. Je foto's worden in realtime verwerkt en worden niet permanent opgeslagen op onze servers."
+            "Privacy van gebruikers is een kernprioriteit bij CalorieVision. Je foto's worden in realtime verwerkt en worden niet permanent opgeslagen op onze servers.",
+            "Конфиденциальность пользователей является основным приоритетом CalorieVision. Ваши фотографии обрабатываются в режиме реального времени и не хранятся постоянно на наших серверах.",
+            "ユーザーのプライバシーはCalorieVisionの中核的な優先事項です。あなたの写真はリアルタイムで処理され、当社のサーバーに永続的に保存されることはありません。",
           )}
         </p>
         <p className="text-muted-foreground mb-4">
@@ -386,7 +412,9 @@ const About = () => {
             "لمزيد من التفاصيل، يرجى الرجوع إلى سياسة الخصوصية وسياسة ملفات تعريف الارتباط الخاصة بنا.",
             "Per maggiori dettagli, consulta la nostra Informativa sulla Privacy e la Politica dei Cookie.",
             "Für vollständige Details lesen Sie bitte unsere Datenschutzrichtlinie und Cookie-Richtlinie.",
-            "Voor volledige details, raadpleeg ons Privacybeleid en Cookiebeleid."
+            "Voor volledige details, raadpleeg ons Privacybeleid en Cookiebeleid.",
+            "Для получения полной информации ознакомьтесь с нашей Политикой конфиденциальности и Политикой использования файлов cookie.",
+            "詳細については、プライバシーポリシーとCookieポリシーをご参照ください。",
           )}
         </p>
 
@@ -394,7 +422,7 @@ const About = () => {
 
         {/* Transparency & Limitations */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Transparency & Limitations", "Transparence et Limitations", "Transparencia y Limitaciones", "Transparência e Limitações", "透明度和局限性", "الشفافية والقيود", "Trasparenza e Limitazioni", "Transparenz und Einschränkungen", "Transparantie en Beperkingen")}
+          {t("Transparency & Limitations", "Transparence et Limitations", "Transparencia y Limitaciones", "Transparência e Limitações", "透明度和局限性", "الشفافية والقيود", "Trasparenza e Limitazioni", "Transparenz und Einschränkungen", "Transparantie en Beperkingen", "Прозрачность и ограничения", "透明性と制限")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -406,33 +434,35 @@ const About = () => {
             "نؤمن بالشفافية التامة حول ما هو CalorieVision — وما ليس كذلك.",
             "Crediamo nell'essere completamente onesti su cosa è CalorieVision — e cosa non è.",
             "Wir glauben daran, vollkommen ehrlich darüber zu sein, was CalorieVision ist — und was es nicht ist.",
-            "We geloven in volledige eerlijkheid over wat CalorieVision is — en wat het niet is."
+            "We geloven in volledige eerlijkheid over wat CalorieVision is — en wat het niet is.",
+            "Мы верим в полную честность относительно того, чем является CalorieVision — и чем он не является.",
+            "CalorieVisionが何であるか、そして何でないかについて完全に正直であることを信条としています。",
           )}
         </p>
 
         <h3 className="text-xl font-semibold mt-6 mb-3 text-foreground">
-          {t("CalorieVision IS:", "CalorieVision EST :", "CalorieVision ES:", "CalorieVision É:", "CalorieVision 是：", "CalorieVision هو:", "CalorieVision È:", "CalorieVision IST:", "CalorieVision IS:")}
+          {t("CalorieVision IS:", "CalorieVision EST :", "CalorieVision ES:", "CalorieVision É:", "CalorieVision 是：", "CalorieVision هو:", "CalorieVision È:", "CalorieVision IST:", "CalorieVision IS:", "CalorieVision — ЭТО:", "CalorieVisionは：")}
         </h3>
         <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-1">
-          <li>✅ {t("An educational tool for nutritional awareness", "Un outil éducatif pour la sensibilisation nutritionnelle", "Una herramienta educativa para la conciencia nutricional", "Uma ferramenta educacional para conscientização nutricional", "一个用于营养意识的教育工具", "أداة تعليمية للتوعية الغذائية", "Uno strumento educativo per la consapevolezza nutrizionale", "Ein Bildungswerkzeug für Ernährungsbewusstsein", "Een educatief hulpmiddel voor voedingsbewustzijn")}</li>
-          <li>✅ {t("A quick way to get approximate calorie estimates", "Un moyen rapide d'obtenir des estimations caloriques approximatives", "Una forma rápida de obtener estimaciones aproximadas de calorías", "Uma maneira rápida de obter estimativas aproximadas de calorias", "一种快速获取大致卡路里估算的方法", "طريقة سريعة للحصول على تقديرات السعرات الحرارية التقريبية", "Un modo rapido per ottenere stime caloriche approssimative", "Eine schnelle Möglichkeit, ungefähre Kalorienschätzungen zu erhalten", "Een snelle manier om geschatte calorieën te krijgen")}</li>
-          <li>✅ {t("A free resource for anyone curious about nutrition", "Une ressource gratuite pour quiconque est curieux de la nutrition", "Un recurso gratuito para cualquiera curioso sobre nutrición", "Um recurso gratuito para qualquer pessoa curiosa sobre nutrição", "一个供任何对营养感兴趣的人使用的免费资源", "مورد مجاني لأي شخص فضولي حول التغذية", "Una risorsa gratuita per chiunque sia curioso della nutrizione", "Eine kostenlose Ressource für alle, die an Ernährung interessiert sind", "Een gratis bron voor iedereen die nieuwsgierig is naar voeding")}</li>
+          <li>✅ {t("An educational tool for nutritional awareness", "Un outil éducatif pour la sensibilisation nutritionnelle", "Una herramienta educativa para la conciencia nutricional", "Uma ferramenta educacional para conscientização nutricional", "一个用于营养意识的教育工具", "أداة تعليمية للتوعية الغذائية", "Uno strumento educativo per la consapevolezza nutrizionale", "Ein Bildungswerkzeug für Ernährungsbewusstsein", "Een educatief hulpmiddel voor voedingsbewustzijn", "Образовательный инструмент для осведомлённости о питании", "栄養意識のための教育ツール")}</li>
+          <li>✅ {t("A quick way to get approximate calorie estimates", "Un moyen rapide d'obtenir des estimations caloriques approximatives", "Una forma rápida de obtener estimaciones aproximadas de calorías", "Uma maneira rápida de obter estimativas aproximadas de calorias", "一种快速获取大致卡路里估算的方法", "طريقة سريعة للحصول على تقديرات السعرات الحرارية التقريبية", "Un modo rapido per ottenere stime caloriche approssimative", "Eine schnelle Möglichkeit, ungefähre Kalorienschätzungen zu erhalten", "Een snelle manier om geschatte calorieën te krijgen", "Быстрый способ получить приблизительную оценку калорий", "おおよそのカロリー推定を素早く取得する方法")}</li>
+          <li>✅ {t("A free resource for anyone curious about nutrition", "Une ressource gratuite pour quiconque est curieux de la nutrition", "Un recurso gratuito para cualquiera curioso sobre nutrición", "Um recurso gratuito para qualquer pessoa curiosa sobre nutrição", "一个供任何对营养感兴趣的人使用的免费资源", "مورد مجاني لأي شخص فضولي حول التغذية", "Una risorsa gratuita per chiunque sia curioso della nutrizione", "Eine kostenlose Ressource für alle, die an Ernährung interessiert sind", "Een gratis bron voor iedereen die nieuwsgierig is naar voeding", "Бесплатный ресурс для всех, кто интересуется питанием", "栄養に興味がある方のための無料リソース")}</li>
         </ul>
 
         <h3 className="text-xl font-semibold mt-6 mb-3 text-foreground">
-          {t("CalorieVision is NOT:", "CalorieVision N'EST PAS :", "CalorieVision NO ES:", "CalorieVision NÃO É:", "CalorieVision 不是：", "CalorieVision ليس:", "CalorieVision NON È:", "CalorieVision IST NICHT:", "CalorieVision IS NIET:")}
+          {t("CalorieVision is NOT:", "CalorieVision N'EST PAS :", "CalorieVision NO ES:", "CalorieVision NÃO É:", "CalorieVision 不是：", "CalorieVision ليس:", "CalorieVision NON È:", "CalorieVision IST NICHT:", "CalorieVision IS NIET:", "CalorieVision — НЕ:", "CalorieVisionではないもの：")}
         </h3>
         <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-1">
-          <li>❌ {t("A medical service or device", "Un service ou dispositif médical", "Un servicio o dispositivo médico", "Um serviço ou dispositivo médico", "医疗服务或设备", "خدمة أو جهاز طبي", "Un servizio o dispositivo medico", "Ein medizinischer Dienst oder Gerät", "Een medische dienst of apparaat")}</li>
-          <li>❌ {t("A substitute for professional nutritional advice", "Un substitut aux conseils nutritionnels professionnels", "Un sustituto del asesoramiento nutricional profesional", "Um substituto para aconselhamento nutricional profissional", "专业营养建议的替代品", "بديل عن النصائح الغذائية المهنية", "Un sostituto del consiglio nutrizionale professionale", "Ein Ersatz für professionelle Ernährungsberatung", "Een vervanging voor professioneel voedingsadvies")}</li>
-          <li>❌ {t("100% accurate (all estimates are approximations)", "100% précis (toutes les estimations sont des approximations)", "100% preciso (todas las estimaciones son aproximaciones)", "100% preciso (todas as estimativas são aproximações)", "100% 准确（所有估算都是近似值）", "دقيق 100% (جميع التقديرات تقريبية)", "Preciso al 100% (tutte le stime sono approssimazioni)", "100% genau (alle Schätzungen sind Näherungen)", "100% nauwkeurig (alle schattingen zijn benaderingen)")}</li>
+          <li>❌ {t("A medical service or device", "Un service ou dispositif médical", "Un servicio o dispositivo médico", "Um serviço ou dispositivo médico", "医疗服务或设备", "خدمة أو جهاز طبي", "Un servizio o dispositivo medico", "Ein medizinischer Dienst oder Gerät", "Een medische dienst of apparaat", "Медицинская служба или устройство", "医療サービスや機器")}</li>
+          <li>❌ {t("A substitute for professional nutritional advice", "Un substitut aux conseils nutritionnels professionnels", "Un sustituto del asesoramiento nutricional profesional", "Um substituto para aconselhamento nutricional profissional", "专业营养建议的替代品", "بديل عن النصائح الغذائية المهنية", "Un sostituto del consiglio nutrizionale professionale", "Ein Ersatz für professionelle Ernährungsberatung", "Een vervanging voor professioneel voedingsadvies", "Замена профессиональной консультации по питанию", "専門的な栄養アドバイスの代替")}</li>
+          <li>❌ {t("100% accurate (all estimates are approximations)", "100% précis (toutes les estimations sont des approximations)", "100% preciso (todas las estimaciones son aproximaciones)", "100% preciso (todas as estimativas são aproximações)", "100% 准确（所有估算都是近似值）", "دقيق 100% (جميع التقديرات تقريبية)", "Preciso al 100% (tutte le stime sono approssimazioni)", "100% genau (alle Schätzungen sind Näherungen)", "100% nauwkeurig (alle schattingen zijn benaderingen)", "100% точный (все оценки являются приблизительными)", "100%正確（すべての推定は近似値です）")}</li>
         </ul>
 
         <hr className="my-8 border-border" />
 
         {/* Contact Us */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Contact Us", "Contactez-Nous", "Contáctenos", "Contate-Nos", "联系我们", "اتصل بنا", "Contattaci", "Kontaktieren Sie Uns", "Neem Contact Op")}
+          {t("Contact Us", "Contactez-Nous", "Contáctenos", "Contate-Nos", "联系我们", "اتصل بنا", "Contattaci", "Kontaktieren Sie Uns", "Neem Contact Op", "Свяжитесь с нами", "お問い合わせ")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -444,7 +474,9 @@ const About = () => {
             "نحب أن نسمع منك! سواء كانت لديك أسئلة أو ملاحظات أو اقتراحات، لا تتردد في التواصل معنا.",
             "Ci piacerebbe sentirti! Che tu abbia domande, feedback o suggerimenti, non esitare a contattarci.",
             "Wir würden gerne von Ihnen hören! Ob Sie Fragen, Feedback oder Vorschläge haben, zögern Sie nicht, uns zu kontaktieren.",
-            "We horen graag van je! Of je nu vragen, feedback of suggesties hebt, neem gerust contact met ons op."
+            "We horen graag van je! Of je nu vragen, feedback of suggesties hebt, neem gerust contact met ons op.",
+            "Мы будем рады услышать вас! Если у вас есть вопросы, отзывы или предложения, не стесняйтесь обращаться.",
+            "ご意見をお待ちしております！質問、フィードバック、ご提案があれば、お気軽にご連絡ください。",
           )}
         </p>
         <ul className="list-disc pl-6 mb-4 text-muted-foreground space-y-1">
@@ -459,7 +491,9 @@ const About = () => {
                 "البريد الإلكتروني:",
                 "Email:",
                 "E-Mail:",
-                "E-mail:"
+                "E-mail:",
+                "Электронная почта:",
+                "メール：",
               )}
             </strong>{" "}
             <span className="select-all">support@calorievision.online</span>
@@ -496,7 +530,9 @@ const About = () => {
                 "الموقع:",
                 "Sito Web:",
                 "Website:",
-                "Website:"
+                "Website:",
+                "Веб-сайт:",
+                "ウェブサイト：",
               )}
             </strong>{" "}
             <a
@@ -519,7 +555,9 @@ const About = () => {
                 "صفحة الاتصال:",
                 "Pagina Contatti:",
                 "Kontaktseite:",
-                "Contactpagina:"
+                "Contactpagina:",
+                "Страница контактов:",
+                "お問い合わせページ：",
               )}
             </strong>{" "}
             <LocalizedNavLink to="/contact" className="text-primary hover:underline">
@@ -532,7 +570,7 @@ const About = () => {
 
         {/* Join Our Journey */}
         <h2 className="text-2xl font-semibold mt-10 mb-4 text-foreground">
-          {t("Join Our Journey", "Rejoignez Notre Aventure", "Únete a Nuestro Viaje", "Junte-se à Nossa Jornada", "加入我们的旅程", "انضم إلى رحلتنا", "Unisciti al Nostro Viaggio", "Begleiten Sie Unsere Reise", "Doe Mee aan Onze Reis")}
+          {t("Join Our Journey", "Rejoignez Notre Aventure", "Únete a Nuestro Viaje", "Junte-se à Nossa Jornada", "加入我们的旅程", "انضم إلى رحلتنا", "Unisciti al Nostro Viaggio", "Begleiten Sie Unsere Reise", "Doe Mee aan Onze Reis", "Присоединяйтесь к нашему пути", "私たちの旅に参加しましょう")}
         </h2>
         <p className="text-muted-foreground mb-4">
           {t(
@@ -544,7 +582,9 @@ const About = () => {
             "يتطور CalorieVision باستمرار. نحن ملتزمون بتحسين الذكاء الاصطناعي لدينا، وإضافة ميزات جديدة، وجعل الوعي الغذائي أكثر سهولة.",
             "CalorieVision è in continua evoluzione. Ci impegniamo a migliorare la nostra IA, aggiungere nuove funzionalità e rendere la consapevolezza nutrizionale ancora più accessibile.",
             "CalorieVision entwickelt sich ständig weiter. Wir sind bestrebt, unsere KI zu verbessern, neue Funktionen hinzuzufügen und das Ernährungsbewusstsein noch zugänglicher zu machen.",
-            "CalorieVision evolueert voortdurend. We zijn toegewijd aan het verbeteren van onze AI, het toevoegen van nieuwe functies en het nog toegankelijker maken van voedingsbewustzijn."
+            "CalorieVision evolueert voortdurend. We zijn toegewijd aan het verbeteren van onze AI, het toevoegen van nieuwe functies en het nog toegankelijker maken van voedingsbewustzijn.",
+            "CalorieVision постоянно развивается. Мы стремимся улучшать наш ИИ, добавлять новые функции и делать осведомлённость о питании ещё более доступной.",
+            "CalorieVisionは常に進化しています。AIの改善、新機能の追加、栄養意識のさらなるアクセス向上に取り組んでいます。",
           )}
         </p>
         <p className="text-muted-foreground mb-4">
@@ -558,7 +598,9 @@ const About = () => {
               "شكراً لاختيارك CalorieVision. نحن فخورون بأن نكون جزءاً من رحلتك نحو وعي غذائي أفضل.",
               "Grazie per aver scelto CalorieVision. Siamo onorati di far parte del tuo percorso verso una migliore consapevolezza nutrizionale.",
               "Vielen Dank, dass Sie sich für CalorieVision entschieden haben. Wir fühlen uns geehrt, Teil Ihrer Reise zu einem besseren Ernährungsbewusstsein zu sein.",
-              "Bedankt voor het kiezen van CalorieVision. We zijn vereerd om deel uit te maken van je reis naar beter voedingsbewustzijn."
+              "Bedankt voor het kiezen van CalorieVision. We zijn vereerd om deel uit te maken van je reis naar beter voedingsbewustzijn.",
+              "Спасибо, что выбрали CalorieVision. Мы рады быть частью вашего пути к лучшей осведомлённости о питании.",
+              "CalorieVisionをお選びいただきありがとうございます。栄養への意識を高める旅の一部となれることを光栄に思います。",
             )}
           </strong>
         </p>
@@ -566,7 +608,7 @@ const About = () => {
         <hr className="my-8 border-border" />
 
         <p className="text-sm text-muted-foreground italic mb-4">
-          {t("Last updated: January 2026", "Dernière mise à jour : janvier 2026", "Última actualización: enero 2026", "Última atualização: janeiro de 2026", "最后更新：2026年1月", "آخر تحديث: يناير 2026", "Ultimo aggiornamento: gennaio 2026", "Zuletzt aktualisiert: Januar 2026", "Laatst bijgewerkt: januari 2026")}
+          {t("Last updated: January 2026", "Dernière mise à jour : janvier 2026", "Última actualización: enero 2026", "Última atualização: janeiro de 2026", "最后更新：2026年1月", "آخر تحديث: يناير 2026", "Ultimo aggiornamento: gennaio 2026", "Zuletzt aktualisiert: Januar 2026", "Laatst bijgewerkt: januari 2026", "Последнее обновление: январь 2026", "最終更新：2026年1月")}
         </p>
 
         <hr className="my-8 border-border" />
@@ -581,7 +623,9 @@ const About = () => {
             "CalorieVision — افهم وجباتك. ببساطة.",
             "CalorieVision — Comprendi i tuoi pasti. Semplicemente.",
             "CalorieVision — Verstehen Sie Ihre Mahlzeiten. Einfach.",
-            "CalorieVision — Begrijp je maaltijden. Simpelweg."
+            "CalorieVision — Begrijp je maaltijden. Simpelweg.",
+            "CalorieVision — Понимайте свою еду. Просто.",
+            "CalorieVision — 食事をシンプルに理解しましょう。",
           )}
         </p>
       </div>

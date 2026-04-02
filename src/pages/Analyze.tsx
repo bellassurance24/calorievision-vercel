@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Loader2, Lightbulb, UtensilsCrossed, X, AlertTriangle } from "lucide-react";
+import { Lightbulb, UtensilsCrossed, X, AlertTriangle } from "lucide-react";
+import { MealScannerLottie } from "@/components/MealScannerLottie";
 import { LocalizedNavLink } from "@/components/LocalizedNavLink";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,14 +9,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { usePageMetadata } from "@/hooks/usePageMetadata";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { translateFoodName, isEnglishFoodName } from "@/utils/foodTranslations";
 import { supabase } from "@/integrations/supabase/client";
 import { trackMealAnalysis } from "@/hooks/useAnalytics";
 import { getDeviceInfo } from "@/hooks/useDeviceInfo";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription, incrementGuestScans } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
 import { LimitReachedModal } from "@/components/LimitReachedModal";
 
 interface FoodItem {
@@ -41,11 +42,26 @@ interface MealAnalysis {
   total: MealTotal;
 }
 
+// ── Guest scan counter (localStorage, no auth required) ─────────────────────
+const GUEST_SCAN_KEY = "cv_guest_scans";
+function getGuestScansToday(): number {
+  try {
+    const raw = localStorage.getItem(GUEST_SCAN_KEY);
+    if (!raw) return 0;
+    const { date, count } = JSON.parse(raw) as { date: string; count: number };
+    const today = new Date().toISOString().slice(0, 10);
+    return date === today ? (count ?? 0) : 0;
+  } catch {
+    return 0;
+  }
+}
+
 const Analyze = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
   const { user } = useAuth();
-  const { isAtLimit, plan, dailyScans, monthlyScans, dailyLimit, monthlyLimit, refresh } = useSubscription();
+  const { isAtLimit, plan, dailyScans, monthlyScans, dailyLimit, monthlyLimit, incrementLocalCount, refresh } = useSubscription();
+  const guestAtLimit = !user && getGuestScansToday() >= 2;
 
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -71,6 +87,7 @@ const Analyze = () => {
   };
 
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const shouldCapture = searchParams.get("capture") === "1";
@@ -466,6 +483,12 @@ const Analyze = () => {
   };
 
   const handleAnalyze = async () => {
+    // ── Auth guard — must be signed in to scan ─────────────────────────────
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
     // ── Limit guard ────────────────────────────────────────────────────────
     if (isAtLimit) {
       setShowLimitModal(true);
@@ -587,14 +610,11 @@ const Analyze = () => {
       setAnalysis(analysisResult);
 
       // ── Log usage scan ────────────────────────────────────────────────────
-      if (user) {
-        await supabase.from("usage_logs").insert({ user_id: user.id }).then(
-          ({ error }) => { if (error) console.warn("[Analyze] usage_logs insert:", error.message); }
-        );
-      } else {
-        incrementGuestScans();
-      }
-      refresh(); // keep limit counter in sync
+      await supabase.from("usage_logs").insert({ user_id: user.id }).then(
+        ({ error }) => { if (error) console.warn("[Analyze] usage_logs insert:", error.message); }
+      );
+      incrementLocalCount(); // synchronous — isAtLimit updates before next click
+      refresh();             // async DB reconciliation (catches other-device scans)
 
       // Track successful meal analysis
       trackMealAnalysis(true);
@@ -714,13 +734,15 @@ const Analyze = () => {
                 variant="hero"
                 size="lg"
                 onClick={imageFile ? handleAnalyze : () => fileInputRef.current?.click()}
-                disabled={isAnalyzing || (imageFile && !acceptedDisclaimer)}
+                disabled={isAnalyzing || guestAtLimit || (imageFile && !acceptedDisclaimer)}
               >
                 {isAnalyzing ? (
-                  <span className="inline-flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span className="inline-flex items-center justify-center gap-1.5">
+                    <MealScannerLottie size={26} />
                     {t("Analyzing meal...", "Analyse du repas...", "Analizando la comida...", "A analisar refeição...", "正在分析餐食...", "جاري تحليل الوجبة...")}
                   </span>
+                ) : guestAtLimit ? (
+                  t("Limit Reached — Sign In", "Limite atteinte — Connexion", "Límite alcanzado — Iniciar sesión", "Limite atingido — Entrar", "已达限制 — 请登录", "تم الوصول إلى الحد — تسجيل الدخول")
                 ) : imageFile ? (
                   copy.analyzePhotoButton
                 ) : (
@@ -807,9 +829,12 @@ const Analyze = () => {
               {!hasAnalysis && !isAnalyzing && <p>{copy.emptyState}</p>}
 
               {isAnalyzing && (
-                <p className="inline-flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> {copy.generating}
-                </p>
+                <div className="flex flex-col items-center justify-center py-6 gap-3">
+                  <MealScannerLottie size={160} />
+                  <p className="text-sm text-muted-foreground animate-pulse text-center">
+                    {copy.generating}
+                  </p>
+                </div>
               )}
 
               {hasAnalysis && analysis && (

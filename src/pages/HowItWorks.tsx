@@ -34,6 +34,8 @@ const HowItWorks = () => {
       "Come funziona CalorieVision – Analisi dei pasti con IA passo dopo passo",
       "So funktioniert CalorieVision – Schritt-für-Schritt KI-Mahlzeitanalyse",
       "Hoe CalorieVision werkt – Stapsgewijze AI-maaltijdanalyse",
+      "Как работает CalorieVision — пошаговый ИИ-анализ блюд",
+      "CalorieVisionの仕組み — AIによるステップ別食事分析",
     ),
     description: t(
       "Learn how CalorieVision uses AI vision, portion estimates, and nutrition references to give educational calorie insights.",
@@ -45,6 +47,8 @@ const HowItWorks = () => {
       "Scopri come CalorieVision utilizza la visione IA, le stime delle porzioni e i riferimenti nutrizionali per fornire informazioni educative sulle calorie.",
       "Erfahren Sie, wie CalorieVision KI-Vision, Portionsschätzungen und Ernährungsreferenzen nutzt, um lehrreiche Kalorieneinblicke zu geben.",
       "Ontdek hoe CalorieVision AI-visie, portie-schattingen en voedingsreferenties gebruikt om educatieve calorie-inzichten te geven.",
+      "Узнайте, как CalorieVision использует ИИ-зрение, оценку порций и справочные данные питания для образовательного анализа калорий.",
+      "CalorieVisionがAIビジョン、分量推定、栄養参照データを使って教育的なカロリー分析を提供する仕組みを学びましょう。",
     ),
     path: "/how-it-works",
   });
@@ -62,6 +66,8 @@ const HowItWorks = () => {
       "Come analizzare il tuo pasto con CalorieVision",
       "Wie Sie Ihre Mahlzeit mit CalorieVision analysieren",
       "Hoe je je maaltijd analyseert met CalorieVision",
+      "Как анализировать своё блюдо с CalorieVision",
+      "CalorieVisionで食事を分析する方法",
     ),
     "description": t(
       "Learn how to use CalorieVision to get AI-powered calorie and nutrition estimates from a photo of your meal.",
@@ -73,6 +79,8 @@ const HowItWorks = () => {
       "Scopri come usare CalorieVision per ottenere stime di calorie e nutrizione basate sull'IA da una foto del tuo pasto.",
       "Erfahren Sie, wie Sie CalorieVision verwenden, um KI-gestützte Kalorien- und Nährwertschätzungen aus einem Foto Ihrer Mahlzeit zu erhalten.",
       "Leer hoe je CalorieVision gebruikt om AI-gestuurde calorie- en voedingsschattingen te krijgen van een foto van je maaltijd.",
+      "Узнайте, как использовать CalorieVision для получения ИИ-оценок калорий и питательной ценности по фото вашего блюда.",
+      "CalorieVisionを使って食事の写真からAIによるカロリーと栄養の推定を取得する方法を学びましょう。",
     ),
     "step": [
       {
@@ -124,6 +132,8 @@ const HowItWorks = () => {
           "Dietro le quinte",
           "Hinter den Kulissen",
           "Achter de schermen",
+          "За кулисами",
+          "舞台裏",
         )}
       </p>
       <h1 className="mb-3 text-3xl font-semibold md:text-4xl">
@@ -137,6 +147,8 @@ const HowItWorks = () => {
           "Come funziona CalorieVision",
           "So funktioniert CalorieVision",
           "Hoe CalorieVision werkt",
+          "Как работает CalorieVision",
+          "CalorieVisionの仕組み",
         )}
       </h1>
       <p className="mb-6 max-w-2xl text-sm text-muted-foreground md:text-base">
@@ -150,6 +162,8 @@ const HowItWorks = () => {
           "CalorieVision utilizza un'intelligenza artificiale avanzata per aiutarti a comprendere i tuoi pasti in modo semplice e accessibile. Ecco come avviene l'analisi del tuo pasto dietro le quinte, spiegato chiaramente passo dopo passo.",
           "CalorieVision verwendet fortschrittliche künstliche Intelligenz, um Ihnen zu helfen, Ihre Mahlzeiten auf einfache und zugängliche Weise zu verstehen. So könnte Ihre Mahlzeitanalyse hinter den Kulissen ablaufen – klar erklärt, Schritt für Schritt.",
           "CalorieVision gebruikt geavanceerde kunstmatige intelligentie om je te helpen je maaltijden op een eenvoudige, toegankelijke manier te begrijpen. Hier is hoe je maaltijdanalyse achter de schermen zou kunnen verlopen – duidelijk uitgelegd, stap voor stap.",
+          "CalorieVision использует передовой искусственный интеллект, чтобы помочь вам лучше понимать свои блюда простым и доступным способом. Вот как выглядит процесс анализа вашего блюда за кулисами — чётко объяснено шаг за шагом.",
+          "CalorieVisionは高度なAIを使って、シンプルでわかりやすい方法で食事を理解できるようサポートします。食事分析が舞台裏でどのように行われるかをステップごとにわかりやすく説明します。",
         )}
       </p>
 
@@ -171,6 +185,8 @@ const HowItWorks = () => {
                   "Passo 1 – La foto del tuo pasto",
                   "Schritt 1 – Ihr Mahlzeitenfoto",
                   "Stap 1 – Je maaltijdfoto",
+                  "Шаг 1 – Ваша фотография блюда",
+                  "ステップ1 – 食事の写真",
                 )}
               </CardTitle>
               <CardDescription>
@@ -184,6 +200,8 @@ const HowItWorks = () => {
                   "Carichi una foto nitida del tuo pasto. Più l'immagine è chiara, migliori saranno i risultati. Le foto vengono elaborate solo per comprendere il contenuto e non vengono memorizzate.",
                   "Sie laden ein klares Foto Ihrer Mahlzeit hoch. Je klarer das Bild, desto besser die Ergebnisse. Fotos werden nur verarbeitet, um den Inhalt zu verstehen – sie werden nicht gespeichert.",
                   "Je uploadt een duidelijke foto van je maaltijd. Hoe helderder het beeld, hoe beter de resultaten. Foto's worden alleen verwerkt om de inhoud te begrijpen – ze worden niet opgeslagen.",
+                  "Вы загружаете чёткую фотографию своего блюда. Чем качественнее снимок, тем точнее результат. Фото обрабатываются только для анализа содержимого тарелки — и не сохраняются.",
+                  "食事の鮮明な写真をアップロードします。画像が鮮明なほど、より正確な結果が得られます。写真は内容物の認識にのみ使用され、保存されません。",
                 )}
               </CardDescription>
             </div>
@@ -203,6 +221,8 @@ const HowItWorks = () => {
                 "Passo 2 – Analisi visiva con IA",
                 "Schritt 2 – KI-Bildanalyse",
                 "Stap 2 – AI-beeldanalyse",
+                "Шаг 2 – ИИ-анализ изображения",
+                "ステップ2 – AIによる画像分析",
               )}
             </CardTitle>
             <CardDescription>
@@ -216,6 +236,8 @@ const HowItWorks = () => {
                 "L'immagine viene inviata in modo sicuro a un modello di visione IA che rileva gli alimenti nella foto analizzando forme, texture e colori.",
                 "Das Bild wird sicher an ein KI-Bilderkennungsmodell gesendet, das Lebensmittel im Bild durch Analyse von Formen, Texturen und Farben erkennt.",
                 "De afbeelding wordt veilig verzonden naar een AI-visiemodel dat voedingsmiddelen in de foto detecteert door vormen, texturen en kleuren te analyseren.",
+                "Изображение безопасно передаётся в модель компьютерного зрения на базе ИИ, которая распознаёт продукты на фотографии, анализируя формы, текстуры и цвета.",
+                "画像はAIビジョンモデルに安全に送信され、形状・質感・色を分析して写真内の食品を識別します。",
               )}
             </CardDescription>
           </CardHeader>
@@ -223,17 +245,17 @@ const HowItWorks = () => {
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                {t("Chicken", "Poulet", "Pollo", "Frango", "鸡肉", "دجاج", "Pollo", "Hähnchen", "Kip")}
+                {t("Chicken", "Poulet", "Pollo", "Frango", "鸡肉", "دجاج", "Pollo", "Hähnchen", "Kip", "Курица", "鶏肉")}
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                {t("Rice", "Riz", "Arroz", "Arroz", "米饭", "أرز", "Riso", "Reis", "Rijst")}
+                {t("Rice", "Riz", "Arroz", "Arroz", "米饭", "أرز", "Riso", "Reis", "Rijst", "Рис", "米飯")}
               </li>
             </ul>
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                {t("Vegetables", "Légumes", "Verduras", "Legumes", "蔬菜", "خضار", "Verdure", "Gemüse", "Groenten")}
+                {t("Vegetables", "Légumes", "Verduras", "Legumes", "蔬菜", "خضار", "Verdure", "Gemüse", "Groenten", "Овощи", "野菜")}
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -247,6 +269,8 @@ const HowItWorks = () => {
                   "Salse o condimenti",
                   "Saucen oder Dressings",
                   "Sauzen of dressings",
+                  "Соусы или заправки",
+                  "ソース・ドレッシング類",
                 )}
               </li>
             </ul>
@@ -266,6 +290,8 @@ const HowItWorks = () => {
                 "Passo 3 – Stima delle porzioni",
                 "Schritt 3 – Portionsgrößenschätzung",
                 "Stap 3 – Portiegrootte-schatting",
+                "Шаг 3 – Оценка размера порции",
+                "ステップ3 – 分量の推定",
               )}
             </CardTitle>
             <CardDescription>
@@ -279,16 +305,18 @@ const HowItWorks = () => {
                 "CalorieVision stima le dimensioni approssimative delle porzioni in grammi in base allo spazio che ogni alimento occupa nel piatto e alle porzioni tipiche.",
                 "CalorieVision schätzt ungefähre Portionsgrößen in Gramm basierend darauf, wie viel Platz jedes Lebensmittel auf dem Teller einnimmt und typische Portionsgrößen.",
                 "CalorieVision schat geschatte portiegroottes in gram op basis van hoeveel ruimte elk voedingsmiddel inneemt op het bord en typische portiegrootten.",
+                "CalorieVision оценивает приблизительный размер порций в граммах, исходя из того, сколько места занимает каждый продукт на тарелке и стандартных размеров порций.",
+                "CalorieVisionは、各食品が皿の上で占めるスペースと一般的な1人前のサイズに基づいて、おおよその分量をグラム単位で推定します。",
               )}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
             <div className="rounded-2xl bg-secondary/70 p-3">
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                {t("Example", "Exemple", "Ejemplo", "Exemplo", "示例", "مثال", "Esempio", "Beispiel", "Voorbeeld")}
+                {t("Example", "Exemple", "Ejemplo", "Exemplo", "示例", "مثال", "Esempio", "Beispiel", "Voorbeeld", "Пример", "例")}
               </p>
-              <p>{t("Chicken: ~120 g", "Poulet : ~120 g", "Pollo: ~120 g", "Frango: ~120 g", "鸡肉：约120克", "دجاج: ~120 غ", "Pollo: ~120 g", "Hähnchen: ~120 g", "Kip: ~120 g")}</p>
-              <p>{t("Rice: ~150 g", "Riz : ~150 g", "Arroz: ~150 g", "Arroz: ~150 g", "米饭：约150克", "أرز: ~150 غ", "Riso: ~150 g", "Reis: ~150 g", "Rijst: ~150 g")}</p>
+              <p>{t("Chicken: ~120 g", "Poulet : ~120 g", "Pollo: ~120 g", "Frango: ~120 g", "鸡肉：约120克", "دجاج: ~120 غ", "Pollo: ~120 g", "Hähnchen: ~120 g", "Kip: ~120 g", "Курица: ~120 г", "鶏肉：約120g")}</p>
+              <p>{t("Rice: ~150 g", "Riz : ~150 g", "Arroz: ~150 g", "Arroz: ~150 g", "米饭：约150克", "أرز: ~150 غ", "Riso: ~150 g", "Reis: ~150 g", "Rijst: ~150 g", "Рис: ~150 г", "米飯：約150g")}</p>
               <p>
                 {t(
                   "Vegetables: ~80 g",
@@ -300,6 +328,8 @@ const HowItWorks = () => {
                   "Verdure: ~80 g",
                   "Gemüse: ~80 g",
                   "Groenten: ~80 g",
+                  "Овощи: ~80 г",
+                  "野菜：約80g",
                 )}
               </p>
             </div>
@@ -314,6 +344,8 @@ const HowItWorks = () => {
                 "Questi valori sono solo stime e dipendono molto dalla qualità della foto e dalle dimensioni effettive delle porzioni nel tuo piatto.",
                 "Diese Werte sind nur Schätzungen und hängen stark von der Qualität des Fotos und den tatsächlichen Portionsgrößen auf Ihrem Teller ab.",
                 "Deze waarden zijn slechts schattingen en zijn sterk afhankelijk van de kwaliteit van de foto en de werkelijke portiegroottes op je bord.",
+                "Эти значения являются приблизительными и во многом зависят от качества фото и фактического размера порций на вашей тарелке.",
+                "これらの値はあくまで推定であり、写真の品質やお皿の実際の分量に大きく依存します。",
               )}
             </p>
           </CardContent>
@@ -332,6 +364,8 @@ const HowItWorks = () => {
                 "Passo 4 – Calcolo delle calorie",
                 "Schritt 4 – Kalorienberechnung",
                 "Stap 4 – Calorieberekening",
+                "Шаг 4 – Расчёт калорий",
+                "ステップ4 – カロリー計算",
               )}
             </CardTitle>
             <CardDescription>
@@ -345,13 +379,15 @@ const HowItWorks = () => {
                 "Il sistema utilizza tabelle nutrizionali di riferimento per calcolare le calorie approssimative per ogni alimento e per il pasto nel suo complesso.",
                 "Das System verwendet Ernährungsreferenztabellen, um ungefähre Kalorien für jedes Lebensmittel und Ihre Mahlzeit insgesamt zu berechnen.",
                 "Het systeem gebruikt voedingsreferentietabellen om geschatte calorieën te berekenen voor elk voedingsmiddel en je maaltijd als geheel.",
+                "Система использует справочные таблицы питательности для расчёта приблизительного количества калорий для каждого продукта и блюда в целом.",
+                "システムは栄養参照テーブルを使用して、各食品および食事全体のおおよそのカロリーを計算します。",
               )}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
             <div className="space-y-1">
-              <p>{t("Chicken: ~220 kcal", "Poulet : ~220 kcal", "Pollo: ~220 kcal", "Frango: ~220 kcal", "鸡肉：约220千卡", "دجاج: ~220 سعرة", "Pollo: ~220 kcal", "Hähnchen: ~220 kcal", "Kip: ~220 kcal")}</p>
-              <p>{t("Rice: ~260 kcal", "Riz : ~260 kcal", "Arroz: ~260 kcal", "Arroz: ~260 kcal", "米饭：约260千卡", "أرز: ~260 سعرة", "Riso: ~260 kcal", "Reis: ~260 kcal", "Rijst: ~260 kcal")}</p>
+              <p>{t("Chicken: ~220 kcal", "Poulet : ~220 kcal", "Pollo: ~220 kcal", "Frango: ~220 kcal", "鸡肉：约220千卡", "دجاج: ~220 سعرة", "Pollo: ~220 kcal", "Hähnchen: ~220 kcal", "Kip: ~220 kcal", "Курица: ~220 ккал", "鶏肉：約220kcal")}</p>
+              <p>{t("Rice: ~260 kcal", "Riz : ~260 kcal", "Arroz: ~260 kcal", "Arroz: ~260 kcal", "米饭：约260千卡", "أرز: ~260 سعرة", "Riso: ~260 kcal", "Reis: ~260 kcal", "Rijst: ~260 kcal", "Рис: ~260 ккал", "米飯：約260kcal")}</p>
               <p>
                 {t(
                   "Vegetables: ~80 kcal",
@@ -363,6 +399,8 @@ const HowItWorks = () => {
                   "Verdure: ~80 kcal",
                   "Gemüse: ~80 kcal",
                   "Groenten: ~80 kcal",
+                  "Овощи: ~80 ккал",
+                  "野菜：約80kcal",
                 )}
               </p>
               <p>
@@ -376,6 +414,8 @@ const HowItWorks = () => {
                   "Salsa leggera: ~60 kcal",
                   "Leichte Sauce: ~60 kcal",
                   "Lichte saus: ~60 kcal",
+                  "Лёгкий соус: ~60 ккал",
+                  "軽いソース：約60kcal",
                 )}
               </p>
             </div>
@@ -391,6 +431,8 @@ const HowItWorks = () => {
                   "Totale stimato",
                   "Geschätzter Gesamtwert",
                   "Geschat totaal",
+                  "Примерный итог",
+                  "推定合計",
                 )}
               </p>
               <p className="text-lg font-semibold text-foreground">~620 kcal</p>
@@ -405,6 +447,8 @@ const HowItWorks = () => {
                   "I numeri sono solo a scopo illustrativo.",
                   "Die Zahlen dienen nur zur Veranschaulichung.",
                   "Getallen zijn alleen ter illustratie.",
+                  "Цифры приведены исключительно в иллюстративных целях.",
+                  "数字はあくまで例示です。",
                 )}
               </p>
             </div>
@@ -424,6 +468,8 @@ const HowItWorks = () => {
                 "Passo 5 – Semplici consigli nutrizionali",
                 "Schritt 5 – Einfache Ernährungstipps",
                 "Stap 5 – Eenvoudige voedingstips",
+                "Шаг 5 – Простые советы по питанию",
+                "ステップ5 – 簡単な栄養アドバイス",
               )}
             </CardTitle>
             <CardDescription>
@@ -437,6 +483,8 @@ const HowItWorks = () => {
                 "Oltre ai numeri, ricevi suggerimenti generali e non medici per aiutarti a costruire pasti più equilibrati nel tempo.",
                 "Neben den Zahlen erhalten Sie allgemeine, nicht-medizinische Vorschläge, die Ihnen helfen, im Laufe der Zeit ausgewogene Mahlzeiten zusammenzustellen.",
                 "Naast de cijfers ontvang je algemene, niet-medische suggesties om je te helpen evenwichtige maaltijden samen te stellen.",
+                "Помимо цифр, вы получаете общие, ненасиловательные советы, которые помогут вам со временем сформировать более сбалансированный рацион.",
+                "数字に加えて、時間をかけてバランスの取れた食事を作るための一般的な非医療的なアドバイスも提供されます。",
               )}
             </CardDescription>
           </CardHeader>
@@ -453,6 +501,8 @@ const HowItWorks = () => {
                   "Aggiungi più verdure",
                   "Mehr Gemüse hinzufügen",
                   "Voeg meer groenten toe",
+                  "Добавьте больше овощей",
+                  "野菜を増やしましょう",
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -466,6 +516,8 @@ const HowItWorks = () => {
                   "Aumenta le verdure colorate per fibre e micronutrienti.",
                   "Erhöhen Sie den Anteil bunter Gemüsesorten für Ballaststoffe und Mikronährstoffe.",
                   "Verhoog kleurrijke groenten voor vezels en micronutriënten.",
+                  "Разнообразные цветные овощи помогут получить больше клетчатки и микронутриентов.",
+                  "色とりどりの野菜を増やすことで、食物繊維やミネラル・ビタミンの摂取量が増えます。",
                 )}
               </p>
             </div>
@@ -481,6 +533,8 @@ const HowItWorks = () => {
                   "Bilancia carboidrati e proteine",
                   "Kohlenhydrate & Eiweiß ausgleichen",
                   "Balanceer koolhydraten & eiwitten",
+                  "Баланс углеводов и белков",
+                  "炭水化物とタンパク質のバランスを",
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -494,6 +548,8 @@ const HowItWorks = () => {
                   "Abbina gli amidi alle proteine per favorire sazietà ed energia.",
                   "Kombinieren Sie Stärke mit Eiweiß für Sättigung und Energie.",
                   "Combineer zetmeel met eiwit voor verzadiging en energie.",
+                  "Сочетайте крахмалистые продукты с белком для чувства сытости и поддержания энергии.",
+                  "でんぷん質の食品とタンパク質を組み合わせることで、満腹感とエネルギーを維持できます。",
                 )}
               </p>
             </div>
@@ -509,6 +565,8 @@ const HowItWorks = () => {
                   "Attenzione alle bevande zuccherate",
                   "Auf zuckerhaltige Getränke achten",
                   "Let op suikerhoudende dranken",
+                  "Следите за сладкими напитками",
+                  "甘い飲み物に注意しましょう",
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -522,6 +580,8 @@ const HowItWorks = () => {
                   "Considera acqua o opzioni senza zucchero se vuoi ridurre gli zuccheri aggiunti.",
                   "Wählen Sie Wasser oder ungesüßte Optionen, wenn Sie Zuckerzusatz reduzieren möchten.",
                   "Overweeg water of ongezoete opties als je toegevoegde suiker wilt verminderen.",
+                  "Если вы стремитесь снизить потребление добавленного сахара, рассмотрите воду или напитки без сахара.",
+                  "添加糖を減らしたい場合は、水や無糖の飲み物をお選びください。",
                 )}
               </p>
             </div>
@@ -545,6 +605,8 @@ const HowItWorks = () => {
                   "Note importanti",
                   "Wichtige Hinweise",
                   "Belangrijke opmerkingen",
+                  "Важные замечания",
+                  "重要な注意事項",
                 )}
               </CardTitle>
               <CardDescription>
@@ -558,6 +620,8 @@ const HowItWorks = () => {
                   "CalorieVision è uno strumento educativo, non un dispositivo medico né una prescrizione nutrizionale.",
                   "CalorieVision ist ein Bildungswerkzeug, kein medizinisches Gerät oder Ernährungsrezept.",
                   "CalorieVision is een educatieve tool, geen medisch apparaat of voedingsvoorschrift.",
+                  "CalorieVision — образовательный инструмент, а не медицинское устройство и не назначение диеты.",
+                  "CalorieVisionは教育ツールであり、医療機器や栄養処方ではありません。",
                 )}
               </CardDescription>
             </div>
@@ -575,6 +639,8 @@ const HowItWorks = () => {
                   "I risultati sono stime, non misurazioni esatte.",
                   "Die Ergebnisse sind Schätzungen, keine exakten Messungen.",
                   "Resultaten zijn schattingen, geen exacte metingen.",
+                  "Результаты являются приблизительными, а не точными измерениями.",
+                  "結果は推定値であり、正確な測定値ではありません。",
                 )}
               </li>
               <li>
@@ -588,6 +654,8 @@ const HowItWorks = () => {
                   "La qualità dell'immagine, l'illuminazione e la varietà degli alimenti influenzano la precisione.",
                   "Bildqualität, Beleuchtung und Lebensmittelvielfalt beeinflussen die Genauigkeit.",
                   "Beeldkwaliteit, verlichting en voedselvariëteit beïnvloeden allemaal de nauwkeurigheid.",
+                  "Качество изображения, освещение и разнообразие блюд влияют на точность.",
+                  "画質、照明、食品の種類はすべて精度に影響します。",
                 )}
               </li>
             </ul>
@@ -603,6 +671,8 @@ const HowItWorks = () => {
                   "Consulta sempre un professionista per questioni relative alla salute.",
                   "Ziehen Sie bei gesundheitsbezogenen Fragen immer professionellen Rat hinzu.",
                   "Raadpleeg altijd professioneel advies voor gezondheidsgerelateerde vragen.",
+                  "По вопросам, связанным со здоровьем, всегда обращайтесь к специалистам.",
+                  "健康に関する質問については、常に専門家の意見を参考にしてください。",
                 )}
               </li>
               <li>
@@ -616,6 +686,8 @@ const HowItWorks = () => {
                   "Non utilizzare CalorieVision come unica base per decisioni mediche o dietetiche.",
                   "Verwenden Sie CalorieVision nicht als alleinige Grundlage für medizinische oder Ernährungsentscheidungen.",
                   "Gebruik CalorieVision niet als enige basis voor medische of dieetbeslissingen.",
+                  "Не используйте CalorieVision как единственную основу для принятия медицинских или диетических решений.",
+                  "CalorieVisionを医療や食事に関する決定の唯一の根拠として使用しないでください。",
                 )}
               </li>
             </ul>

@@ -1,10 +1,18 @@
 /**
  * useSubscription.ts
- * Fetches the current user's plan from Supabase and counts today's / this
- * month's AI scans from usage_logs to determine whether the limit is reached.
+ * Single-query, DB-driven subscription and usage hook.
  *
- * Unauthenticated users are treated as "starter" and their daily scans are
- * tracked via localStorage so they don't need an account for the soft-guard.
+ * Reads plan_type and usage_stats from the `profiles` table in one round-trip.
+ * These columns are kept in sync automatically by DB triggers:
+ *   - trg_sync_profile_plan_type      → updates plan_type when subscriptions change
+ *   - trg_update_profile_usage_stats  → increments daily/monthly counters after each scan
+ *
+ * Scan counting uses TWO layers:
+ *  1. incrementLocalCount() — synchronous, zero-latency state update applied
+ *     immediately after a scan so isAtLimit reflects the new total before the
+ *     next click, with no DB round-trip required.
+ *  2. refresh() — triggers a full DB re-fetch to reconcile the server-side
+ *     count (catches scans from other devices, corrects any drift).
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -23,40 +31,21 @@ export interface SubscriptionInfo {
   dailyLimit: number;
   monthlyLimit: number;
   isLoading: boolean;
-  /** Call after a scan is logged to refresh the counters */
+  /**
+   * Call immediately after a scan completes to increment counters
+   * synchronously. This ensures isAtLimit is true on the very next render,
+   * before the async DB refresh has a chance to complete.
+   */
+  incrementLocalCount: () => void;
+  /** Call after incrementLocalCount to reconcile with the DB */
   refresh: () => void;
 }
 
 const PLAN_LIMITS: Record<PlanType, { daily: number; monthly: number }> = {
-  starter:  { daily: 2,          monthly: 999_999 },
-  pro:      { daily: 999_999,    monthly: 1_000   },
-  ultimate: { daily: 999_999,    monthly: 5_000   },
+  starter:  { daily: 2,              monthly: 999_999_999 },
+  pro:      { daily: 999_999_999,    monthly: 1_000       },
+  ultimate: { daily: 999_999_999,    monthly: 999_999_999 }, // unlimited
 };
-
-// ── Guest (unauthenticated) localStorage helpers ─────────────────────────────
-const GUEST_LS_KEY = "cv_guest_scans";
-
-interface GuestEntry { date: string; count: number }
-
-export function getGuestScansToday(): number {
-  try {
-    const raw = localStorage.getItem(GUEST_LS_KEY);
-    if (!raw) return 0;
-    const entry = JSON.parse(raw) as GuestEntry;
-    const today = new Date().toISOString().slice(0, 10);
-    return entry.date === today ? entry.count : 0;
-  } catch {
-    return 0;
-  }
-}
-
-export function incrementGuestScans(): void {
-  try {
-    const today = new Date().toISOString().slice(0, 10);
-    const count = getGuestScansToday();
-    localStorage.setItem(GUEST_LS_KEY, JSON.stringify({ date: today, count: count + 1 }));
-  } catch { /* storage unavailable — silent */ }
-}
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 export function useSubscription(): SubscriptionInfo {
@@ -70,13 +59,21 @@ export function useSubscription(): SubscriptionInfo {
 
   const refresh = useCallback(() => setTick(n => n + 1), []);
 
+  /**
+   * Increment both counters synchronously so isAtLimit updates on the
+   * very next render — no waiting for a DB round-trip.
+   */
+  const incrementLocalCount = useCallback(() => {
+    setDailyScans(n => n + 1);
+    setMonthlyScans(n => n + 1);
+  }, []);
+
   useEffect(() => {
-    // ── Guest path ──────────────────────────────────────────────────────────
+    // ── Unauthenticated: treat as over-limit (Analyze redirects to /auth) ───
     if (!user) {
-      const g = getGuestScansToday();
       setPlan("starter");
-      setDailyScans(g);
-      setMonthlyScans(g);
+      setDailyScans(999);
+      setMonthlyScans(999);
       setIsLoading(false);
       return;
     }
@@ -87,41 +84,34 @@ export function useSubscription(): SubscriptionInfo {
     const load = async () => {
       setIsLoading(true);
       try {
-        // 1. Fetch active subscription (fallback → starter)
-        const { data: sub } = await supabase
-          .from("subscriptions")
-          .select("plan_type")
-          .eq("user_id", user.id)
-          .eq("status", "active")
+        // Single query: profiles table has plan_type (synced from subscriptions
+        // by trigger) and usage_stats (incremented after each scan by trigger).
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("plan_type, usage_stats")
+          .eq("id", user.id)
           .maybeSingle();
 
-        const currentPlan: PlanType = (sub?.plan_type as PlanType) ?? "starter";
-        if (!cancelled) setPlan(currentPlan);
+        if (cancelled) return;
 
-        // 2. Count scans today (for starter daily limit)
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
+        const currentPlan: PlanType = (profile?.plan_type as PlanType) ?? "starter";
 
-        const { count: dayCount } = await supabase
-          .from("usage_logs")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .gte("created_at", todayStart.toISOString());
+        // usage_stats shape:
+        // { daily_scans: { "2026-04-02": 3 }, monthly_scans: { "2026-04": 5 } }
+        const usageStats = (profile?.usage_stats ?? {}) as {
+          daily_scans?: Record<string, number>;
+          monthly_scans?: Record<string, number>;
+        };
 
-        if (!cancelled) setDailyScans(dayCount ?? 0);
+        const today = new Date().toISOString().slice(0, 10);       // "2026-04-02"
+        const month = today.slice(0, 7);                           // "2026-04"
 
-        // 3. Count scans this month (for pro/ultimate monthly limit)
-        const monthStart = new Date();
-        monthStart.setDate(1);
-        monthStart.setHours(0, 0, 0, 0);
+        const dayCount   = usageStats.daily_scans?.[today]   ?? 0;
+        const monthCount = usageStats.monthly_scans?.[month] ?? 0;
 
-        const { count: monthCount } = await supabase
-          .from("usage_logs")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .gte("created_at", monthStart.toISOString());
-
-        if (!cancelled) setMonthlyScans(monthCount ?? 0);
+        setPlan(currentPlan);
+        setDailyScans(dayCount);
+        setMonthlyScans(monthCount);
 
       } catch (err) {
         console.error("[useSubscription] load error:", err);
@@ -149,6 +139,7 @@ export function useSubscription(): SubscriptionInfo {
     dailyLimit:   limits.daily,
     monthlyLimit: limits.monthly,
     isLoading,
+    incrementLocalCount,
     refresh,
   };
 }

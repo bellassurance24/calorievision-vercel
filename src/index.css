@@ -120,7 +120,12 @@
   }
 
   .section-card {
-    @apply rounded-3xl border border-primary/15 bg-gradient-to-b from-primary/5 via-card/90 to-accent/5 p-6 shadow-sm shadow-primary/10 backdrop-blur-sm md:p-8;
+    @apply rounded-3xl border border-primary/15 p-6 shadow-sm shadow-primary/10 md:p-8;
+    background: hsl(var(--card) / 0.92);
+  }
+
+  .dark .section-card {
+    background: hsl(var(--card) / 0.38);
   }
 
   .section-card h2 {
@@ -277,4 +282,33 @@ article tbody tr:hover,
     padding: 10px 12px !important;
     font-size: 0.85rem !important;
   }
+}
+
+/* ─── Blog card image v5: fixed 220 px height — SolidBlogImage component ───── */
+.image-v5-fixed-220 {
+  width: 100% !important;
+  height: 220px !important;
+  min-height: 220px !important;
+  max-height: 220px !important;
+  overflow: hidden !important;
+  display: block !important;
+  background: #f3f4f6 !important;
+  flex-shrink: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+.image-v5-fixed-220 img {
+  width: 100% !important;
+  height: 220px !important;
+  min-height: 220px !important;
+  max-height: 220px !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  border-radius: 24px 24px 0 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }

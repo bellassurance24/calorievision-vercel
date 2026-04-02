@@ -102,7 +102,7 @@ const UGCHeroVideo = memo(function UGCHeroVideo({
       </button>
 
       {/* CTA overlay — bottom */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-12">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent p-4 pt-12">
         <button
           onClick={onCtaClick}
           className="w-full py-3 px-6 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl text-sm md:text-base hover:shadow-lg hover:scale-[1.02] transition-all"

@@ -214,6 +214,12 @@ const Pricing = () => {
 
   // ── Stripe Checkout handler ────────────────────────────────────────────────
   const handleCheckout = async (planId: "pro" | "ultimate", cycle: "monthly" | "yearly") => {
+    // ── Auth guard: must have an account before paying ───────────────────────
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
     // Resolve price ID on the frontend — simple if/else, no server-side map.
     let priceId: string | undefined;
     if (planId === "pro") {
@@ -252,6 +258,7 @@ const Pricing = () => {
           userId:       user?.id ?? "",
           email:        user?.email ?? undefined,
           origin:       window.location.origin,
+          locale:       language,          // ← Stripe Checkout language
         },
       });
 

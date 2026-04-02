@@ -1,6 +1,19 @@
 User-agent: *
 Allow: /
 
+# Explicitly allow major social media crawlers
+User-agent: Pinterestbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
 # Block generic category/tag routes without valid slugs
 Disallow: /*/blog/category$
 Disallow: /*/blog/tag$

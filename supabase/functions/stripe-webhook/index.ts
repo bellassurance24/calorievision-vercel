@@ -121,6 +121,27 @@ serve(async (req) => {
         } else {
           console.log(`[stripe-webhook] Subscription activated: user=${userId} plan=${planType}`);
         }
+
+        // Forward sale event to n8n → analytics_master
+        const n8nSaleUrl = Deno.env.get("N8N_SALE_WEBHOOK_URL");
+        if (n8nSaleUrl) {
+          const amountTotal = session.amount_total ?? 0;
+          fetch(n8nSaleUrl, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              stripe_session_id: session.id,
+              customer_email:    session.customer_email ?? session.customer_details?.email ?? "",
+              amount:            amountTotal / 100,           // cents → dollars
+              currency:          (session.currency ?? "usd").toUpperCase(),
+              plan_type:         planType,
+              billing_cycle:     session.metadata?.billingCycle ?? "",
+              user_id:           userId,
+            }),
+          }).catch((err) =>
+            console.warn("[stripe-webhook] n8n forward failed:", err?.message),
+          );
+        }
       }
       break;
     }

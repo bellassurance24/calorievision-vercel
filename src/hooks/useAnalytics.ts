@@ -9,6 +9,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { isLikelyBotUserAgent } from "@/lib/analyticsBot";
+import { trackVisit } from "@/lib/trackVisit";
 
 // ── Persistent IDs ────────────────────────────────────────────────────────────
 const getVisitorId = (): string => {
@@ -131,6 +132,7 @@ export const usePageTracking = (): void => {
 
   useEffect(() => {
     trackEvent("page_view", { path: location.pathname });
+    trackVisit(location.pathname); // also writes to analytics_master via n8n
   }, [location.pathname]);
 };
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
 import { useBlogT } from '../hooks/useBlogT';
+import { SolidBlogImage } from '../components/blog/SolidBlogImage';
 
 const SITE_URL = 'https://calorievision.online';
 
@@ -151,15 +152,15 @@ export default function Blog() {
             <article
               style={{
                 background: '#ffffff',
-                borderRadius: '16px',
+                borderRadius: '24px',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
                 overflow: 'hidden',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                transition: 'transform 0.3s, box-shadow 0.3s',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)';
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(0,0,0,0.14)';
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
@@ -167,19 +168,45 @@ export default function Blog() {
               }}
             >
               {post.featured_image_url ? (
-                <img
+                <SolidBlogImage
                   src={post.featured_image_url}
                   alt={post.title}
-                  style={{ width: '100%', height: '180px', objectFit: 'cover' }}
-                  loading="lazy"
                 />
               ) : (
-                <div style={{ width: '100%', height: '120px', background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px' }}>
-                  🥗
+                <div
+                  style={{
+                    width: '100%',
+                    height: '220px',
+                    minHeight: '220px',
+                    maxHeight: '220px',
+                    overflow: 'hidden',
+                    borderRadius: '24px 24px 0 0',
+                    background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: '48px' }}>🥗</span>
                 </div>
               )}
               <div style={{ padding: '20px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#111827', margin: '0 0 8px', lineHeight: '1.4' }}>
+                <h2 style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#111827',
+                  margin: '0 0 8px',
+                  lineHeight: '1.4',
+                  /* Clamp to 2 lines on ALL language routes — prevents long
+                     translated titles (RU/DE/FR/AR/JA…) from making the card
+                     taller than the EN card.  EN titles are already ≤2 lines
+                     so this has zero visual impact on the English route. */
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}>
                   {post.title}
                 </h2>
                 {post.meta_description && (

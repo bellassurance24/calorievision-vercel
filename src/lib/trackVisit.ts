@@ -74,12 +74,19 @@ export const trackVisit = (path: string): void => {
     utm_campaign: utm.get("utm_campaign"),
   };
 
-  // Fire-and-forget — never blocks the page
+  // Fire-and-forget — never blocks the page.
+  // mode: 'no-cors' skips the CORS preflight entirely.
+  // Content-Type must be 'text/plain' (a "simple" header) — 'application/json'
+  // would trigger a preflight that a no-cors request cannot complete.
+  // n8n receives the raw JSON string; parse it in the Set node with
+  // JSON.parse($json.body) if needed, or configure the webhook Body
+  // Content Type as "Raw / Custom" → "application/json".
   fetch(webhookUrl, {
-    method:    "POST",
-    headers:   { "Content-Type": "application/json" },
-    body:      JSON.stringify(payload),
-    keepalive: true,
+    method:      "POST",
+    mode:        "no-cors",
+    headers:     { "Content-Type": "text/plain" },
+    body:        JSON.stringify(payload),
+    keepalive:   true,
   }).catch((err) => {
     if (import.meta.env.DEV) {
       console.debug("[trackVisit] n8n webhook failed:", err);

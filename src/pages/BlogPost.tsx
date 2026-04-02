@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
 import { useLanguage, Language, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
 import { useBlogT } from '../hooks/useBlogT';
+import { setBlogLangSlugMap, clearBlogLangSlugMap } from '../utils/blogLangSlugStore';
 
 const SITE_URL = 'https://calorievision.online';
 
@@ -144,6 +145,7 @@ export default function BlogPost() {
   useEffect(() => {
     let cancelled = false;
     setIsEnFallback(false);
+    clearBlogLangSlugMap();          // prevent slug bleeding between posts
 
     async function getPost() {
       if (!slug) { setLoading(false); return; }
@@ -211,7 +213,8 @@ export default function BlogPost() {
           if (!cancelled && allVersions) {
             const map: Record<string, string> = {};
             for (const v of allVersions) {
-              map[v.language] = v.localized_slug ?? v.slug;
+              // Use base slug (reliable) — localized_slug data is corrupt in DB
+              map[v.language] = v.slug;
             }
             setLangSlugMap(map);
           }
@@ -269,6 +272,18 @@ export default function BlogPost() {
     };
   }, [post, slug, language, langSlugMap]);
 
+  // ── Sync langSlugMap to shared store (for MainLayout language switcher) ────
+  useEffect(() => {
+    setBlogLangSlugMap(langSlugMap);
+    return () => clearBlogLangSlugMap();
+  }, [langSlugMap]);
+
+  // NOTE: localized_slug redirect removed — the DB localized_slug data is
+  // corrupt (assigned to wrong language rows), so we keep the base slug in
+  // the URL which is reliable and works across all languages.
+
+  const blogPath = `/${language}/blog`;
+
   // ── derived values ──────────────────────────────────────────────────────────
   const { processedHtml, tocItems } = useMemo(
     () => injectHeadingIds(sanitizeArticleHtml(post?.content ?? '')),
@@ -277,7 +292,6 @@ export default function BlogPost() {
   );
 
   const isRtl    = RTL_LANGS.has(language);
-  const blogPath = `/${language}/blog`;
   const locale   = LOCALE_MAP[language] ?? 'en-US';
 
   const coverImage = post?.featured_image_url || post?.image_url || null;

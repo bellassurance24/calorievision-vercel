@@ -3,6 +3,7 @@ import { Calendar, Tag } from 'lucide-react';
 import { BlogPost } from '@/types/blog';
 import { useBlogTranslation } from '@/hooks/useBlogTranslation';
 import { useEffect, useState } from 'react';
+import { SolidBlogImage } from '@/components/blog/SolidBlogImage';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -73,14 +74,15 @@ export function BlogCard({ post }: BlogCardProps) {
   };
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
+    <article className="group overflow-hidden rounded-3xl border border-border bg-card shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.14)] hover:-translate-y-1.5">
       {post.featured_image_url && (
-        <LocalizedNavLink to={`/blog/${post.localized_slug ?? post.slug}`} className="block overflow-hidden">
-          <img
+        <LocalizedNavLink
+          to={`/blog/${post.localized_slug ?? post.slug}`}
+          className="block"
+        >
+          <SolidBlogImage
             src={post.featured_image_url}
             alt={post.featured_image_alt || translatedTitle}
-            className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
           />
         </LocalizedNavLink>
       )}
@@ -94,7 +96,7 @@ export function BlogCard({ post }: BlogCardProps) {
             {post.category.name}
           </LocalizedNavLink>
         )} */}
-        <h2 className="mb-2 text-xl font-bold text-foreground">
+        <h2 className="mb-2 text-xl font-bold text-foreground line-clamp-2">
           <LocalizedNavLink
             to={`/blog/${post.localized_slug ?? post.slug}`}
             className="hover:text-primary transition-colors"

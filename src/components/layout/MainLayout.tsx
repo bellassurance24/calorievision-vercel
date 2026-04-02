@@ -373,7 +373,7 @@ const MainLayout = ({
                 variant="ghost"
                 size="sm"
                 className="md:hidden text-primary-foreground min-w-[44px] min-h-[44px]"
-                aria-label={language === "fr" ? "Ouvrir le menu" : "Open menu"}
+                aria-label={current.home ? `${current.home} — menu` : "Open menu"}
               >
                 <Menu className="h-5 w-5" aria-hidden="true" />
               </Button>
@@ -420,7 +420,7 @@ const MainLayout = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="sm" className="inline-flex items-center gap-1.5 rounded-full px-3 md:px-4" aria-label={`Changer de langue (actuelle : ${languageCode})`}>
+              <Button type="button" variant="outline" size="sm" className="inline-flex items-center gap-1.5 rounded-full px-3 md:px-4" aria-label={`Language: ${languageCode}`}>
                 <WavingFlag src={flagImages[language]} alt={`${languageCode} flag`} size="sm" />
                 <span className="text-sm font-medium uppercase tracking-[0.16em]">{languageCode}</span>
                 <ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
@@ -465,7 +465,7 @@ const MainLayout = ({
           <div className="flex items-center gap-2">
             <img src="/gauge-logo.webp" className="h-5 w-5 md:h-6 md:w-6 object-contain" alt="CalorieVision" />
             <p className="font-medium text-primary-foreground/90">
-              © 2025 CalorieVision – All Rights Reserved.
+              © 2026 CalorieVision – All Rights Reserved.
             </p>
           </div>
           <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 md:gap-x-4", language === "ru" ? "justify-center" : "justify-end", isRTL && "flex-row-reverse")}>
