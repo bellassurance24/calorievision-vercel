@@ -250,19 +250,75 @@ const Pricing = () => {
 
     setCheckoutLoading(planId);
     try {
+      // Explicitly fetch the current session token right before the call.
+      // supabase.functions.invoke() has an internal getSession() call, but
+      // fetching it here and passing it directly in headers eliminates any
+      // race condition between token refresh and request dispatch.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        // Session disappeared between the auth guard check and here — bail out.
+        navigate("/auth");
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: {
           planType:     planId,
           billingCycle: cycle,
-          priceId,                        // ← sent directly; Edge Function uses this
-          userId:       user?.id ?? "",
-          email:        user?.email ?? undefined,
-          origin:       window.location.origin,
-          locale:       language,          // ← Stripe Checkout language
+          priceId,       // ← resolved from VITE_STRIPE_PRICE_* env vars
+          origin:        window.location.origin,
+          locale:        language,
+          // userId and email are intentionally omitted — the Edge Function
+          // derives them from the validated Supabase JWT, never from the client.
         },
       });
 
       if (error || !data?.url) {
+        // ── Distinguish auth failure from payment config errors ───────────────
+        // FunctionsHttpError exposes the raw Response on `.context`.
+        // Reading `.status` lets us detect 401 without parsing the body.
+        const httpStatus = (error as any)?.context?.status as number | undefined;
+
+        if (httpStatus === 401) {
+          // Session expired between the getSession() check and the Edge Function call.
+          // Redirect to auth so the user can sign in with a fresh token.
+          toast({
+            title: t(
+              "Session expired",
+              "Session expirée",
+              "Sesión expirada",
+              "Sessão expirada",
+              "会话已过期",
+              "انتهت الجلسة",
+              "Sessione scaduta",
+              "Sitzung abgelaufen",
+              "Sessie verlopen",
+              "Сессия истекла",
+              "セッションが期限切れ",
+            ),
+            description: t(
+              "Please sign in again and retry.",
+              "Veuillez vous reconnecter et réessayer.",
+              "Por favor, inicia sesión de nuevo e inténtalo otra vez.",
+              "Por favor, inicie sessão novamente e tente outra vez.",
+              "请重新登录后再试。",
+              "يرجى تسجيل الدخول مجدداً والمحاولة مرة أخرى.",
+              "Accedi di nuovo e riprova.",
+              "Bitte melde dich erneut an und versuche es nochmal.",
+              "Meld je opnieuw aan en probeer het opnieuw.",
+              "Пожалуйста, войдите снова и повторите попытку.",
+              "再度サインインしてお試しください。",
+            ),
+            variant: "destructive",
+          });
+          navigate("/auth");
+          return;
+        }
+
+        // Generic payment / config error
         toast({
           title: t(
             "Payment unavailable",

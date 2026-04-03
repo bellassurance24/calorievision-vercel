@@ -1,0 +1,198 @@
+{
+  "name": "CalorieVision – Analytics Master",
+  "nodes": [
+    {
+      "id": "visit-webhook-001",
+      "name": "Webhook Visit",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "track-visit",
+        "responseMode": "onReceived",
+        "responseData": "noData",
+        "options": {
+          "allowedOrigins": "https://calorievision.online"
+        }
+      }
+    },
+    {
+      "id": "geo-lookup-002",
+      "name": "Geo Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [340, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "=http://ip-api.com/json/{{ $json.headers['x-forwarded-for'] ? $json.headers['x-forwarded-for'].split(',')[0].trim() : ($json.headers['x-real-ip'] ?? '0.0.0.0') }}?fields=status,country,city,regionName,query",
+        "options": {
+          "timeout": 3000
+        },
+        "onError": "continueRegularOutput"
+      }
+    },
+    {
+      "id": "set-visit-003",
+      "name": "Assemble Visit Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [580, 300],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            { "id": "v01", "name": "event_type",    "value": "page_view",                                                                            "type": "string" },
+            { "id": "v02", "name": "visitor_ip",    "value": "={{ $('Webhook Visit').item.json.headers['x-forwarded-for'] ? $('Webhook Visit').item.json.headers['x-forwarded-for'].split(',')[0].trim() : '' }}", "type": "string" },
+            { "id": "v03", "name": "country",       "value": "={{ $json.country ?? '' }}",                                                           "type": "string" },
+            { "id": "v04", "name": "city",          "value": "={{ $json.city ?? '' }}",                                                              "type": "string" },
+            { "id": "v05", "name": "region",        "value": "={{ $json.regionName ?? '' }}",                                                        "type": "string" },
+            { "id": "v06", "name": "path",          "value": "={{ $('Webhook Visit').item.json.body.path ?? '/' }}",                                 "type": "string" },
+            { "id": "v07", "name": "visitor_id",    "value": "={{ $('Webhook Visit').item.json.body.visitor_id ?? '' }}",                            "type": "string" },
+            { "id": "v08", "name": "session_id",    "value": "={{ $('Webhook Visit').item.json.body.session_id ?? '' }}",                            "type": "string" },
+            { "id": "v09", "name": "referrer",      "value": "={{ $('Webhook Visit').item.json.body.referrer ?? '' }}",                              "type": "string" },
+            { "id": "v10", "name": "user_agent",    "value": "={{ $('Webhook Visit').item.json.body.user_agent ?? '' }}",                            "type": "string" },
+            { "id": "v11", "name": "device_type",   "value": "={{ $('Webhook Visit').item.json.body.device_type ?? '' }}",                           "type": "string" },
+            { "id": "v12", "name": "browser",       "value": "={{ $('Webhook Visit').item.json.body.browser ?? '' }}",                               "type": "string" },
+            { "id": "v13", "name": "os",            "value": "={{ $('Webhook Visit').item.json.body.os ?? '' }}",                                    "type": "string" },
+            { "id": "v14", "name": "language",      "value": "={{ $('Webhook Visit').item.json.body.language ?? '' }}",                              "type": "string" },
+            { "id": "v15", "name": "utm_source",    "value": "={{ $('Webhook Visit').item.json.body.utm_source ?? null }}",                          "type": "string" },
+            { "id": "v16", "name": "utm_medium",    "value": "={{ $('Webhook Visit').item.json.body.utm_medium ?? null }}",                          "type": "string" },
+            { "id": "v17", "name": "utm_campaign",  "value": "={{ $('Webhook Visit').item.json.body.utm_campaign ?? null }}",                        "type": "string" },
+            { "id": "v18", "name": "timestamp",     "value": "={{ new Date().toISOString() }}",                                                      "type": "string" }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "supabase-visit-004",
+      "name": "Supabase Insert Visit",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [820, 300],
+      "parameters": {
+        "resource": "row",
+        "operation": "create",
+        "tableId": "analytics_master",
+        "dataToSend": "autoMapInputData",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "id": "stripe-webhook-005",
+      "name": "Webhook Stripe Sale",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 600],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-sale",
+        "responseMode": "onReceived",
+        "responseData": "noData",
+        "options": {}
+      }
+    },
+    {
+      "id": "set-sale-006",
+      "name": "Assemble Sale Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [340, 600],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "event_type",       "value": "sale",                                                   "type": "string" },
+            { "id": "s02", "name": "customer_email",   "value": "={{ $json.body.customer_email ?? '' }}",                 "type": "string" },
+            { "id": "s03", "name": "amount",           "value": "={{ $json.body.amount ?? 0 }}",                          "type": "number" },
+            { "id": "s04", "name": "currency",         "value": "={{ ($json.body.currency ?? 'usd').toUpperCase() }}",    "type": "string" },
+            { "id": "s05", "name": "stripe_session_id","value": "={{ $json.body.stripe_session_id ?? '' }}",              "type": "string" },
+            { "id": "s06", "name": "plan_type",        "value": "={{ $json.body.plan_type ?? '' }}",                      "type": "string" },
+            { "id": "s07", "name": "billing_cycle",    "value": "={{ $json.body.billing_cycle ?? '' }}",                  "type": "string" },
+            { "id": "s08", "name": "status",           "value": "active",                                                 "type": "string" },
+            { "id": "s09", "name": "country",          "value": "={{ $json.body.country ?? '' }}",                        "type": "string" },
+            { "id": "s10", "name": "visitor_id",       "value": "={{ $json.body.user_id ?? '' }}",                        "type": "string" },
+            { "id": "s11", "name": "timestamp",        "value": "={{ new Date().toISOString() }}",                        "type": "string" }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "supabase-sale-007",
+      "name": "Supabase Insert Sale",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [580, 600],
+      "parameters": {
+        "resource": "row",
+        "operation": "create",
+        "tableId": "analytics_master",
+        "dataToSend": "autoMapInputData",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Visit": {
+      "main": [
+        [{ "node": "Geo Lookup", "type": "main", "index": 0 }]
+      ]
+    },
+    "Geo Lookup": {
+      "main": [
+        [{ "node": "Assemble Visit Row", "type": "main", "index": 0 }]
+      ]
+    },
+    "Assemble Visit Row": {
+      "main": [
+        [{ "node": "Supabase Insert Visit", "type": "main", "index": 0 }]
+      ]
+    },
+    "Webhook Stripe Sale": {
+      "main": [
+        [{ "node": "Assemble Sale Row", "type": "main", "index": 0 }]
+      ]
+    },
+    "Assemble Sale Row": {
+      "main": [
+        [{ "node": "Supabase Insert Sale", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "id": "calorievision-analytics-master",
+  "meta": {
+    "instanceId": ""
+  },
+  "credentials": [
+    {
+      "id": "1",
+      "name": "Supabase Account",
+      "type": "supabaseApi",
+      "data": {
+        "host": "https://ttjcfwspcpnxtxzqnfrh.supabase.co",
+        "serviceRole": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0amNmd3NwY3BueHR4enFuZnJoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjQxMTUyOCwiZXhwIjoyMDg3OTg3NTI4fQ.nBjpnQmLNiQBRCMibiCltStri6YGG0EIIYODBvf35xw"
+      }
+    }
+  ]
+}

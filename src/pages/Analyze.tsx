@@ -546,6 +546,21 @@ const Analyze = () => {
         setRawError(`HTTP ${response.status}\n\n${errText}`);
         let innerMsg = "";
         try { innerMsg = (JSON.parse(errText) as { error?: string }).error ?? ""; } catch { /* raw */ }
+
+        // ── Daily limit enforcement from SQL trigger ───────────────────────
+        // The server returns HTTP 400 with { error: "Daily limit reached" }
+        // when the user has exhausted their scan quota. Show the upgrade
+        // modal instead of the generic error toast.
+        if (
+          response.status === 400 &&
+          innerMsg.toLowerCase().includes("limit reached")
+        ) {
+          setShowLimitModal(true);
+          // `return` here skips the `catch` block (no generic toast) but the
+          // `finally` block still runs, resetting isAnalyzing to false.
+          return;
+        }
+
         throw new Error(`HTTP ${response.status}${innerMsg ? `: ${innerMsg}` : ""}`);
       }
 
@@ -611,7 +626,17 @@ const Analyze = () => {
 
       // ── Log usage scan ────────────────────────────────────────────────────
       await supabase.from("usage_logs").insert({ user_id: user.id }).then(
-        ({ error }) => { if (error) console.warn("[Analyze] usage_logs insert:", error.message); }
+        ({ error }) => {
+          if (!error) return;
+          if (error.message?.toLowerCase().includes("limit reached")) {
+            // SQL trigger fired — the user hit their quota on this insert.
+            // Show the upgrade modal and sync local state with DB reality.
+            setShowLimitModal(true);
+            refresh();
+          } else {
+            console.warn("[Analyze] usage_logs insert:", error.message);
+          }
+        }
       );
       incrementLocalCount(); // synchronous — isAtLimit updates before next click
       refresh();             // async DB reconciliation (catches other-device scans)
