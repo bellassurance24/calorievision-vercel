@@ -589,20 +589,6 @@ navigate(destination, { replace: true });
       </div>
     </div>
   </form>
-);
-
-const Auth = () => {
-  return (
-    <div className="min-h-screen bg-[#f0f9f9] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <div className="flex justify-center mb-6">
-          <div className="bg-primary/10 p-3 rounded-full">
-            <Utensils className="h-8 w-8 text-primary" />
-          </div>
-        </div>
-        <AuthComponent />
-      </div>
-    </div>
   );
 };
 
