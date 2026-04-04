@@ -250,111 +250,121 @@ const Pricing = () => {
 
     setCheckoutLoading(planId);
     try {
-      // Explicitly fetch the current session token right before the call.
-      // supabase.functions.invoke() has an internal getSession() call, but
-      // fetching it here and passing it directly in headers eliminates any
-      // race condition between token refresh and request dispatch.
-      // After email-confirmation redirects, Supabase may not have finished
-      // writing the token to localStorage by the time this runs. Wait up to
-      // 600 ms for the session to hydrate before falling back to a refresh.
+      // ── 1. Resolve session ────────────────────────────────────────────────
+      // After email-confirmation the JWT may not be in localStorage yet.
+      // Try getSession first; if missing, wait 600 ms then force a refresh.
+      console.log("[Checkout] 1/4 — resolving session…");
       let { data: { session } } = await supabase.auth.getSession();
+      console.log("[Checkout] getSession →", session ? `ok (…${session.access_token.slice(-8)})` : "null");
+
       if (!session?.access_token) {
+        console.log("[Checkout] no token yet — waiting 600 ms for Supabase to hydrate…");
         await new Promise<void>((r) => setTimeout(r, 600));
-        const { data: refreshed } = await supabase.auth.refreshSession();
+        const { data: refreshed, error: refreshErr } = await supabase.auth.refreshSession();
+        console.log("[Checkout] refreshSession →", refreshed.session ? "ok" : `null (${refreshErr?.message})`);
         session = refreshed.session;
       }
+
       if (!session?.access_token) {
+        console.warn("[Checkout] still no session after refresh — redirecting to /auth");
         navigate("/auth?returnTo=/pricing");
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+      // ── 2. Call Edge Function with a 15-second timeout kill-switch ────────
+      // If the function hangs (CORS, cold-start, network issue) the promise
+      // would never resolve and the spinner would freeze forever.
+      // Promise.race ensures we always exit within 15 s.
+      console.log("[Checkout] 2/4 — calling create-checkout-session…", {
+        planType: planId, billingCycle: cycle, priceId,
+        origin: window.location.origin,
+      });
+
+      const TIMEOUT_MS = 15_000;
+      const invokePromise = supabase.functions.invoke("create-checkout-session", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
         body: {
           planType:     planId,
           billingCycle: cycle,
-          priceId,       // ← resolved from VITE_STRIPE_PRICE_* env vars
-          origin:        window.location.origin,
-          locale:        language,
-          // userId and email are intentionally omitted — the Edge Function
-          // derives them from the validated Supabase JWT, never from the client.
+          priceId,
+          origin:       window.location.origin,
+          locale:       language,
         },
       });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("checkout-timeout")), TIMEOUT_MS)
+      );
 
+      let data: any, error: any;
+      try {
+        ({ data, error } = await Promise.race([invokePromise, timeoutPromise]));
+      } catch (raceErr: any) {
+        if (raceErr?.message === "checkout-timeout") {
+          console.error("[Checkout] ⏱ Edge Function did not respond in 15 s — likely CORS or cold-start. Check Supabase logs.");
+          toast({
+            title: t("Checkout timed out", "Expiration du paiement", "Tiempo de espera agotado", "Tempo esgotado", "结账超时", "انتهت مهلة الدفع", "Timeout pagamento", "Checkout-Timeout", "Checkout time-out", "Время ожидания истекло", "チェックアウトタイムアウト"),
+            description: "The payment server didn't respond within 15 s. Open browser DevTools → Console for details.",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw raceErr;
+      }
+
+      console.log("[Checkout] 3/4 — invoke result:", { data, error });
+
+      // ── 3. Handle invoke errors ───────────────────────────────────────────
       if (error || !data?.url) {
-        // ── Distinguish auth failure from payment config errors ───────────────
-        // FunctionsHttpError exposes the raw Response on `.context`.
-        // Reading `.status` lets us detect 401 without parsing the body.
         const httpStatus = (error as any)?.context?.status as number | undefined;
+        const errMsg     = (error as any)?.message ?? "unknown";
+        console.error("[Checkout] ❌ invoke failed:", { httpStatus, errMsg, data });
 
         if (httpStatus === 401) {
-          // 401 is common right after email confirmation — the JWT from the
-          // magic-link redirect hasn't been persisted to localStorage yet when
-          // the first invoke() fires. Refresh silently and auto-retry once so
-          // the user lands directly in Stripe Checkout without any manual step.
-          try {
-            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-            if (!refreshError && refreshData.session?.access_token) {
-              const { data: retryData, error: retryError } = await supabase.functions.invoke(
-                "create-checkout-session",
-                {
-                  headers: { Authorization: `Bearer ${refreshData.session.access_token}` },
-                  body: { planType: planId, billingCycle: cycle, priceId, origin: window.location.origin, locale: language },
-                }
-              );
-              if (!retryError && retryData?.url) {
-                window.location.href = retryData.url;
-                return; // ✅ straight to Stripe — no toast, no manual retry
-              }
-            }
-          } catch { /* refresh failed — fall through to generic error toast */ }
+          console.log("[Checkout] 401 — refreshing session and retrying once…");
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+          console.log("[Checkout] retry-refresh →", refreshData.session ? "ok" : `null (${refreshError?.message})`);
 
-          // Refresh + retry both failed — redirect silently to auth.
-          // The user returns to /pricing with a fresh session via ?returnTo
-          // and can complete checkout without ever seeing an error toast.
+          if (!refreshError && refreshData.session?.access_token) {
+            const { data: retryData, error: retryError } = await supabase.functions.invoke(
+              "create-checkout-session",
+              {
+                headers: { Authorization: `Bearer ${refreshData.session.access_token}` },
+                body: { planType: planId, billingCycle: cycle, priceId, origin: window.location.origin, locale: language },
+              }
+            );
+            console.log("[Checkout] retry result:", { retryData, retryError });
+            if (!retryError && retryData?.url) {
+              console.log("[Checkout] ✅ retry succeeded — redirecting to Stripe");
+              window.location.href = retryData.url;
+              return;
+            }
+          }
+          // Both attempts failed — silent redirect (no red toast)
+          console.warn("[Checkout] all auth recovery failed — redirecting to /auth");
           navigate("/auth?returnTo=/pricing");
           return;
         }
 
-        // Generic payment / config error
+        // Non-401 error — show exactly what went wrong so it's visible in the UI
         toast({
-          title: t(
-            "Payment unavailable",
-            "Paiement indisponible",
-            "Pago no disponible",
-            "Pagamento indisponível",
-            "支付暂不可用",
-            "الدفع غير متاح",
-            "Pagamento non disponibile",
-            "Zahlung nicht verfügbar",
-            "Betaling niet beschikbaar",
-            "Оплата недоступна",
-            "お支払い不可",
-          ),
-          description: t(
-            "Stripe is not configured yet. Please check back soon.",
-            "Stripe n'est pas encore configuré. Revenez bientôt.",
-            "Stripe aún no está configurado. Vuelve pronto.",
-            "O Stripe ainda não está configurado. Volte em breve.",
-            "Stripe 尚未配置，请稍后再试。",
-            "لم يتم تكوين Stripe بعد. تفضل بالعودة قريباً.",
-            "Stripe non è ancora configurato. Riprova presto.",
-            "Stripe ist noch nicht konfiguriert. Bitte schau bald wieder vorbei.",
-            "Stripe is nog niet geconfigureerd. Kom snel terug.",
-            "Stripe ещё не настроен. Загляните позже.",
-            "Stripeはまだ設定されていません。後でもう一度ご確認ください。",
-          ),
+          title: t("Payment error", "Erreur de paiement", "Error de pago", "Erro no pagamento", "支付错误", "خطأ في الدفع", "Errore pagamento", "Zahlungsfehler", "Betalingsfout", "Ошибка оплаты", "決済エラー"),
+          description: `HTTP ${httpStatus ?? "?"} — ${errMsg}. See browser console for full details.`,
           variant: "destructive",
         });
         return;
       }
 
-      // Redirect to Stripe Checkout
+      // ── 4. Redirect to Stripe Checkout ────────────────────────────────────
+      console.log("[Checkout] 4/4 ✅ — redirecting to Stripe:", data.url);
       window.location.href = data.url;
+
     } catch (e: any) {
-      console.error("[Pricing] checkout error:", e);
+      console.error("[Checkout] unexpected error:", e);
+      toast({
+        title: t("Unexpected error", "Erreur inattendue", "Error inesperado", "Erro inesperado", "意外错误", "خطأ غير متوقع", "Errore imprevisto", "Unerwarteter Fehler", "Onverwachte fout", "Непредвиденная ошибка", "予期しないエラー"),
+        description: e?.message ?? "Unknown error. Check browser console.",
+        variant: "destructive",
+      });
     } finally {
       setCheckoutLoading(null);
     }
