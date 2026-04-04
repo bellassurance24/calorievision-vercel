@@ -258,8 +258,20 @@ const Pricing = () => {
       console.log("[Checkout] getSession →", session ? `ok (…${session.access_token.slice(-8)})` : "null");
 
       if (!session?.access_token) {
-        console.log("[Checkout] no token yet — waiting 600 ms for Supabase to hydrate…");
-        await new Promise<void>((r) => setTimeout(r, 600));
+        // After email confirmation Supabase puts access_token + type=signup
+        // in the URL hash and writes the session asynchronously. Detect this
+        // case and give it 1500 ms; all other races only need 600 ms.
+        const rawHash = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        const hashParams = new URLSearchParams(rawHash);
+        const isFromEmailConfirm =
+          hashParams.has("access_token") || hashParams.get("type") === "signup";
+        const hydrateWaitMs = isFromEmailConfirm ? 1500 : 600;
+
+        console.log(`[Checkout] no token yet — waiting ${hydrateWaitMs} ms (emailConfirm: ${isFromEmailConfirm})…`);
+        await new Promise<void>((r) => setTimeout(r, hydrateWaitMs));
+
         const { data: refreshed, error: refreshErr } = await supabase.auth.refreshSession();
         console.log("[Checkout] refreshSession →", refreshed.session ? "ok" : `null (${refreshErr?.message})`);
         session = refreshed.session;
