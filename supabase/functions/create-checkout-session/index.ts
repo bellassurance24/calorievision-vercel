@@ -72,16 +72,25 @@ serve(async (req) => {
       );
     }
 
+    // Extract the raw JWT — pass it directly to getUser() for reliable
+    // server-side validation (the global.headers approach is unreliable
+    // in some Supabase JS client versions running in Deno).
+    const jwt = authHeader.replace("Bearer ", "").trim();
+
     const supabaseUrl  = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnon = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Create a per-request client scoped to the caller's JWT
-    const supabase = createClient(supabaseUrl, supabaseAnon, {
-      global: { headers: { Authorization: authHeader } },
+    // Use the service-role key so getUser() validates against Supabase Auth
+    // directly without being blocked by RLS.
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? supabaseAnon;
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Pass the JWT directly — this is the officially documented pattern for
+    // edge functions and bypasses the global.headers lookup issue.
+    const { data: { user }, error: authError } = await supabase.auth.getUser(jwt);
 
     if (authError || !user) {
       console.warn("[create-checkout-session] JWT validation failed:", authError?.message ?? "no user");
