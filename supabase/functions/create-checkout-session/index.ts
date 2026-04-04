@@ -23,17 +23,41 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno&no-check";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-const JSON_HEADERS = { ...CORS, "Content-Type": "application/json" };
+/** All domains that are allowed to call this function. */
+const ALLOWED_ORIGINS = new Set([
+  "https://calorievision.online",
+  "https://www.calorievision.online",
+]);
+
+/**
+ * Build CORS headers for each request.
+ * - Echoes back the exact requesting origin when it is in the allow-list
+ *   (required when Authorization is sent — browsers reject wildcard "*").
+ * - Falls back to the primary domain for unknown origins so the browser
+ *   at least gets a valid CORS header rather than an empty one.
+ */
+function buildCors(req: Request) {
+  const requestOrigin = req.headers.get("Origin") ?? "";
+  const allowOrigin = ALLOWED_ORIGINS.has(requestOrigin)
+    ? requestOrigin
+    : "https://calorievision.online";
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+    "Vary": "Origin",
+  };
+}
 
 /** Fallback used only if the frontend forgets to send `origin` */
 const FALLBACK_URL = "https://calorievision.online";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
+  const CORS = buildCors(req);
+  const JSON_HEADERS = { ...CORS, "Content-Type": "application/json" };
+
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
   try {
     // ── Server-side auth: validate Supabase JWT ──────────────────────────────
