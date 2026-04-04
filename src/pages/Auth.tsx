@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Utensils } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import AuthComponent from "@/components/auth/AuthComponent";
+import AuthComponent from "../components/auth/AuthComponent";
 
 const Auth = () => {
   const [isSignupMode, setIsSignupMode] = useState(false);
@@ -19,7 +19,10 @@ const Auth = () => {
         <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
           {isSignupMode ? "Create an account" : "Sign in to CalorieVision"}
         </h2>
-        <AuthComponent isSignupMode={isSignupMode} returnTo={returnTo} />
+        
+        {/* هاد السطر هو اللي كان فيه المشكل ودابا صلحناه */}
+        <AuthComponent />
+
         <div className="mt-6 text-center">
           <button
             type="button"
