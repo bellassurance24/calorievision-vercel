@@ -49,15 +49,12 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 
 const queryClient = new QueryClient();
 
-// Loading fallback component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
   </div>
 );
 
-// Wrapper for lazy loaded components — includes error boundary so a broken
-// page cannot crash the whole app.
 const LazyPage = ({ children }: { children: React.ReactNode }) => (
   <ErrorBoundary>
     <Suspense fallback={<PageLoader />}>
@@ -66,188 +63,35 @@ const LazyPage = ({ children }: { children: React.ReactNode }) => (
   </ErrorBoundary>
 );
 
-// Generate localized routes for all supported languages
+// Public localized routes — none of these require authentication
 const LocalizedRoutes = () => (
   <>
     {SUPPORTED_LANGUAGES.map((lang) => (
       <Route key={lang} path={`/${lang}`}>
-        {/* Home */}
-        <Route
-          index
-          element={
-            <MainLayout>
-              <ErrorBoundary>
-                <Index />
-              </ErrorBoundary>
-            </MainLayout>
-          }
-        />
-        {/* Analyze */}
-        <Route
-          path="analyze"
-          element={
-            <MainLayout>
-              <ErrorBoundary>
-                <Analyze />
-              </ErrorBoundary>
-            </MainLayout>
-          }
-        />
-        {/* How It Works */}
-        <Route
-          path="how-it-works"
-          element={
-            <MainLayout>
-              <LazyPage><HowItWorks /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* FAQ */}
-        <Route
-          path="faq"
-          element={
-            <MainLayout>
-              <LazyPage><Faq /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* About */}
-        <Route
-          path="about"
-          element={
-            <MainLayout>
-              <LazyPage><About /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Contact */}
-        <Route
-          path="contact"
-          element={
-            <MainLayout>
-              <LazyPage><Contact /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Install */}
-        <Route
-          path="install"
-          element={
-            <MainLayout>
-              <LazyPage><Install /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Pricing */}
-        <Route
-          path="pricing"
-          element={
-            <MainLayout>
-              <LazyPage><Pricing /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Privacy Policy */}
-        <Route
-          path="privacy-policy"
-          element={
-            <MainLayout>
-              <LazyPage><PrivacyPolicy /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Terms */}
-        <Route
-          path="terms"
-          element={
-            <MainLayout>
-              <LazyPage><Terms /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Disclaimer */}
-        <Route
-          path="disclaimer"
-          element={
-            <MainLayout>
-              <LazyPage><Disclaimer /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Cookie Policy */}
-        <Route
-          path="cookie-policy"
-          element={
-            <MainLayout>
-              <LazyPage><CookiePolicy /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Branding Settings */}
-        <Route
-          path="branding-settings"
-          element={
-            <MainLayout>
-              <LazyPage><BrandingSettings /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Notification Settings */}
-        <Route
-          path="notification-settings"
-          element={
-            <MainLayout>
-              <LazyPage><NotificationSettings /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Blog Routes */}
-        <Route
-          path="blog"
-          element={
-            <MainLayout>
-              <LazyPage><Blog /></LazyPage>
-            </MainLayout>
-          }
-        />
-        <Route
-          path="blog/:slug"
-          element={
-            <MainLayout>
-              <LazyPage><BlogPost /></LazyPage>
-            </MainLayout>
-          }
-        />
-        <Route
-          path="blog/category/:categorySlug"
-          element={
-            <MainLayout>
-              <LazyPage><BlogCategory /></LazyPage>
-            </MainLayout>
-          }
-        />
-        <Route
-          path="blog/tag/:tagSlug"
-          element={
-            <MainLayout>
-              <LazyPage><BlogTag /></LazyPage>
-            </MainLayout>
-          }
-        />
-        {/* Redirect /:lang/admin* to /admin* (admin is not localized) */}
+        <Route index element={<MainLayout><ErrorBoundary><Index /></ErrorBoundary></MainLayout>} />
+        <Route path="analyze" element={<MainLayout><ErrorBoundary><Analyze /></ErrorBoundary></MainLayout>} />
+        <Route path="how-it-works" element={<MainLayout><LazyPage><HowItWorks /></LazyPage></MainLayout>} />
+        <Route path="faq" element={<MainLayout><LazyPage><Faq /></LazyPage></MainLayout>} />
+        <Route path="about" element={<MainLayout><LazyPage><About /></LazyPage></MainLayout>} />
+        <Route path="contact" element={<MainLayout><LazyPage><Contact /></LazyPage></MainLayout>} />
+        <Route path="install" element={<MainLayout><LazyPage><Install /></LazyPage></MainLayout>} />
+        {/* Pricing is PUBLIC — no auth guard */}
+        <Route path="pricing" element={<MainLayout><LazyPage><Pricing /></LazyPage></MainLayout>} />
+        <Route path="privacy-policy" element={<MainLayout><LazyPage><PrivacyPolicy /></LazyPage></MainLayout>} />
+        <Route path="terms" element={<MainLayout><LazyPage><Terms /></LazyPage></MainLayout>} />
+        <Route path="disclaimer" element={<MainLayout><LazyPage><Disclaimer /></LazyPage></MainLayout>} />
+        <Route path="cookie-policy" element={<MainLayout><LazyPage><CookiePolicy /></LazyPage></MainLayout>} />
+        <Route path="branding-settings" element={<MainLayout><LazyPage><BrandingSettings /></LazyPage></MainLayout>} />
+        <Route path="notification-settings" element={<MainLayout><LazyPage><NotificationSettings /></LazyPage></MainLayout>} />
+        <Route path="blog" element={<MainLayout><LazyPage><Blog /></LazyPage></MainLayout>} />
+        <Route path="blog/:slug" element={<MainLayout><LazyPage><BlogPost /></LazyPage></MainLayout>} />
+        <Route path="blog/category/:categorySlug" element={<MainLayout><LazyPage><BlogCategory /></LazyPage></MainLayout>} />
+        <Route path="blog/tag/:tagSlug" element={<MainLayout><LazyPage><BlogTag /></LazyPage></MainLayout>} />
+        {/* /:lang/admin* and /:lang/auth redirect to canonical unlocalized paths */}
         <Route path="admin" element={<Navigate to="/admin" replace />} />
         <Route path="admin/*" element={<Navigate to="/admin" replace />} />
-        {/* Redirect /:lang/auth to /auth */}
         <Route path="auth" element={<Navigate to="/auth" replace />} />
-        {/* 404 for this language */}
-        <Route
-          path="*"
-          element={
-            <MainLayout>
-              <NotFound />
-            </MainLayout>
-          }
-        />
+        <Route path="*" element={<MainLayout><NotFound /></MainLayout>} />
       </Route>
     ))}
   </>
@@ -265,13 +109,12 @@ const App = () => (
                 <Sonner />
                 <LanguageRedirect />
                 <HreflangTags />
-
                 <AnalyticsTracker />
                 <Routes>
-                  {/* Localized routes for all languages */}
+                  {/* Public localized routes (pricing and analyze are here, not in AdminRoute) */}
                   {LocalizedRoutes()}
 
-                  {/* Auth page (no language prefix needed) */}
+                  {/* Auth page — no language prefix */}
                   <Route path="/auth" element={<LazyPage><Auth /></LazyPage>} />
 
                   {/* Admin routes — ALL protected by AdminRoute layout guard */}
@@ -286,18 +129,11 @@ const App = () => (
                     <Route path="/admin/change-password" element={<LazyPage><ChangePassword /></LazyPage>} />
                   </Route>
 
-                  {/* Root redirect - handled by LanguageRedirect */}
+                  {/* Root — handled by LanguageRedirect */}
                   <Route path="/" element={null} />
 
-                  {/* Catch-all for any unmatched routes */}
-                  <Route
-                    path="*"
-                    element={
-                      <MainLayout>
-                        <NotFound />
-                      </MainLayout>
-                    }
-                  />
+                  {/* Catch-all 404 */}
+                  <Route path="*" element={<MainLayout><NotFound /></MainLayout>} />
                 </Routes>
               </TooltipProvider>
             </NotificationProvider>

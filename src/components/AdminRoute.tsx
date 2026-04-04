@@ -5,7 +5,14 @@ const AdminRoute = () => {
   const { user, isAdmin, isLoading } = useAuth();
 
   if (isLoading) return null; // wait for auth state to settle
-  if (!user || !isAdmin) return <Navigate to="/auth" replace />;
+  if (!isLoading && (!user || !isAdmin)) {
+    return (
+      <Navigate 
+        to={`/auth?returnTo=${encodeURIComponent(window.location.pathname)}`} 
+        replace 
+      />
+    );
+  }
 
   return <Outlet />;
 };

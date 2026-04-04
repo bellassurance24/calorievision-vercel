@@ -44,6 +44,8 @@ interface MealAnalysis {
 
 // ── Guest scan counter (localStorage, no auth required) ─────────────────────
 const GUEST_SCAN_KEY = "cv_guest_scans";
+const GUEST_SCAN_LIMIT = 2;
+
 function getGuestScansToday(): number {
   try {
     const raw = localStorage.getItem(GUEST_SCAN_KEY);
@@ -56,12 +58,22 @@ function getGuestScansToday(): number {
   }
 }
 
+function incrementGuestScans(): void {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const existing = getGuestScansToday();
+    localStorage.setItem(GUEST_SCAN_KEY, JSON.stringify({ date: today, count: existing + 1 }));
+  } catch { /* ignore — localStorage may be unavailable */ }
+}
+
 const Analyze = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
   const { user } = useAuth();
   const { isAtLimit, plan, dailyScans, monthlyScans, dailyLimit, monthlyLimit, incrementLocalCount, refresh } = useSubscription();
-  const guestAtLimit = !user && getGuestScansToday() >= 2;
+  // Guest scan tracking — state-backed so guestAtLimit reacts after each scan
+  const [guestScanCount, setGuestScanCount] = useState(() => getGuestScansToday());
+  const guestAtLimit = !user && guestScanCount >= GUEST_SCAN_LIMIT;
 
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -483,14 +495,14 @@ const Analyze = () => {
   };
 
   const handleAnalyze = async () => {
-    // ── Auth guard — must be signed in to scan ─────────────────────────────
-    if (!user) {
-      navigate("/auth");
+    // ── Guest limit guard — 2 free scans before requiring an account ──────
+    if (!user && guestAtLimit) {
+      setShowLimitModal(true);
       return;
     }
 
-    // ── Limit guard ────────────────────────────────────────────────────────
-    if (isAtLimit) {
+    // ── Authenticated limit guard — DB-driven plan limits ─────────────────
+    if (user && isAtLimit) {
       setShowLimitModal(true);
       return;
     }
@@ -625,21 +637,26 @@ const Analyze = () => {
       setAnalysis(analysisResult);
 
       // ── Log usage scan ────────────────────────────────────────────────────
-      await supabase.from("usage_logs").insert({ user_id: user.id }).then(
-        ({ error }) => {
-          if (!error) return;
-          if (error.message?.toLowerCase().includes("limit reached")) {
-            // SQL trigger fired — the user hit their quota on this insert.
-            // Show the upgrade modal and sync local state with DB reality.
-            setShowLimitModal(true);
-            refresh();
-          } else {
-            console.warn("[Analyze] usage_logs insert:", error.message);
+      if (user) {
+        // Authenticated: write to DB, let SQL trigger enforce server-side limits
+        await supabase.from("usage_logs").insert({ user_id: user.id }).then(
+          ({ error }) => {
+            if (!error) return;
+            if (error.message?.toLowerCase().includes("limit reached")) {
+              setShowLimitModal(true);
+              refresh();
+            } else {
+              console.warn("[Analyze] usage_logs insert:", error.message);
+            }
           }
-        }
-      );
-      incrementLocalCount(); // synchronous — isAtLimit updates before next click
-      refresh();             // async DB reconciliation (catches other-device scans)
+        );
+        incrementLocalCount(); // synchronous — isAtLimit updates before next click
+        refresh();             // async DB reconciliation (catches other-device scans)
+      } else {
+        // Guest: track in localStorage and update state so guestAtLimit reacts
+        incrementGuestScans();
+        setGuestScanCount(getGuestScansToday());
+      }
 
       // Track successful meal analysis
       trackMealAnalysis(true);
@@ -961,11 +978,11 @@ const Analyze = () => {
     <LimitReachedModal
       open={showLimitModal}
       onClose={() => setShowLimitModal(false)}
-      plan={plan}
-      dailyScans={dailyScans}
-      monthlyScans={monthlyScans}
-      dailyLimit={dailyLimit}
-      monthlyLimit={monthlyLimit}
+      plan={user ? plan : "starter"}
+      dailyScans={user ? dailyScans : guestScanCount}
+      monthlyScans={user ? monthlyScans : guestScanCount}
+      dailyLimit={user ? dailyLimit : GUEST_SCAN_LIMIT}
+      monthlyLimit={user ? monthlyLimit : GUEST_SCAN_LIMIT}
     />
     </>
   );

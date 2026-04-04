@@ -216,7 +216,7 @@ const Pricing = () => {
   const handleCheckout = async (planId: "pro" | "ultimate", cycle: "monthly" | "yearly") => {
     // ── Auth guard: must have an account before paying ───────────────────────
     if (!user) {
-      navigate("/auth");
+      navigate("/auth?returnTo=/pricing");
       return;
     }
 
@@ -257,7 +257,7 @@ const Pricing = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
         // Session disappeared between the auth guard check and here — bail out.
-        navigate("/auth");
+        navigate("/auth?returnTo=/pricing");
         return;
       }
 
@@ -283,39 +283,40 @@ const Pricing = () => {
         const httpStatus = (error as any)?.context?.status as number | undefined;
 
         if (httpStatus === 401) {
-          // Session expired between the getSession() check and the Edge Function call.
-          // Redirect to auth so the user can sign in with a fresh token.
+          // Token timing: refresh and ask the user to retry instead of sending them to /auth.
+          try {
+            await supabase.auth.refreshSession();
+          } catch { /* ignore — refresh best-effort */ }
           toast({
             title: t(
-              "Session expired",
-              "Session expirée",
-              "Sesión expirada",
-              "Sessão expirada",
-              "会话已过期",
-              "انتهت الجلسة",
-              "Sessione scaduta",
-              "Sitzung abgelaufen",
-              "Sessie verlopen",
-              "Сессия истекла",
-              "セッションが期限切れ",
+              "Session refreshed — please retry",
+              "Session actualisée — veuillez réessayer",
+              "Sesión actualizada — intenta de nuevo",
+              "Sessão atualizada — tente novamente",
+              "会话已刷新，请重试",
+              "تم تحديث الجلسة — يرجى المحاولة مجدداً",
+              "Sessione aggiornata — riprova",
+              "Sitzung erneuert – bitte erneut versuchen",
+              "Sessie vernieuwd — probeer opnieuw",
+              "Сессия обновлена — попробуйте снова",
+              "セッションを更新しました。再試行してください",
             ),
             description: t(
-              "Please sign in again and retry.",
-              "Veuillez vous reconnecter et réessayer.",
-              "Por favor, inicia sesión de nuevo e inténtalo otra vez.",
-              "Por favor, inicie sessão novamente e tente outra vez.",
-              "请重新登录后再试。",
-              "يرجى تسجيل الدخول مجدداً والمحاولة مرة أخرى.",
-              "Accedi di nuovo e riprova.",
-              "Bitte melde dich erneut an und versuche es nochmal.",
-              "Meld je opnieuw aan en probeer het opnieuw.",
-              "Пожалуйста, войдите снова и повторите попытку.",
-              "再度サインインしてお試しください。",
+              "Click the upgrade button again to continue.",
+              "Cliquez à nouveau sur le bouton pour continuer.",
+              "Haz clic de nuevo en el botón para continuar.",
+              "Clique novamente no botão para continuar.",
+              "请再次点击升级按钮继续。",
+              "انقر على زر الترقية مرة أخرى للمتابعة.",
+              "Fai clic di nuovo sul pulsante per continuare.",
+              "Klicke erneut auf den Button, um fortzufahren.",
+              "Klik nogmaals op de knop om verder te gaan.",
+              "Нажмите кнопку ещё раз, чтобы продолжить.",
+              "再度ボタンをクリックして続けてください。",
             ),
             variant: "destructive",
           });
-          navigate("/auth");
-          return;
+          return; // Stay on the pricing page — no /auth redirect
         }
 
         // Generic payment / config error
