@@ -587,8 +587,7 @@ navigate(destination, { replace: true });
       {t("Don't have an account? Sign up", "Pas de compte ? S'inscrire")}
       </button>
       </div>
-    </div>
-  </form>
+    </form>
   );
 };
 
