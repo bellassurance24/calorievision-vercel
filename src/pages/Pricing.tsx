@@ -283,40 +283,45 @@ const Pricing = () => {
         const httpStatus = (error as any)?.context?.status as number | undefined;
 
         if (httpStatus === 401) {
-          // Token timing: refresh and ask the user to retry instead of sending them to /auth.
+          // 401 is common right after email confirmation — the JWT from the
+          // magic-link redirect hasn't been persisted to localStorage yet when
+          // the first invoke() fires. Refresh silently and auto-retry once so
+          // the user lands directly in Stripe Checkout without any manual step.
           try {
-            await supabase.auth.refreshSession();
-          } catch { /* ignore — refresh best-effort */ }
+            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+            if (!refreshError && refreshData.session?.access_token) {
+              const { data: retryData, error: retryError } = await supabase.functions.invoke(
+                "create-checkout-session",
+                {
+                  headers: { Authorization: `Bearer ${refreshData.session.access_token}` },
+                  body: { planType: planId, billingCycle: cycle, priceId, origin: window.location.origin, locale: language },
+                }
+              );
+              if (!retryError && retryData?.url) {
+                window.location.href = retryData.url;
+                return; // ✅ straight to Stripe — no toast, no manual retry
+              }
+            }
+          } catch { /* refresh failed — fall through to generic error toast */ }
+
+          // Refresh or retry also failed — surface a minimal message
           toast({
             title: t(
-              "Session refreshed — please retry",
-              "Session actualisée — veuillez réessayer",
-              "Sesión actualizada — intenta de nuevo",
-              "Sessão atualizada — tente novamente",
-              "会话已刷新，请重试",
-              "تم تحديث الجلسة — يرجى المحاولة مجدداً",
-              "Sessione aggiornata — riprova",
-              "Sitzung erneuert – bitte erneut versuchen",
-              "Sessie vernieuwd — probeer opnieuw",
-              "Сессия обновлена — попробуйте снова",
-              "セッションを更新しました。再試行してください",
-            ),
-            description: t(
-              "Click the upgrade button again to continue.",
-              "Cliquez à nouveau sur le bouton pour continuer.",
-              "Haz clic de nuevo en el botón para continuar.",
-              "Clique novamente no botão para continuar.",
-              "请再次点击升级按钮继续。",
-              "انقر على زر الترقية مرة أخرى للمتابعة.",
-              "Fai clic di nuovo sul pulsante per continuare.",
-              "Klicke erneut auf den Button, um fortzufahren.",
-              "Klik nogmaals op de knop om verder te gaan.",
-              "Нажмите кнопку ещё раз, чтобы продолжить.",
-              "再度ボタンをクリックして続けてください。",
+              "Session error — please sign in again",
+              "Erreur de session — veuillez vous reconnecter",
+              "Error de sesión — inicia sesión de nuevo",
+              "Erro de sessão — inicie sessão novamente",
+              "会话错误，请重新登录",
+              "خطأ في الجلسة — يرجى تسجيل الدخول مجدداً",
+              "Errore di sessione — accedi di nuovo",
+              "Sitzungsfehler — bitte erneut anmelden",
+              "Sessiefout — meld je opnieuw aan",
+              "Ошибка сессии — войдите снова",
+              "セッションエラー — 再度サインインしてください",
             ),
             variant: "destructive",
           });
-          return; // Stay on the pricing page — no /auth redirect
+          return;
         }
 
         // Generic payment / config error
