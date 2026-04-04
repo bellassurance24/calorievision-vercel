@@ -254,9 +254,16 @@ const Pricing = () => {
       // supabase.functions.invoke() has an internal getSession() call, but
       // fetching it here and passing it directly in headers eliminates any
       // race condition between token refresh and request dispatch.
-      const { data: { session } } = await supabase.auth.getSession();
+      // After email-confirmation redirects, Supabase may not have finished
+      // writing the token to localStorage by the time this runs. Wait up to
+      // 600 ms for the session to hydrate before falling back to a refresh.
+      let { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        // Session disappeared between the auth guard check and here — bail out.
+        await new Promise<void>((r) => setTimeout(r, 600));
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        session = refreshed.session;
+      }
+      if (!session?.access_token) {
         navigate("/auth?returnTo=/pricing");
         return;
       }
@@ -304,23 +311,10 @@ const Pricing = () => {
             }
           } catch { /* refresh failed — fall through to generic error toast */ }
 
-          // Refresh or retry also failed — surface a minimal message
-          toast({
-            title: t(
-              "Session error — please sign in again",
-              "Erreur de session — veuillez vous reconnecter",
-              "Error de sesión — inicia sesión de nuevo",
-              "Erro de sessão — inicie sessão novamente",
-              "会话错误，请重新登录",
-              "خطأ في الجلسة — يرجى تسجيل الدخول مجدداً",
-              "Errore di sessione — accedi di nuovo",
-              "Sitzungsfehler — bitte erneut anmelden",
-              "Sessiefout — meld je opnieuw aan",
-              "Ошибка сессии — войдите снова",
-              "セッションエラー — 再度サインインしてください",
-            ),
-            variant: "destructive",
-          });
+          // Refresh + retry both failed — redirect silently to auth.
+          // The user returns to /pricing with a fresh session via ?returnTo
+          // and can complete checkout without ever seeing an error toast.
+          navigate("/auth?returnTo=/pricing");
           return;
         }
 
