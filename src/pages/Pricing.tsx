@@ -249,14 +249,15 @@ const Pricing = () => {
 
       if (error || !data?.url) {
         const httpStatus = (error as any)?.context?.status as number | undefined;
-        if (httpStatus === 401) {
-          // Session was valid on client but rejected server-side — force re-login
-          navigate("/auth?returnTo=/pricing");
-          return;
-        }
+        // We only reach this block after getSession() already returned a valid token.
+        // A 401 here means the edge function rejected a server-side validated token.
+        // Do NOT redirect to /auth: that creates an infinite loop.
+        // Show a toast so the user stays on the page.
         toast({
           title: t("Payment error", "Erreur de paiement", "Error de pago", "Erro no pagamento", "支付错误", "خطأ في الدفع", "Errore pagamento", "Zahlungsfehler", "Betalingsfout", "Ошибка оплаты", "決済エラー"),
-          description: (error as any)?.message ?? "Checkout failed. Please try again.",
+          description: httpStatus === 401
+            ? t("⚠️ Checkout service error — please try again.", "⚠️ Erreur du service de paiement — veuillez réessayer.", "⚠️ Error en el servicio de pago — inténtelo de nuevo.", "⚠️ Erro no serviço de pagamento — tente novamente.", "⚠️ 结账服务错误，请重试。", "⚠️ خطأ في خدمة الدفع — أعد المحاولة.", "⚠️ Errore servizio pagamento — riprova.", "⚠️ Zahlungsdienst-Fehler — bitte erneut versuchen.", "⚠️ Betaalfout — probeer opnieuw.", "⚠️ Ошибка сервиса — повторите попытку.", "⚠️ 決済サービスエラー — 再試行してください。")
+            : (error as any)?.message ?? t("Checkout failed. Please try again.", "Échec du paiement. Veuillez réessayer.", "Error en el pago. Inténtelo de nuevo.", "Falha no pagamento. Tente novamente.", "结账失败，请重试。", "فشل الدفع. يرجى المحاولة مجدداً.", "Pagamento fallito. Riprova.", "Zahlung fehlgeschlagen. Bitte erneut versuchen.", "Betaling mislukt. Probeer het opnieuw.", "Ошибка оплаты. Повторите попытку.", "決済に失敗しました。もう一度お試しください。"),
           variant: "destructive",
         });
         return;
