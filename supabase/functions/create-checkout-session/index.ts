@@ -20,7 +20,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 // @deno-types="https://esm.sh/v135/stripe@14.21.0/types/index.d.ts"
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno&no-check";
+import Stripe from "https://esm.sh/stripe@13.11.0?target=deno&no-check";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /** All domains that are allowed to call this function. */
