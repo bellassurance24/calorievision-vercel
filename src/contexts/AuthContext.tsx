@@ -140,6 +140,18 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/`;
+    
+    // Vérifier si l'email existe déjà
+    const { data: existingUser } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+  
+    if (existingUser) {
+      return { error: new Error("This email is already registered. Please sign in instead.") };
+    }
+  
     const { error } = await supabase.auth.signUp({
       email,
       password,
