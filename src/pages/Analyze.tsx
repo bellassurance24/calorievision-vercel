@@ -772,24 +772,25 @@ const Analyze = () => {
               </div>
 
               <Button
-                type="button"
-                variant="hero"
-                size="lg"
-                onClick={imageFile ? handleAnalyze : () => fileInputRef.current?.click()}
-                disabled={isAnalyzing || (imageFile && !acceptedDisclaimer && !guestAtLimit)}
-              >
-                {isAnalyzing ? (
-                  <span className="inline-flex items-center justify-center gap-1.5">
-                    <MealScannerLottie size={26} />
-                    {t("Analyzing meal...", "Analyse du repas...", "Analizando la comida...", "A analisar refeição...", "正在分析餐食...", "جاري تحليل الوجبة...")}
-                  </span>
-                ) : guestAtLimit ? (
-                  onClick={guestAtLimit ? () => navigate("/pricing") : (imageFile ? handleAnalyze : () => fileInputRef.current?.click())}
-                  copy.analyzePhotoButton
-                ) : (
-                  copy.analyzeButton
-                )}
-              </Button>
+  type="button"
+  variant="hero"
+  size="lg"
+  onClick={guestAtLimit ? () => navigate("/pricing") : (imageFile ? handleAnalyze : () => fileInputRef.current?.click())}
+  disabled={isAnalyzing || (imageFile && !acceptedDisclaimer && !guestAtLimit)}
+>
+  {isAnalyzing ? (
+    <span className="inline-flex items-center justify-center gap-1.5">
+      <MealScannerLottie size={26} />
+      {t("Analyzing meal...", "Analyse du repas...", "Analizando la comida...", "A analisar refeição...", "正在分析餐食...", "جاري تحليل الوجبة...")}
+    </span>
+  ) : guestAtLimit ? (
+    t("Limit Reached — Sign In", "Limite atteinte — Connexion", "Límite alcanzado — Iniciar sesión", "Limite atingido — Entrar", "已达限制 — 请登录", "الدخول — الحد")
+  ) : imageFile ? (
+    copy.analyzePhotoButton
+  ) : (
+    copy.analyzeButton
+  )}
+</Button>
               <p className="text-xs text-muted-foreground">
                 {t(
                   "Photos are processed securely to generate an analysis and are not stored or used for training.",
