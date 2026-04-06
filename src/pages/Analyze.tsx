@@ -776,7 +776,7 @@ const Analyze = () => {
                 variant="hero"
                 size="lg"
                 onClick={imageFile ? handleAnalyze : () => fileInputRef.current?.click()}
-                disabled={isAnalyzing || guestAtLimit || (imageFile && !acceptedDisclaimer)}
+                disabled={isAnalyzing || (imageFile && !acceptedDisclaimer && !guestAtLimit)}
               >
                 {isAnalyzing ? (
                   <span className="inline-flex items-center justify-center gap-1.5">
@@ -784,8 +784,7 @@ const Analyze = () => {
                     {t("Analyzing meal...", "Analyse du repas...", "Analizando la comida...", "A analisar refeição...", "正在分析餐食...", "جاري تحليل الوجبة...")}
                   </span>
                 ) : guestAtLimit ? (
-                  t("Limit Reached — Sign In", "Limite atteinte — Connexion", "Límite alcanzado — Iniciar sesión", "Limite atingido — Entrar", "已达限制 — 请登录", "تم الوصول إلى الحد — تسجيل الدخول")
-                ) : imageFile ? (
+                  onClick={guestAtLimit ? () => navigate("/pricing") : (imageFile ? handleAnalyze : () => fileInputRef.current?.click())}
                   copy.analyzePhotoButton
                 ) : (
                   copy.analyzeButton
