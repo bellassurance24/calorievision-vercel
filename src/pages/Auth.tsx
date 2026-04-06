@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { UtensilsCrossed, Loader2, Mail, Lock, ArrowLeft } from "lucide-react";
+import { UtensilsCrossed, Loader2, Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 const Auth = () => {
   const { user, signIn, signUp, signInWithGoogle, isLoading, isAdmin } = useAuth();
@@ -40,7 +40,7 @@ const Auth = () => {
   const [isSignupMode, setIsSignupMode] = useState(false);
   const [confirmPasswordSignup, setConfirmPasswordSignup] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const t = (en: string, fr: string) => (language === "fr" ? fr : en);
 
   useEffect(() => {
@@ -155,7 +155,10 @@ const Auth = () => {
     try {
       const { error } = await signUp(email, password);
       if (error) {
-        toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });
+        const msg = error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("user already")
+          ? t("This email is already registered. Please sign in instead.", "Cet email est déjà enregistré. Veuillez vous connecter.")
+          : error.message;
+        toast({ title: t("Error", "Erreur"), description: msg, variant: "destructive" });
         return;
       }
       setSignupSuccess(true);
@@ -169,7 +172,7 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/auth?type=recovery`,
       });
       if (error) {
         toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });
@@ -369,31 +372,38 @@ const Auth = () => {
                   />
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder={t("Password (min. 6 characters)", "Mot de passe (min. 6 caractères)")}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="pl-10"
-                    autoComplete="new-password"
-                  />
+  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input
+    type={showPassword ? "text" : "password"}
+    placeholder={t("Password (min. 6 characters)", "Mot de passe (min. 6 caractères)")}
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+    minLength={6}
+    className="pl-10 pr-10"
+    autoComplete="new-password"
+  />
+  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+  </button>
+</div>
                 </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder={t("Confirm password", "Confirmer le mot de passe")}
-                    value={confirmPasswordSignup}
-                    onChange={(e) => setConfirmPasswordSignup(e.target.value)}
-                    required
-                    minLength={6}
-                    className="pl-10"
-                    autoComplete="new-password"
-                  />
-                </div>
+ <div className="relative">
+ <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+ <Input
+   type={showPassword ? "text" : "password"}
+   placeholder={t("Confirm password", "Confirmer le mot de passe")}
+   value={confirmPasswordSignup}
+   onChange={(e) => setConfirmPasswordSignup(e.target.value)}
+   required
+   minLength={6}
+   className="pl-10 pr-10"
+   autoComplete="new-password"
+ />
+ <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+ </button>
+</div>
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Create account", "Créer un compte")}
                 </Button>
@@ -453,17 +463,21 @@ const Auth = () => {
                 />
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="password"
-                  placeholder={t("Password", "Mot de passe")}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="pl-10"
-                  autoComplete="current-password"
-                />
+  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input
+    type={showPassword ? "text" : "password"}
+    placeholder={t("Password", "Mot de passe")}
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+    minLength={6}
+    className="pl-10 pr-10"
+    autoComplete="current-password"
+  />
+  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+  </button>
+</div>
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Sign in", "Se connecter")}
