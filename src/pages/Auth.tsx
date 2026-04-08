@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { UtensilsCrossed, Loader2, Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Loader2, Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 const Auth = () => {
   const { user, signIn, signUp, signInWithGoogle, isLoading, isAdmin } = useAuth();
@@ -26,6 +26,12 @@ const Auth = () => {
   };
 
   const hasNavigatedRef = useRef(false);
+  // Tracks that PASSWORD_RECOVERY was received. Prevents double-processing if
+  // onAuthStateChange fires more than once (e.g. token refresh mid-session).
+  const recoveryConfirmedRef = useRef(false);
+  // Hard lock: once true, the recovery flow is fully committed and no re-entrant
+  // handler can override it.
+  const recoveryHandledRef = useRef(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -49,42 +55,61 @@ const Auth = () => {
     const errorDescription = params.get("error_description");
     const errorCode = params.get("error_code") ?? params.get("error");
 
+    // ─── RULE 1 (highest priority, checked before everything else) ───────────
+    // If type=recovery is anywhere in the URL, ALWAYS show "Set a new password"
+    // and CLEAR any error state. This intentionally runs before the
+    // recoveryHandledRef guard so that:
+    //   a) Error fragments like #error=access_denied or error_code=otp_expired
+    //      that coexist with type=recovery are completely ignored (they are
+    //      produced by email-client link prefetching, not by a truly bad link).
+    //   b) After a failed updateUser() call resets the refs, any subsequent
+    //      re-run of this effect (e.g. triggered by a language change) restores
+    //      the update form instead of staying on the Reset Password screen.
     if (type === "recovery") {
       setIsUpdateMode(true);
       setIsResetMode(false);
       setLinkError(null);
+      return;
     }
 
+    // ─── RULE 2 ──────────────────────────────────────────────────────────────
+    // No recovery intent in the URL. If PASSWORD_RECOVERY already fired and
+    // locked the form, nothing else should override that state.
+    if (recoveryHandledRef.current) return;
+
+    // ─── RULE 3 ──────────────────────────────────────────────────────────────
+    // Error params present (no type=recovery in URL). Most likely an expired or
+    // already-used recovery link. Show the password form with an error banner so
+    // the user can see the "Request a new link" button. Do NOT flip to reset mode
+    // here — that hides the password form and strands users who still want to try.
     if (errorDescription || errorCode) {
       const message = (errorDescription ?? errorCode ?? "").replace(/\+/g, " ").trim();
-      setLinkError(message || t("Email link is invalid or has expired", "Le lien email est invalide ou a expiré"));
-      setIsUpdateMode(false);
-      setIsResetMode(true);
+      setLinkError(
+        message ||
+        t("Email link is invalid or has expired", "Le lien email est invalide ou a expiré")
+      );
+      setIsUpdateMode(true);
+      setIsResetMode(false);
     }
   }, [language, location.search, location.hash]);
 
   useEffect(() => {
-    if (isLoading || !isUpdateMode || user) return;
-    let cancelled = false;
-    const timer = window.setTimeout(() => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (cancelled) return;
-        if (!session) {
-          setLinkError(t("Email link is invalid or has expired", "Le lien email est invalide ou a expiré"));
-          setIsUpdateMode(false);
-          setIsResetMode(true);
-        }
-      });
-    }, 250);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [isLoading, isUpdateMode, user, language]);
-
-  useEffect(() => {
+    // Listen for PASSWORD_RECOVERY to lock the update form in place.
+    // This is the only authoritative signal from Supabase that the recovery
+    // link is valid. We do NOT use a timer-based getSession() check because:
+    //   - The timer races against PKCE code exchange and fires too early
+    //   - Typing in the password field keeps the component alive past the
+    //     timer, causing it to flip the form to "invalid link" mid-input
+    // Genuinely expired/invalid links are handled by the URL params effect
+    // above — Supabase adds error_description to the redirect URL in that case.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
+        // Guard against double-firing (e.g. token refresh mid-session, or the
+        // implicit-flow hash being re-parsed). Once we've confirmed the recovery
+        // session exists, lock the form in update mode permanently.
+        if (recoveryHandledRef.current) return;
+        recoveryHandledRef.current = true;
+        recoveryConfirmedRef.current = true;
         setIsUpdateMode(true);
         setIsResetMode(false);
         setLinkError(null);
@@ -155,10 +180,19 @@ const Auth = () => {
     try {
       const { error } = await signUp(email, password);
       if (error) {
-        const msg = error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("user already")
-          ? t("This email is already registered. Please sign in instead.", "Cet email est déjà enregistré. Veuillez vous connecter.")
-          : error.message;
-        toast({ title: t("Error", "Erreur"), description: msg, variant: "destructive" });
+        const isExistingAccount =
+          error.message.toLowerCase().includes("already exists") ||
+          error.message.toLowerCase().includes("already registered") ||
+          error.message.toLowerCase().includes("user already");
+        toast({
+          title: isExistingAccount
+            ? t("This account already exists.", "Ce compte existe déjà.")
+            : t("Error", "Erreur"),
+          description: isExistingAccount
+            ? t("Please sign in instead.", "Veuillez vous connecter à la place.")
+            : error.message,
+          variant: "destructive",
+        });
         return;
       }
       setSignupSuccess(true);
@@ -211,9 +245,42 @@ const Auth = () => {
     }
     setIsSubmitting(true);
     try {
+      // Guard: verify a recovery session exists before calling updateUser().
+      // With PKCE flow the client exchanges ?code=XXXXX on page load and stores
+      // the session; if that exchange failed (expired link, wrong browser, email
+      // prefetch consumed the OTP) there is no session and updateUser() would
+      // fail with "Auth session missing". We surface the error here so the user
+      // sees "request a new link" immediately rather than after a confusing API call.
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession) {
+        setLinkError(
+          t(
+            "Your recovery session has expired. Use 'Request a new link' below to get a fresh link.",
+            "Votre session a expiré. Utilisez 'Demander un nouveau lien' ci-dessous."
+          )
+        );
+        return;
+      }
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) {
-        toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });
+        const isSessionError =
+          error.message.toLowerCase().includes("session") ||
+          error.message.toLowerCase().includes("not authenticated") ||
+          error.message.toLowerCase().includes("auth session missing");
+        if (isSessionError) {
+          // Show the error inline (inside the card, above the fields) rather than
+          // as a corner toast. This keeps all messaging inside the recovery form and
+          // avoids the alarming red popup the user sees on a valid recovery URL.
+          // The "Request a new link" button below is the natural next action.
+          setLinkError(
+            t(
+              "Your session has expired. Use 'Request a new link' below to get a fresh link.",
+              "Votre session a expiré. Utilisez 'Demander un nouveau lien' ci-dessous."
+            )
+          );
+        } else {
+          toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });
+        }
         return;
       }
       toast({
@@ -241,9 +308,11 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-hero px-4">
       <Card className="w-full max-w-md glass-panel border-primary/20">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent">
-            <UtensilsCrossed className="h-8 w-8 text-primary-foreground" />
-          </div>
+          <img
+            src="/apple-touch-icon.png"
+            alt="CalorieVision"
+            className="mx-auto h-20 w-20 rounded-full object-cover"
+          />
           <CardTitle className="text-2xl font-bold">
             {isUpdateMode
               ? t("Set a new password", "Définir un nouveau mot de passe")
@@ -277,33 +346,49 @@ const Auth = () => {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder={t("New password", "Nouveau mot de passe")}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="pl-10"
+                  className="pl-10 pr-10"
                   autoComplete="new-password"
                 />
+                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder={t("Confirm new password", "Confirmer le mot de passe")}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="pl-10"
+                  className="pl-10 pr-10"
                   autoComplete="new-password"
                 />
+                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Update password", "Mettre à jour")}
               </Button>
-              <Button type="button" variant="ghost" className="w-full" onClick={() => { setIsUpdateMode(false); setIsResetMode(true); }}>
+              <Button type="button" variant="ghost" className="w-full" onClick={() => {
+                // Navigate to /auth with no params — this clears type=recovery from
+                // the URL so the useEffect no longer forces update mode, then we
+                // explicitly set reset mode so the user can request a fresh link.
+                recoveryHandledRef.current = false;
+                recoveryConfirmedRef.current = false;
+                setIsUpdateMode(false);
+                setIsResetMode(true);
+                setLinkError(null);
+                navigate("/auth");
+              }}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t("Request a new link", "Demander un nouveau lien")}
               </Button>
@@ -387,7 +472,6 @@ const Auth = () => {
     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
   </button>
 </div>
-                </div>
  <div className="relative">
  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
  <Input
@@ -478,7 +562,6 @@ const Auth = () => {
     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
   </button>
 </div>
-              </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Sign in", "Se connecter")}
               </Button>

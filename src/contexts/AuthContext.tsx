@@ -140,23 +140,36 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
-    // Vérifier si l'email existe déjà
-    const { data: existingUser } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("email", email)
-      .maybeSingle();
-  
-    if (existingUser) {
-      return { error: new Error("This email is already registered. Please sign in instead.") };
+
+    console.log("--- DEBUG: SIGNUP ATTEMPT ---", { email });
+
+    // 1. Mandatory RPC Check - MUST return true if exists
+    const { data: isRegistered, error: checkError } = await supabase
+      .rpc('is_email_registered', { p_email: email });
+
+    console.log("--- DEBUG: RPC RESPONSE ---", { isRegistered, checkError });
+
+    if (checkError) {
+      console.error("--- DEBUG: RPC FAILED ---", checkError.message);
+      return { error: new Error("Server validation error. Please try again.") };
     }
-  
+
+    // 2. HARD BLOCK: If isRegistered is true, we STOP here.
+    if (isRegistered === true) {
+      console.log("--- DEBUG: BLOCKING SIGNUP - EMAIL EXISTS ---");
+      return { error: new Error("This account already exists. Please sign in instead.") };
+    }
+
+    // 3. Only proceeds if isRegistered is explicitly false
+    console.log("--- DEBUG: PROCEEDING TO SUPABASE AUTH ---");
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: redirectUrl },
     });
+
+    if (error) console.error("--- DEBUG: AUTH ERROR ---", error.message);
+    
     return { error: error as Error | null };
   };
 

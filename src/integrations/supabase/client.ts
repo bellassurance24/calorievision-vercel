@@ -25,6 +25,12 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
+      // PKCE (default since supabase-js v2.52). Recovery emails redirect to
+      // /auth?type=recovery&code=XXXXX — the client exchanges the code for a
+      // session and fires PASSWORD_RECOVERY. Do NOT use 'implicit' here: the
+      // implicit client ignores ?code entirely, so no session is ever established
+      // and updateUser() always fails with "Auth session missing".
+      flowType: 'pkce',
     },
   }
 );
