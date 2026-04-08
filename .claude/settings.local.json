@@ -44,7 +44,9 @@
       "Bash(/dev/null ls:*)",
       "Bash(grep -n \"5\\\\.99\\\\|12\\\\.99\\\\|9\\\\.99\\\\|price\\\\|$\" src/pages/Pricing.tsx)",
       "Bash(python -c \":*)",
-      "Bash(find C:UsershpDesktopCalorieVisionvision-plate-nutritionvision-plate-nutrition-main/src -type f -path *pages*)"
+      "Bash(find C:UsershpDesktopCalorieVisionvision-plate-nutritionvision-plate-nutrition-main/src -type f -path *pages*)",
+      "Bash(vercel)",
+      "Bash(vercel inspect:*)"
     ]
   }
 }

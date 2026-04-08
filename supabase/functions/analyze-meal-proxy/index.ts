@@ -267,12 +267,55 @@ async function analyzeWithOpenAI(
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
-serve(async (req) => {
+async function checkGuestScanLimit(req: Request): Promise<Response | null> {
+  // If the request carries a valid authenticated user JWT, skip guest limiting
+  // (authenticated users are limited by the SQL trigger on usage_stats instead).
+  const authHeader = req.headers.get("Authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const jwt = authHeader.replace("Bearer ", "").trim();
+    // Verify the JWT actually resolves to a real user via Supabase
+    const sb = getAdminClient();
+    const { data: { user } } = await sb.auth.getUser(jwt);
+    if (user) return null; // authenticated user — skip guest limit
+  }
+
+  const clientIp =
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown";
+
+  const today = new Date().toISOString().slice(0, 10);
+  const sb = getAdminClient();
+
+  const { data, error } = await sb
+    .from("guest_scan_limits")
+    .select("scan_count")
+    .eq("ip_address", clientIp)
+    .eq("scan_date", today)
+    .single();
+
+  if (!error && data && data.scan_count >= 2) {
+    return new Response(
+      JSON.stringify({ error: "Daily limit reached" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  await sb.from("guest_scan_limits").upsert(
+    { ip_address: clientIp, scan_date: today, scan_count: (data?.scan_count ?? 0) + 1 },
+    { onConflict: "ip_address,scan_date" }
+  );
+
+  return null;
+}serve(async (req) => {
   console.log("analyze-meal-proxy: received", req.method);
 
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const rateLimitRes = rateLimit(req);
+  const guestLimitRes = await checkGuestScanLimit(req);
+if (guestLimitRes) return guestLimitRes;
   if (rateLimitRes) return rateLimitRes;
 
   if (req.method !== "POST") {
