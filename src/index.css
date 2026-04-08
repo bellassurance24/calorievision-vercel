@@ -146,6 +146,18 @@
 }
 
 @layer utilities {
+  /* Desktop nav: explicit media query avoids Tailwind hidden/md:flex ordering
+     issues that cause Blink (Chrome/Edge) to skip repainting the nav when the
+     parent has backdrop-filter. */
+  .desktop-nav {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: flex;
+    }
+  }
+
   .bg-hero {
     background-image: radial-gradient(120% 120% at top, hsl(var(--primary) / 0.14), transparent),
       radial-gradient(120% 120% at bottom, hsl(var(--accent) / 0.18), transparent);

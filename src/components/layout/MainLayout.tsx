@@ -341,7 +341,7 @@ const MainLayout = ({
         </LocalizedNavLink>
 
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 text-sm font-medium md:flex md:text-base">
+        <nav className="desktop-nav flex-1 items-center justify-center gap-6 text-sm font-medium md:text-base">
           <LocalizedNavLink to="/" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
             {current.home}
           </LocalizedNavLink>
