@@ -93,6 +93,40 @@ const Auth = () => {
     }
   }, [language, location.search, location.hash]);
 
+  // Handle implicit-flow recovery links (#access_token=...&type=recovery).
+  // When flowType is 'pkce', Supabase does NOT auto-exchange hash tokens, so
+  // PASSWORD_RECOVERY never fires on its own. We extract the tokens manually
+  // and call setSession() — which triggers onAuthStateChange(PASSWORD_RECOVERY)
+  // and lets the existing handler lock the update form in place.
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const params = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token") ?? "";
+    const type = params.get("type");
+    if (!accessToken || type !== "recovery") return;
+
+    supabase.auth
+      .setSession({ access_token: accessToken, refresh_token: refreshToken })
+      .then(({ error }) => {
+        if (error) {
+          setLinkError(
+            language === "fr"
+              ? "Votre lien de récupération est invalide ou a expiré."
+              : "Your recovery link is invalid or has expired."
+          );
+          setIsUpdateMode(true);
+        }
+        // Clean up the hash so it is not re-processed on future navigation
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search
+        );
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     // Listen for PASSWORD_RECOVERY to lock the update form in place.
     // This is the only authoritative signal from Supabase that the recovery
