@@ -167,9 +167,7 @@ export function LimitReachedModal({
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
       <DialogContent className="max-w-sm rounded-2xl p-6 text-center">
         <div className="flex justify-center mb-4">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-            <AlertCircle className="h-7 w-7 text-destructive" aria-hidden="true" />
-          </span>
+          <img src="/gauge-logo.webp" className="h-14 w-14 object-contain" alt="CalorieVision" />
         </div>
 
         <DialogHeader className="mb-2">
