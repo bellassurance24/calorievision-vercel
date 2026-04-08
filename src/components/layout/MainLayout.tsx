@@ -365,7 +365,12 @@ const MainLayout = ({
           </LocalizedNavLink>
         </nav>
 
-        <div className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "")}>
+        {/* Controls: mobile menu + language selector + notification bell
+             Grouped into a single flex child so the header has exactly 3
+             direct children (logo, nav, controls). This prevents Blink
+             (Chrome/Edge) from wrapping the nav onto a hidden second line
+             when flex-wrap is active. */}
+        <div className={cn("flex items-center gap-2 shrink-0", isRTL ? "flex-row-reverse" : "")}>
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -443,10 +448,6 @@ const MainLayout = ({
             </DropdownMenuContent>
           </DropdownMenu>
 
-        </div>
-
-        {/* Notification Bell - separate flex child, pushed to far right on mobile */}
-        <div className={cn("flex items-center shrink-0", isRTL ? "mr-auto" : "ml-auto md:ml-0")}>
           <NotificationDropdown />
         </div>
       </header>
