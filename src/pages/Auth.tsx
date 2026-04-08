@@ -127,39 +127,6 @@ const Auth = () => {
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Handle PKCE-flow recovery links (?code=XXXX&type=recovery).
-  // Supabase PKCE reset emails land with a ?code= query param. The client
-  // must call exchangeCodeForSession() to trade it for a session, which then
-  // fires onAuthStateChange(PASSWORD_RECOVERY) and locks the update form.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    const type = params.get("type");
-    if (!code || type !== "recovery") return;
-
-    supabase.auth
-      .exchangeCodeForSession(code)
-      .then(({ error }) => {
-        if (error) {
-          setLinkError(
-            language === "fr"
-              ? "Votre lien de récupération est invalide ou a expiré."
-              : "Your recovery link is invalid or has expired."
-          );
-          setIsUpdateMode(true);
-        }
-        // Remove code from URL — it is single-use and must not be replayed
-        const clean = new URLSearchParams(window.location.search);
-        clean.delete("code");
-        const qs = clean.toString();
-        window.history.replaceState(
-          null,
-          "",
-          window.location.pathname + (qs ? `?${qs}` : "")
-        );
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   useEffect(() => {
     // Listen for PASSWORD_RECOVERY to lock the update form in place.
     // This is the only authoritative signal from Supabase that the recovery
@@ -273,7 +240,7 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?type=recovery`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       });
       if (error) {
         toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });

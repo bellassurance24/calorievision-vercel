@@ -42,6 +42,7 @@ const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const AdminMedia = lazy(() => import("./pages/AdminMedia"));
 const AdminAssets = lazy(() => import("./pages/AdminAssets"));
 const AdminHomepageEditor = lazy(() => import("./pages/AdminHomepageEditor"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const ChangePassword = lazy(() => import("./pages/ChangePassword"));
 const NotificationSettings = lazy(() => import("./pages/NotificationSettings"));
 const Install = lazy(() => import("./pages/Install"));
@@ -114,8 +115,9 @@ const App = () => (
                   {/* Public localized routes (pricing and analyze are here, not in AdminRoute) */}
                   {LocalizedRoutes()}
 
-                  {/* Auth page — no language prefix */}
+                  {/* Auth pages — no language prefix */}
                   <Route path="/auth" element={<LazyPage><Auth /></LazyPage>} />
+                  <Route path="/auth/callback" element={<LazyPage><AuthCallback /></LazyPage>} />
 
                   {/* Admin routes — ALL protected by AdminRoute layout guard */}
                   <Route element={<AdminRoute />}>
