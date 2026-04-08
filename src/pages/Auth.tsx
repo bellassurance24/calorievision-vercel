@@ -94,10 +94,9 @@ const Auth = () => {
   }, [language, location.search, location.hash]);
 
   // Handle implicit-flow recovery links (#access_token=...&type=recovery).
-  // When flowType is 'pkce', Supabase does NOT auto-exchange hash tokens, so
-  // PASSWORD_RECOVERY never fires on its own. We extract the tokens manually
-  // and call setSession() — which triggers onAuthStateChange(PASSWORD_RECOVERY)
-  // and lets the existing handler lock the update form in place.
+  // With flowType:'implicit', Supabase reset emails send tokens directly in
+  // the hash. We call setSession() explicitly so PASSWORD_RECOVERY fires and
+  // the update form is shown. Hash is then cleaned from the URL.
   useEffect(() => {
     const hash = window.location.hash;
     if (!hash) return;
@@ -116,8 +115,11 @@ const Auth = () => {
               ? "Votre lien de récupération est invalide ou a expiré."
               : "Your recovery link is invalid or has expired."
           );
-          setIsUpdateMode(true);
         }
+        // Always show the update form — on success PASSWORD_RECOVERY clears
+        // the error; on failure the error banner + "Request a new link" are shown.
+        setIsUpdateMode(true);
+        setIsResetMode(false);
         // Clean up the hash so it is not re-processed on future navigation
         window.history.replaceState(
           null,
@@ -240,7 +242,7 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth`,
       });
       if (error) {
         toast({ title: t("Error", "Erreur"), description: error.message, variant: "destructive" });

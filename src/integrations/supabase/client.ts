@@ -25,12 +25,12 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
-      // PKCE (default since supabase-js v2.52). Recovery emails redirect to
-      // /auth?type=recovery&code=XXXXX — the client exchanges the code for a
-      // session and fires PASSWORD_RECOVERY. Do NOT use 'implicit' here: the
-      // implicit client ignores ?code entirely, so no session is ever established
-      // and updateUser() always fails with "Auth session missing".
-      flowType: 'pkce',
+      // Implicit flow: recovery emails redirect to /auth with tokens in the
+      // URL hash (#access_token=...&type=recovery). Auth.tsx reads the hash,
+      // calls setSession(), and fires PASSWORD_RECOVERY.
+      // PKCE is NOT used: Gmail link-preview consumes the ?code= before the
+      // user clicks, and the SPA loses the code_verifier on every navigation.
+      flowType: 'implicit',
     },
   }
 );
