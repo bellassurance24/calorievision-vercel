@@ -636,6 +636,11 @@ const Analyze = () => {
 
       setAnalysis(analysisResult);
 
+      // ── Facebook Pixel: track successful scan ─────────────────────────────
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'ViewContent', { content_name: 'meal_scan' });
+      }
+
       // ── Log usage scan ────────────────────────────────────────────────────
       if (user) {
         // Authenticated: write to DB, let SQL trigger enforce server-side limits

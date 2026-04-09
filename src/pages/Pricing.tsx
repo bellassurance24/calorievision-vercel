@@ -263,6 +263,14 @@ const Pricing = () => {
         return;
       }
 
+      // Facebook Pixel: track checkout initiation
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'InitiateCheckout', {
+          value: planId === 'pro' ? 5.99 : 12.99,
+          currency: 'USD',
+        });
+      }
+
       window.location.href = data.url;
     } catch (e: any) {
       toast({
