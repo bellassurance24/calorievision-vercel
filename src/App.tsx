@@ -46,6 +46,7 @@ const ChangePassword = lazy(() => import("./pages/ChangePassword"));
 const NotificationSettings = lazy(() => import("./pages/NotificationSettings"));
 const Install = lazy(() => import("./pages/Install"));
 const Pricing = lazy(() => import("./pages/Pricing"));
+const History = lazy(() => import("./pages/History"));
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const LocalizedRoutes = () => (
         <Route path="install" element={<MainLayout><LazyPage><Install /></LazyPage></MainLayout>} />
         {/* Pricing is PUBLIC — no auth guard */}
         <Route path="pricing" element={<MainLayout><LazyPage><Pricing /></LazyPage></MainLayout>} />
+        <Route path="history" element={<MainLayout><LazyPage><History /></LazyPage></MainLayout>} />
         <Route path="privacy-policy" element={<MainLayout><LazyPage><PrivacyPolicy /></LazyPage></MainLayout>} />
         <Route path="terms" element={<MainLayout><LazyPage><Terms /></LazyPage></MainLayout>} />
         <Route path="disclaimer" element={<MainLayout><LazyPage><Disclaimer /></LazyPage></MainLayout>} />

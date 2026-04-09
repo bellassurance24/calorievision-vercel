@@ -19,6 +19,7 @@ import { removeLanguagePrefix } from "@/hooks/useLocalizedPath";
 import { NotificationPermissionPopup } from "@/components/NotificationPermissionPopup";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const MainLayout = ({
   children
@@ -33,6 +34,8 @@ const MainLayout = ({
   } = useBranding();
   const { user, isAdmin, signOut } = useAuth();
   const { unreadCount } = useNotifications();
+  const { plan } = useSubscription();
+  const showHistory = !!user && (plan === "pro" || plan === "ultimate");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -49,6 +52,7 @@ const MainLayout = ({
       pricing: "Pricing",
       analyzeCta: "Analyze a meal",
       howItWorksCta: "How it works",
+      history: "History",
       brandingSettingsAria: "Open branding settings"
     },
     fr: {
@@ -63,6 +67,7 @@ const MainLayout = ({
       pricing: "Tarifs",
       analyzeCta: "Analyser un repas",
       howItWorksCta: "Comment ça marche",
+      history: "Historique",
       brandingSettingsAria: "Ouvrir les paramètres de branding"
     },
     es: {
@@ -77,6 +82,7 @@ const MainLayout = ({
       pricing: "Precios",
       analyzeCta: "Analizar una comida",
       howItWorksCta: "Cómo funciona",
+      history: "Historial",
       brandingSettingsAria: "Abrir los ajustes de marca"
     },
     pt: {
@@ -91,6 +97,7 @@ const MainLayout = ({
       pricing: "Preços",
       analyzeCta: "Analisar uma refeição",
       howItWorksCta: "Como funciona",
+      history: "Histórico",
       brandingSettingsAria: "Abrir as configurações de marca"
     },
     zh: {
@@ -105,6 +112,7 @@ const MainLayout = ({
       pricing: "定价",
       analyzeCta: "分析一餐",
       howItWorksCta: "了解工作原理",
+      history: "历史记录",
       brandingSettingsAria: "打开品牌设置"
     },
     ar: {
@@ -119,6 +127,7 @@ const MainLayout = ({
       pricing: "الأسعار",
       analyzeCta: "حلّل وجبة",
       howItWorksCta: "كيف يعمل",
+      history: "السجل",
       brandingSettingsAria: "فتح إعدادات الهوية البصرية"
     },
     it: {
@@ -133,6 +142,7 @@ const MainLayout = ({
       pricing: "Prezzi",
       analyzeCta: "Analizza un pasto",
       howItWorksCta: "Come funziona",
+      history: "Cronologia",
       brandingSettingsAria: "Apri le impostazioni del branding"
     },
     de: {
@@ -147,6 +157,7 @@ const MainLayout = ({
       pricing: "Preise",
       analyzeCta: "Mahlzeit analysieren",
       howItWorksCta: "So funktioniert's",
+      history: "Verlauf",
       brandingSettingsAria: "Branding-Einstellungen öffnen"
     },
     nl: {
@@ -161,6 +172,7 @@ const MainLayout = ({
       pricing: "Prijzen",
       analyzeCta: "Analyseer een maaltijd",
       howItWorksCta: "Hoe het werkt",
+      history: "Geschiedenis",
       brandingSettingsAria: "Huisstijl instellingen openen"
     },
     ru: {
@@ -175,6 +187,7 @@ const MainLayout = ({
       pricing: "Цены",
       analyzeCta: "Анализировать блюдо",
       howItWorksCta: "Как это работает",
+      history: "История",
       brandingSettingsAria: "Открыть настройки бренда"
     },
     ja: {
@@ -189,6 +202,7 @@ const MainLayout = ({
       pricing: "料金",
       analyzeCta: "食事を分析する",
       howItWorksCta: "使い方を見る",
+      history: "履歴",
       brandingSettingsAria: "ブランド設定を開く"
     }
   } as const;
@@ -363,6 +377,11 @@ const MainLayout = ({
           <LocalizedNavLink to="/contact" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
             {current.contact}
           </LocalizedNavLink>
+          {showHistory && (
+            <LocalizedNavLink to="/history" className="text-primary-foreground/80 transition-colors hover:text-primary-foreground" activeClassName="text-primary-foreground">
+              {current.history}
+            </LocalizedNavLink>
+          )}
         </nav>
 
         {/* Controls: mobile menu + language selector + notification bell
@@ -406,6 +425,11 @@ const MainLayout = ({
                 <LocalizedNavLink to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
                   {current.contact}
                 </LocalizedNavLink>
+                {showHistory && (
+                  <LocalizedNavLink to="/history" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors">
+                    {current.history}
+                  </LocalizedNavLink>
+                )}
                 {user && (
                   <LocalizedNavLink to="/notification-settings" onClick={() => setMobileMenuOpen(false)} className="text-foreground text-lg font-medium py-2 px-4 rounded-lg hover:bg-muted transition-colors flex items-center gap-2">
                     <div className="relative">
