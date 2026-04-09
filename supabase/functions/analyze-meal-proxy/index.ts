@@ -94,6 +94,16 @@ async function uploadScanImage(
 }
 
 // ── Save full scan record (image + analysis) after successful analysis ─────────
+function computeExpiresAt(planType: string): string {
+  const now = new Date();
+  switch (planType) {
+    case "ultimate": now.setDate(now.getDate() + 30); break;
+    case "pro":      now.setDate(now.getDate() + 7);  break;
+    default:         now.setDate(now.getDate() + 1);   break; // starter & guests
+  }
+  return now.toISOString();
+}
+
 async function saveScanRecord(
   imageBytes: Uint8Array,
   mimeType: string,
@@ -104,6 +114,8 @@ async function saveScanRecord(
   country: string | null,
   city: string | null,
   deviceBrand: string | null,
+  userId: string | null,
+  planType: string,
 ): Promise<void> {
   try {
     const enabled = await isCaptureEnabled();
@@ -126,6 +138,8 @@ async function saveScanRecord(
       device_brand:    deviceBrand,
       total_calories:  Math.round(analysis.totalCalories),
       analysis_result: analysis,
+      user_id:         userId,
+      expires_at:      computeExpiresAt(planType),
     });
 
     if (error) {
@@ -133,7 +147,8 @@ async function saveScanRecord(
     } else {
       console.log(
         `saveScanRecord: saved — ${analysis.items.length} items, ` +
-        `${analysis.totalCalories} kcal, image=${storagePath ?? "none"}`,
+        `${analysis.totalCalories} kcal, user=${userId ?? "guest"}, ` +
+        `plan=${planType}, image=${storagePath ?? "none"}`,
       );
     }
   } catch (e) {
@@ -267,17 +282,36 @@ async function analyzeWithOpenAI(
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
-async function checkGuestScanLimit(req: Request): Promise<Response | null> {
-  // If the request carries a valid authenticated user JWT, skip guest limiting
-  // (authenticated users are limited by the SQL trigger on usage_stats instead).
+// Resolves the authenticated user from the JWT, if any.
+// Returns the user ID or null (guest).
+async function resolveUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("Authorization");
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const jwt = authHeader.replace("Bearer ", "").trim();
-    // Verify the JWT actually resolves to a real user via Supabase
     const sb = getAdminClient();
     const { data: { user } } = await sb.auth.getUser(jwt);
-    if (user) return null; // authenticated user — skip guest limit
+    if (user) return user.id;
   }
+  return null;
+}
+
+// Looks up the user's subscription plan type. Returns "starter" for guests or
+// users without a subscription.
+async function resolveUserPlan(userId: string | null): Promise<string> {
+  if (!userId) return "starter";
+  const sb = getAdminClient();
+  const { data } = await sb
+    .from("subscriptions")
+    .select("plan_type")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .single();
+  return data?.plan_type ?? "starter";
+}
+
+async function checkGuestScanLimit(req: Request, userId: string | null): Promise<Response | null> {
+  // Authenticated users are limited by the SQL trigger on usage_stats instead.
+  if (userId) return null;
 
   const clientIp =
     req.headers.get("cf-connecting-ip") ??
@@ -314,9 +348,11 @@ async function checkGuestScanLimit(req: Request): Promise<Response | null> {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const rateLimitRes = rateLimit(req);
-  const guestLimitRes = await checkGuestScanLimit(req);
-if (guestLimitRes) return guestLimitRes;
+  const userId = await resolveUserId(req);
+  const guestLimitRes = await checkGuestScanLimit(req, userId);
+  if (guestLimitRes) return guestLimitRes;
   if (rateLimitRes) return rateLimitRes;
+  const planType = await resolveUserPlan(userId);
 
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405, headers: corsHeaders });
@@ -376,6 +412,7 @@ if (guestLimitRes) return guestLimitRes;
     const savePromise = saveScanRecord(
       imageBytes, image.type, result,
       deviceType, browser, language, country, city, deviceBrand,
+      userId, planType,
     );
     const runtime = globalThis as { EdgeRuntime?: { waitUntil: (p: Promise<void>) => void } };
     if (runtime.EdgeRuntime?.waitUntil) {
