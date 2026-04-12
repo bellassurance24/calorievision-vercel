@@ -1,22 +1,30 @@
 import { useEffect, useRef, useState } from "react";
+import gaugeWheel from "@/assets/gauge-no-bg.png";
 
-/* ─── Timing constants (ms) ─────────────────────────────────────── */
-const CYCLE       = 5000;  // full loop length
-const SCAN_END    = 1900;  // scan line finishes travelling
-const COUNT_START =  700;  // numbers begin counting
-const COUNT_END   = 2300;  // numbers reach target
+/* ─── Timing (ms) ──────────────────────────────────────────────────── */
+const CYCLE       = 5000;
+const RESET_END   =  320;   // needle snaps back to start
+const COUNT_START =  320;
+const COUNT_END   = 2300;
+
+/* ─── Needle angles (degrees, SVG rotate — 0 = 12 o'clock, CW+) ─── */
+const NEEDLE_ZERO = -65;   // 10 o'clock — "empty tank"
+const NEEDLE_FULL =  28;   // 1 o'clock  — 487 kcal, matches baked needle
 
 const TARGETS = { calories: 487, protein: 32, carbs: 45, fat: 18 };
 
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
+function easeInCubic(t: number) {
+  return t * t * t;
+}
 
-/* ─── Animated card ─────────────────────────────────────────────── */
+/* ─── Main component ────────────────────────────────────────────────── */
 export function NutritionScanAnimation() {
   const [phase, setPhase] = useState(0);
-  const rafRef  = useRef<number>(0);
-  const t0Ref   = useRef<number>(0);
+  const rafRef = useRef<number>(0);
+  const t0Ref  = useRef<number>(0);
 
   useEffect(() => {
     t0Ref.current = performance.now();
@@ -28,12 +36,8 @@ export function NutritionScanAnimation() {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  /* scan line */
-  const scanPct     = Math.min(phase / SCAN_END, 1) * 100;
-  const scanVisible = phase < SCAN_END + 300;
-
-  /* counting */
-  const rawP  = Math.max(0, Math.min((phase - COUNT_START) / (COUNT_END - COUNT_START), 1));
+  /* Count-up */
+  const rawP   = Math.max(0, Math.min((phase - COUNT_START) / (COUNT_END - COUNT_START), 1));
   const countP = easeOutCubic(rawP);
 
   const calories = Math.round(countP * TARGETS.calories);
@@ -41,196 +45,245 @@ export function NutritionScanAnimation() {
   const carbs    = Math.round(countP * TARGETS.carbs);
   const fat      = Math.round(countP * TARGETS.fat);
 
-  /* pulsing glow when scan is complete */
-  const holdPhase = Math.max(0, phase - COUNT_END);
-  const pulse     = Math.sin((holdPhase / 1400) * Math.PI * 2) * 0.4 + 0.6; // 0.2–1.0
-  const glowAlpha = countP * 0.18 * (phase > COUNT_END ? pulse : 1);
-  const glowPx    = Math.round(countP * 28);
+  /* Needle — quick CCW reset then slow CW sweep */
+  let needleDeg: number;
+  if (phase < RESET_END) {
+    const resetP = easeInCubic(phase / RESET_END);
+    needleDeg = NEEDLE_FULL - resetP * (NEEDLE_FULL - NEEDLE_ZERO);
+  } else {
+    needleDeg = NEEDLE_ZERO + countP * (NEEDLE_FULL - NEEDLE_ZERO);
+  }
+
+  /* Macro pill appearance */
+  const pill1 = phase > 1700;
+  const pill2 = phase > 2050;
+  const pill3 = phase > 2400;
+
+  /* Card glow at end */
+  const holdP = Math.max(0, (phase - COUNT_END) / (CYCLE - COUNT_END));
+  const pulse = Math.sin((phase / 1400) * Math.PI * 2) * 0.12 + 0.88;
+  const glowPx = Math.round(holdP * 24);
+  const glowA  = (holdP * 0.22 * pulse).toFixed(3);
 
   return (
     <div
-      className="relative rounded-2xl bg-white overflow-hidden select-none"
       style={{
         width: "100%",
-        maxWidth: "300px",
-        boxShadow: `0 4px 28px rgba(0,0,0,0.09), 0 0 ${glowPx}px ${Math.round(glowPx / 2)}px rgba(13,148,136,${glowAlpha.toFixed(3)})`,
+        maxWidth: "290px",
+        background: "linear-gradient(160deg,#ffffff 0%,#fff7ed 100%)",
+        borderRadius: "22px",
+        boxShadow: `0 6px 36px rgba(0,0,0,0.11), 0 1px 4px rgba(0,0,0,0.07), 0 0 ${glowPx}px ${Math.round(glowPx / 2)}px rgba(249,115,22,${glowA})`,
+        overflow: "hidden",
+        userSelect: "none",
+        fontFamily: "system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
       }}
     >
-      {/* ── Plate area ─────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden"
-        style={{ background: "linear-gradient(145deg,#f8fafc 0%,#f0fdf4 100%)" }}
-      >
-        <div className="flex items-center justify-center py-6 px-4">
-          <PlateIllustration />
-        </div>
-
-        {/* scan line */}
-        {scanVisible && (
-          <>
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                inset: "0 0 auto",
-                top: `${scanPct}%`,
-                height: "2px",
-                background:
-                  "linear-gradient(90deg,transparent 0%,#0d9488 15%,#2dd4bf 50%,#0d9488 85%,transparent 100%)",
-                boxShadow: "0 0 12px 4px rgba(13,148,136,0.55)",
-                pointerEvents: "none",
-              }}
-            />
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: `${scanPct}%`,
-                background: "rgba(13,148,136,0.055)",
-                pointerEvents: "none",
-              }}
-            />
-          </>
-        )}
+      {/* ── Top badge ──────────────────────────────────────────────── */}
+      <div style={{ padding: "14px 18px 0", display: "flex", alignItems: "center", gap: "7px" }}>
+        <span
+          style={{
+            width: "7px", height: "7px", borderRadius: "50%",
+            background: "#f97316",
+            boxShadow: "0 0 0 3px rgba(249,115,22,0.18)",
+            display: "inline-block",
+            animation: "cvPulse 1.5s ease-in-out infinite",
+          }}
+        />
+        <span
+          style={{
+            fontSize: "10.5px", fontWeight: 700, color: "#64748b",
+            letterSpacing: "0.1em", textTransform: "uppercase",
+          }}
+        >
+          Nutrition Analysis
+        </span>
       </div>
 
-      {/* ── Stats area ─────────────────────────────────────────── */}
-      <div className="px-4 pt-3 pb-4 space-y-2.5">
-        {/* Calories row */}
+      {/* ── Gauge wheel ───────────────────────────────────────────── */}
+      <div style={{ display: "flex", justifyContent: "center", padding: "10px 24px 4px" }}>
         <div
-          className="flex items-baseline justify-between"
-          style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "8px" }}
+          style={{
+            position: "relative",
+            width: "192px",
+            height: "192px",
+            filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.14))",
+          }}
         >
-          <span
+          {/* Orange wheel */}
+          <img
+            src={gaugeWheel}
+            alt=""
+            aria-hidden
+            draggable={false}
+            style={{ width: "100%", height: "100%", display: "block" }}
+          />
+
+          {/* Animated needle overlay */}
+          <svg
+            aria-hidden
+            viewBox="0 0 192 192"
             style={{
-              fontSize: "9px",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "#94a3b8",
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              overflow: "visible",
             }}
           >
-            Calories
-          </span>
+            <defs>
+              <linearGradient id="cvNeedleGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stopColor="#2dd4bf" />
+                <stop offset="60%"  stopColor="#0d9488" />
+                <stop offset="100%" stopColor="#0f766e" />
+              </linearGradient>
+              <filter id="cvNeedleShadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="1" stdDeviation="2.5" floodColor="rgba(0,0,0,0.5)" />
+              </filter>
+            </defs>
+
+            {/* Needle group — translated to circle center, then rotated */}
+            <g
+              transform={`translate(96,96) rotate(${needleDeg.toFixed(2)})`}
+              filter="url(#cvNeedleShadow)"
+            >
+              {/* Main needle body — tapers from base to tip */}
+              <polygon
+                points="-3,12 3,12 1.2,-72 -1.2,-72"
+                fill="url(#cvNeedleGrad)"
+              />
+              {/* Sharp tip */}
+              <polygon
+                points="-1.2,-72 1.2,-72 0,-84"
+                fill="#2dd4bf"
+              />
+              {/* Highlight streak */}
+              <line
+                x1="0.6" y1="8"
+                x2="0.6" y2="-78"
+                stroke="rgba(255,255,255,0.35)"
+                strokeWidth="0.7"
+              />
+              {/* Hub — outer dark ring */}
+              <circle r="9"   fill="#0f172a" />
+              {/* Hub — mid */}
+              <circle r="6.5" fill="#1e293b" />
+              {/* Hub — inner teal accent */}
+              <circle r="3.5" fill="#0d9488" />
+              {/* Hub — center glint */}
+              <circle r="1.2" fill="rgba(255,255,255,0.55)" cx="0" cy="-0.5" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      {/* ── Calorie readout ───────────────────────────────────────── */}
+      <div style={{ textAlign: "center", padding: "6px 20px 4px" }}>
+        <div
+          style={{
+            fontSize: "44px",
+            fontWeight: 800,
+            color: "#0f172a",
+            lineHeight: 1,
+            letterSpacing: "-0.03em",
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          {calories.toLocaleString()}
           <span
-            className="tabular-nums"
-            style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", lineHeight: 1 }}
+            style={{
+              fontSize: "15px",
+              fontWeight: 500,
+              color: "#94a3b8",
+              marginLeft: "5px",
+              letterSpacing: "0",
+            }}
           >
-            {calories.toLocaleString()}
-            <span style={{ fontSize: "11px", fontWeight: 400, color: "#94a3b8", marginLeft: "3px" }}>
-              kcal
-            </span>
+            kcal
           </span>
         </div>
-
-        {/* Macro bars */}
-        <MacroRow label="Protein" value={protein} unit="g" max={TARGETS.protein} color="#0d9488" />
-        <MacroRow label="Carbs"   value={carbs}   unit="g" max={TARGETS.carbs}   color="#f97316" />
-        <MacroRow label="Fat"     value={fat}     unit="g" max={TARGETS.fat}     color="#eab308" />
+        <div
+          style={{
+            fontSize: "10px",
+            fontWeight: 600,
+            color: "#cbd5e1",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            marginTop: "3px",
+          }}
+        >
+          Total Calories
+        </div>
       </div>
+
+      {/* ── Macro pills ───────────────────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          gap: "7px",
+          padding: "10px 14px 16px",
+          justifyContent: "center",
+        }}
+      >
+        <MacroPill label="Protein" value={protein} unit="g" color="#0d9488" visible={pill1} />
+        <MacroPill label="Carbs"   value={carbs}   unit="g" color="#f97316" visible={pill2} />
+        <MacroPill label="Fat"     value={fat}     unit="g" color="#eab308" visible={pill3} />
+      </div>
+
+      {/* ── Keyframes ─────────────────────────────────────────────── */}
+      <style>{`
+        @keyframes cvPulse {
+          0%,100% { opacity:1; transform:scale(1); }
+          50%      { opacity:0.45; transform:scale(0.82); }
+        }
+      `}</style>
     </div>
   );
 }
 
-/* ─── Macro bar row ─────────────────────────────────────────────── */
-function MacroRow({
-  label, value, unit, max, color,
+/* ─── Macro pill ────────────────────────────────────────────────────── */
+function MacroPill({
+  label, value, unit, color, visible,
 }: {
-  label: string; value: number; unit: string; max: number; color: string;
+  label: string; value: number; unit: string; color: string; visible: boolean;
 }) {
-  const pct = max > 0 ? (value / max) * 100 : 0;
   return (
-    <div>
+    <div
+      style={{
+        flex: 1,
+        background: `${color}12`,
+        border: `1.5px solid ${color}28`,
+        borderRadius: "14px",
+        padding: "7px 8px",
+        textAlign: "center",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0) scale(1)" : "translateY(8px) scale(0.94)",
+        transition: "opacity 0.38s cubic-bezier(0.34,1.56,0.64,1), transform 0.38s cubic-bezier(0.34,1.56,0.64,1)",
+      }}
+    >
       <div
-        className="flex items-center justify-between"
-        style={{ marginBottom: "4px" }}
+        style={{
+          fontSize: "15px",
+          fontWeight: 800,
+          color,
+          lineHeight: 1,
+          fontVariantNumeric: "tabular-nums",
+        }}
       >
-        <span style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>{label}</span>
-        <span
-          className="tabular-nums"
-          style={{ fontSize: "11px", fontWeight: 700, color }}
-        >
-          {value}
-          {unit}
-        </span>
+        {value}
+        <span style={{ fontSize: "10px", fontWeight: 600, marginLeft: "1px" }}>{unit}</span>
       </div>
       <div
         style={{
-          height: "6px",
-          width: "100%",
-          borderRadius: "9999px",
-          background: "#f1f5f9",
-          overflow: "hidden",
+          fontSize: "9px",
+          fontWeight: 600,
+          color: "#94a3b8",
+          textTransform: "uppercase",
+          letterSpacing: "0.07em",
+          marginTop: "3px",
         }}
       >
-        <div
-          style={{
-            width: `${pct}%`,
-            height: "100%",
-            borderRadius: "9999px",
-            backgroundColor: color,
-          }}
-        />
+        {label}
       </div>
     </div>
-  );
-}
-
-/* ─── Plate illustration (SVG) ──────────────────────────────────── */
-function PlateIllustration() {
-  return (
-    <svg
-      viewBox="0 0 200 155"
-      width="200"
-      height="155"
-      aria-hidden
-      style={{ display: "block", overflow: "visible" }}
-    >
-      {/* drop shadow */}
-      <ellipse cx="100" cy="148" rx="76" ry="9" fill="rgba(0,0,0,0.07)" />
-
-      {/* plate */}
-      <ellipse cx="100" cy="92" rx="82" ry="56" fill="white" />
-      <ellipse cx="100" cy="92" rx="82" ry="56" fill="none" stroke="#e2e8f0" strokeWidth="1.5" />
-      <ellipse cx="100" cy="92" rx="74" ry="50" fill="none" stroke="#f1f5f9" strokeWidth="1" />
-      <ellipse cx="100" cy="93" rx="68" ry="46" fill="#fafafa" />
-
-      {/* ── Greens / salad (left) ── */}
-      <ellipse cx="70" cy="89" rx="29" ry="21" fill="#dcfce7" />
-      <ellipse cx="62" cy="83" rx="15" ry="11" fill="#4ade80" opacity=".9" />
-      <ellipse cx="75" cy="91" rx="12" ry="9"  fill="#22c55e" opacity=".85" />
-      <ellipse cx="65" cy="96" rx="9"  rx2="9"  ry="7"  fill="#86efac" />
-      {/* leaf veins */}
-      <path d="M56 82 Q62 78 68 82" stroke="#15803d" strokeWidth=".9" fill="none" opacity=".5" />
-      <path d="M70 89 Q76 85 82 89" stroke="#15803d" strokeWidth=".9" fill="none" opacity=".4" />
-
-      {/* ── Chicken / protein (right) ── */}
-      <ellipse cx="132" cy="84" rx="27" ry="19" fill="#fde68a" />
-      <ellipse cx="131" cy="82" rx="21" ry="15" fill="#fbbf24" />
-      <ellipse cx="132" cy="81" rx="15" ry="11" fill="#f59e0b" />
-      {/* grill marks */}
-      <path d="M122 78 Q131 76 140 78" stroke="#b45309" strokeWidth="1.3" fill="none" opacity=".6" strokeLinecap="round"/>
-      <path d="M123 83 Q132 81 141 83" stroke="#b45309" strokeWidth="1.3" fill="none" opacity=".4" strokeLinecap="round"/>
-
-      {/* ── Rice / carbs (bottom) ── */}
-      <ellipse cx="100" cy="111" rx="24" ry="13" fill="#fef9c3" />
-      <ellipse cx="100" cy="110" rx="17" ry="9"  fill="#fef3c7" />
-      {[83,89,95,101,107,86,92,98,104].map((x, i) => (
-        <ellipse key={i} cx={x} cy={109 + (i % 2 === 0 ? 0 : 2)} rx="1.6" ry="2.8" fill="#fde047" opacity=".7" />
-      ))}
-
-      {/* ── Sauce drizzle ── */}
-      <path
-        d="M106 100 Q112 104 117 101 Q121 98 124 103"
-        stroke="#ef4444"
-        strokeWidth="1.8"
-        fill="none"
-        opacity=".35"
-        strokeLinecap="round"
-      />
-    </svg>
   );
 }
