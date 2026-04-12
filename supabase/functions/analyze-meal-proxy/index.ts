@@ -309,6 +309,32 @@ async function resolveUserPlan(userId: string | null): Promise<string> {
   return data?.plan_type ?? "starter";
 }
 
+async function checkStarterDailyLimit(userId: string, planType: string): Promise<Response | null> {
+  if (planType !== "starter") return null;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const sb = getAdminClient();
+
+  const { data } = await sb
+    .from("profiles")
+    .select("usage_stats")
+    .eq("id", userId)
+    .single();
+
+  const usageStats = (data?.usage_stats ?? {}) as {
+    daily_scans?: Record<string, number>;
+  };
+  const dayCount = usageStats.daily_scans?.[today] ?? 0;
+
+  if (dayCount >= 2) {
+    return new Response(
+      JSON.stringify({ error: "Daily scan limit reached" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+  return null;
+}
+
 async function checkGuestScanLimit(req: Request, userId: string | null): Promise<Response | null> {
   // Authenticated users are limited by the SQL trigger on usage_stats instead.
   if (userId) return null;
@@ -353,6 +379,10 @@ async function checkGuestScanLimit(req: Request, userId: string | null): Promise
   if (guestLimitRes) return guestLimitRes;
   if (rateLimitRes) return rateLimitRes;
   const planType = await resolveUserPlan(userId);
+  if (userId) {
+    const starterLimitRes = await checkStarterDailyLimit(userId, planType);
+    if (starterLimitRes) return starterLimitRes;
+  }
 
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405, headers: corsHeaders });

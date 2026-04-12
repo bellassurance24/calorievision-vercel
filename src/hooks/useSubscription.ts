@@ -44,7 +44,7 @@ export interface SubscriptionInfo {
 const PLAN_LIMITS: Record<PlanType, { daily: number; monthly: number }> = {
   starter:  { daily: 2,              monthly: 999_999_999 },
   pro:      { daily: 999_999_999,    monthly: 1_000       },
-  ultimate: { daily: 999_999_999,    monthly: 999_999_999 }, // unlimited
+  ultimate: { daily: 999_999_999,    monthly: 5_000       },
 };
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
