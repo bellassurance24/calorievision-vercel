@@ -8,8 +8,8 @@ const COUNT_START =  320;
 const COUNT_END   = 2300;
 
 /* ─── Needle angles (degrees, SVG rotate — 0 = 12 o'clock, CW+) ─── */
-const NEEDLE_ZERO = -65;   // 10 o'clock — "empty tank"
-const NEEDLE_FULL =  28;   // 1 o'clock  — 487 kcal, matches baked needle
+const NEEDLE_ZERO = -130;  // 8 o'clock — far left, "empty tank"
+const NEEDLE_FULL =   28;  // 1 o'clock — 487 kcal, matches baked needle
 
 const TARGETS = { calories: 487, protein: 32, carbs: 45, fat: 18 };
 
@@ -142,12 +142,6 @@ export function NutritionScanAnimation() {
                 <feDropShadow dx="0" dy="1" stdDeviation="2.5" floodColor="rgba(0,0,0,0.5)" />
               </filter>
             </defs>
-
-            {/* Baked-needle eraser — fixed at 28° to paint over the static needle in the image */}
-            <g transform="translate(96,96) rotate(28)">
-              <polygon points="-3,13 3,13 1.8,-85 -1.8,-85" fill="white" />
-              <circle r="11" fill="white" />
-            </g>
 
             {/* Needle group — translated to circle center, then rotated */}
             <g
