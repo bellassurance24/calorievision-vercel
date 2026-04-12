@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import gaugeWheel from "@/assets/gauge-no-bg.png";
+import gaugeWheel from "@/assets/gauge-original.webp";
 
 /* ─── Timing (ms) ──────────────────────────────────────────────────── */
 const CYCLE       = 5000;
@@ -70,7 +70,7 @@ export function NutritionScanAnimation() {
       style={{
         width: "100%",
         maxWidth: "290px",
-        background: "linear-gradient(160deg,#ffffff 0%,#fff7ed 100%)",
+        background: "#ffffff",
         borderRadius: "22px",
         boxShadow: `0 6px 36px rgba(0,0,0,0.11), 0 1px 4px rgba(0,0,0,0.07), 0 0 ${glowPx}px ${Math.round(glowPx / 2)}px rgba(249,115,22,${glowA})`,
         overflow: "hidden",
@@ -106,6 +106,8 @@ export function NutritionScanAnimation() {
             position: "relative",
             width: "192px",
             height: "192px",
+            background: "#ffffff",
+            borderRadius: "50%",
             filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.14))",
           }}
         >
@@ -140,6 +142,12 @@ export function NutritionScanAnimation() {
                 <feDropShadow dx="0" dy="1" stdDeviation="2.5" floodColor="rgba(0,0,0,0.5)" />
               </filter>
             </defs>
+
+            {/* Baked-needle eraser — fixed at 28° to paint over the static needle in the image */}
+            <g transform="translate(96,96) rotate(28)">
+              <polygon points="-3,13 3,13 1.8,-85 -1.8,-85" fill="white" />
+              <circle r="11" fill="white" />
+            </g>
 
             {/* Needle group — translated to circle center, then rotated */}
             <g
