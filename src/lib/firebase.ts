@@ -146,8 +146,12 @@ async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null
       scope: "/",
     });
 
-    // Wait for SW to be ready
-    await navigator.serviceWorker.ready;
+    // Wait for SW to be ready — race against a 5 s timeout so a failed or
+    // slow-activating SW never blocks getFCMToken() indefinitely.
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise<void>(resolve => setTimeout(resolve, 5_000)),
+    ]);
 
     // Send config to SW
     if (registration.active) {
