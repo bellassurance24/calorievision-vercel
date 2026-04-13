@@ -14,7 +14,7 @@ import MediaShowcaseSection from "@/components/MediaShowcaseSection";
 
 import howItWorks1 from "@/assets/how-it-works-1.jpg";
 import howItWorks2 from "@/assets/how-it-works-2.jpg";
-import { NutritionScanAnimation } from "@/components/NutritionScanAnimation";
+import CalorieGauge from "@/components/CalorieGauge";
 
 const Index = () => {
   const { language } = useLanguage();
@@ -250,7 +250,7 @@ const Index = () => {
             )}
           </p>
           <div className="flex justify-center">
-            <NutritionScanAnimation />
+            <CalorieGauge value={487} max={1000} />
           </div>
         </section>
       </ScrollAnimation>
