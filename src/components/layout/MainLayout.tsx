@@ -16,7 +16,6 @@ import CookieConsentBanner, { reopenCookieConsent } from "@/components/CookieCon
 import { getBlogLangSlugMap } from "@/utils/blogLangSlugStore";
 import { supabase } from "@/integrations/supabase/client";
 import { removeLanguagePrefix } from "@/hooks/useLocalizedPath";
-import { NotificationPermissionPopup } from "@/components/NotificationPermissionPopup";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -529,8 +528,6 @@ const MainLayout = ({
     {/* Install Prompt - shows once until app is installed */}
     <InstallPrompt />
 
-    {/* Notification Permission Popup - shows after app usage */}
-    <NotificationPermissionPopup />
   </div>;
 };
 export default MainLayout;
