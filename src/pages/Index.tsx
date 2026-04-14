@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, CheckCircle2, Image as ImageIcon, Sparkles, Workflow } from "lucide-react";
 import { LocalizedNavLink } from "@/components/LocalizedNavLink";
