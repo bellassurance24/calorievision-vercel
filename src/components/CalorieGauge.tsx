@@ -21,6 +21,11 @@ const TICKS = Array.from({ length: 11 }, (_, i) => {
     y1: +(CY - 104 * Math.sin(rad)).toFixed(2),
     x2: +(CX + 113 * Math.cos(rad)).toFixed(2),
     y2: +(CY - 113 * Math.sin(rad)).toFixed(2),
+    // label sits just outside the tick (r=118), following the arc curve
+    lx: +(CX + 118 * Math.cos(rad)).toFixed(2),
+    ly: +(CY - 118 * Math.sin(rad)).toFixed(2),
+    value: i * 100,
+    anchor: i === 0 ? "start" : i === 10 ? "end" : "middle",
   };
 });
 
@@ -72,7 +77,7 @@ const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
           "0 8px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
       }}
     >
-      <svg viewBox="0 0 240 140" className="w-full">
+      <svg viewBox="0 -8 240 148" className="w-full">
         <defs>
           <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF6B00" />
@@ -99,35 +104,29 @@ const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
           style={{ pathLength }}
         />
 
-        {/* Tick marks */}
+        {/* Tick marks + numeric labels */}
         {TICKS.map((tick, i) => (
-          <line
-            key={i}
-            x1={tick.x1} y1={tick.y1}
-            x2={tick.x2} y2={tick.y2}
-            stroke="#D1D5DB"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
+          <g key={i}>
+            <line
+              x1={tick.x1} y1={tick.y1}
+              x2={tick.x2} y2={tick.y2}
+              stroke="#D1D5DB"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <text
+              x={tick.lx}
+              y={tick.ly}
+              fontSize="8"
+              fill="#6B7280"
+              textAnchor={tick.anchor}
+              dominantBaseline="middle"
+              fontFamily="system-ui,sans-serif"
+            >
+              {tick.value}
+            </text>
+          </g>
         ))}
-
-        {/* Labels */}
-        <text
-          x="18" y="136"
-          fontSize="9" fill="#9CA3AF"
-          textAnchor="middle"
-          fontFamily="system-ui,sans-serif"
-        >
-          0
-        </text>
-        <text
-          x="222" y="136"
-          fontSize="9" fill="#9CA3AF"
-          textAnchor="middle"
-          fontFamily="system-ui,sans-serif"
-        >
-          1000
-        </text>
 
         {/* Needle — rotates around pivot (CX, CY) */}
         <motion.g
