@@ -1,160 +1,113 @@
-import { useEffect, useState } from "react";
-import {
-  motion,
-  useMotionValue,
-  useTransform,
-  animate,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion } from "framer-motion";
 
-/* ── Geometry ─────────────────────────────────────────────────── */
-const CX = 120;
-const CY = 120;
-const R  = 95;
-const ARC_PATH = `M${CX - R} ${CY} A${R} ${R} 0 0 1 ${CX + R} ${CY}`;
+const cx = 120;
+const cy = 115;
+const r = 90;
 
-/* 11 tick marks evenly spaced along the arc (180° → 0°) */
-const TICKS = Array.from({ length: 11 }, (_, i) => {
-  const rad = ((180 - i * 18) * Math.PI) / 180;
+function polarToCartesian(angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
   return {
-    x1: +(CX + 104 * Math.cos(rad)).toFixed(2),
-    y1: +(CY - 104 * Math.sin(rad)).toFixed(2),
-    x2: +(CX + 113 * Math.cos(rad)).toFixed(2),
-    y2: +(CY - 113 * Math.sin(rad)).toFixed(2),
-    // label sits just outside the tick (r=118), following the arc curve
-    lx: +(CX + 118 * Math.cos(rad)).toFixed(2),
-    ly: +(CY - 118 * Math.sin(rad)).toFixed(2),
-    value: i * 100,
-    anchor: i === 0 ? "start" : i === 10 ? "end" : "middle",
+    x: cx + r * Math.cos(rad),
+    y: cy + r * Math.sin(rad),
   };
-});
-
-/* ── Component ───────────────────────────────────────────────── */
-interface CalorieGaugeProps {
-  max?: number;
 }
 
-const TARGET = 460;
+const startAngle = 180;
+const endAngle = 0;
+const startPt = polarToCartesian(startAngle);
+const endPt = polarToCartesian(endAngle);
+const arcPath = `M ${startPt.x} ${startPt.y} A ${r} ${r} 0 0 1 ${endPt.x} ${endPt.y}`;
 
-const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
-  /* One master progress value: 0 → 1, looping forever */
-  const progress = useMotionValue(0);
+const CalorieGauge = () => {
+  const maxValue = 1000;
+  const targetValue = 460;
+  const targetAngle = 180 - (targetValue / maxValue) * 180;
+  const needleRotateTarget = 180 - (targetValue / maxValue) * 180 - 90;
 
-  /* Arc fill: 0 → TARGET/max */
-  const pathLength = useTransform(progress, (v) => v * (TARGET / max));
-
-  /* Needle target angle: -90° (far left) → angle° at TARGET value */
-  const TARGET_ANGLE = (TARGET / max) * 180 - 90; // ≈ −7.2°
-
-  /* Counter: 0 → TARGET, synced to progress */
-  const displayFloat = useTransform(progress, (v) => v * TARGET);
-  const [displayVal, setDisplayVal] = useState(0);
-  useMotionValueEvent(displayFloat, "change", (v) => {
-    setDisplayVal(Math.round(v));
+  const ticks = Array.from({ length: 11 }, (_, i) => {
+    const val = i * 100;
+    const angle = 180 - (val / maxValue) * 180;
+    const rad = (angle * Math.PI) / 180;
+    const inner = { x: cx + (r - 8) * Math.cos(rad), y: cy + (r - 8) * Math.sin(rad) };
+    const outer = { x: cx + (r + 2) * Math.cos(rad), y: cy + (r + 2) * Math.sin(rad) };
+    const label = { x: cx + (r - 20) * Math.cos(rad), y: cy + (r - 20) * Math.sin(rad) };
+    return { val, inner, outer, label };
   });
 
-  /* Start infinite loop on mount */
-  useEffect(() => {
-    const controls = animate(progress, 1, {
-      duration: 2,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut",
-    });
-    return controls.stop;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <div
-      className="relative w-72 flex flex-col items-center rounded-3xl bg-white py-4 px-2"
-      style={{
-        boxShadow:
-          "0 8px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-      }}
-    >
-      <svg viewBox="0 -8 240 148" className="w-full">
+    <div className="flex items-center justify-center w-80 h-56 bg-white rounded-2xl shadow-md">
+      <svg viewBox="0 0 240 140" className="w-full h-full">
+        {/* Background arc */}
+        <path d={arcPath} fill="none" stroke="#F3F4F6" strokeWidth="14" strokeLinecap="round" />
+
+        {/* Animated orange arc */}
+        <motion.path
+          d={arcPath}
+          fill="none"
+          stroke="url(#og)"
+          strokeWidth="14"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: [0, targetValue / maxValue, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+
         <defs>
-          <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF6B00" />
             <stop offset="100%" stopColor="#FF9500" />
           </linearGradient>
         </defs>
 
-        {/* Background track */}
-        <path
-          d={ARC_PATH}
-          fill="none"
-          stroke="#F3F4F6"
-          strokeWidth="16"
-          strokeLinecap="round"
-        />
-
-        {/* Animated progress arc — driven by pathLength MotionValue */}
-        <motion.path
-          d={ARC_PATH}
-          fill="none"
-          stroke="url(#gauge-grad)"
-          strokeWidth="16"
-          strokeLinecap="round"
-          style={{ pathLength }}
-        />
-
-        {/* Tick marks + numeric labels */}
-        {TICKS.map((tick, i) => (
-          <g key={i}>
-            <line
-              x1={tick.x1} y1={tick.y1}
-              x2={tick.x2} y2={tick.y2}
-              stroke="#D1D5DB"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-            <text
-              x={tick.lx}
-              y={tick.ly}
-              fontSize="8"
-              fill="#6B7280"
-              textAnchor={tick.anchor}
-              dominantBaseline="middle"
-              fontFamily="system-ui,sans-serif"
-            >
-              {tick.value}
+        {/* Tick marks and labels */}
+        {ticks.map(({ val, inner, outer, label }) => (
+          <g key={val}>
+            <line x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
+              stroke="#D1D5DB" strokeWidth="1.5" />
+            <text x={label.x} y={label.y} textAnchor="middle"
+              dominantBaseline="middle" fontSize="6" fill="#9CA3AF">
+              {val}
             </text>
           </g>
         ))}
 
-        {/* Needle — clock-hand style, rotates around (CX, CY) */}
+        {/* Needle — vertical line rotating from center pivot */}
         <motion.g
-          style={{
-            transformOrigin: `${CX}px ${CY}px`,
-            filter: "drop-shadow(0 0 4px #22C55E)",
-          }}
-          animate={{ rotate: [-90, TARGET_ANGLE, -90] }}
+          style={{ transformOrigin: `${cx}px ${cy}px` }}
+          initial={{ rotate: -90 }}
+          animate={{ rotate: [-90, needleRotateTarget, -90] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
           <line
-            x1={CX} y1={CY} x2={CX} y2={CY - 75}
-            stroke="#22C55E" strokeWidth="4" strokeLinecap="round"
+            x1={cx} y1={cy}
+            x2={cx} y2={cy - 75}
+            stroke="#22C55E"
+            strokeWidth="3.5"
+            strokeLinecap="round"
           />
-          <circle cx={CX} cy={CY} r="6" fill="#FF6B00" />
         </motion.g>
 
-        {/* Pivot: white circle + orange dot — drawn on top of needle base */}
-        <circle cx={CX} cy={CY} r="11" fill="white" stroke="#FF6B00" strokeWidth="3" />
-        <circle cx={CX} cy={CY} r="4.5" fill="#FF6B00" />
-      </svg>
+        {/* Center circle */}
+        <circle cx={cx} cy={cy} r="8" fill="white" stroke="#FF6B00" strokeWidth="2.5" />
+        <circle cx={cx} cy={cy} r="3" fill="#FF6B00" />
 
-      {/* Calorie counter */}
-      <div className="flex flex-col items-center pb-1 -mt-2">
-        <span
-          className="text-4xl font-bold tabular-nums leading-none"
-          style={{ color: "#1e293b" }}
+        {/* Calorie counter */}
+        <motion.text
+          x={cx} y={cy + 20}
+          textAnchor="middle"
+          fontSize="14"
+          fontWeight="bold"
+          fill="#1e293b"
         >
-          {displayVal}
-          <span className="text-sm font-medium text-gray-400 ml-1.5">kcal</span>
-        </span>
-      </div>
+          <motion.tspan
+            animate={{ opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 4, repeat: Infinity, times: [0, 0.2, 0.8, 1] }}
+          >
+            460
+          </motion.tspan>
+        </motion.text>
+        <text x={cx} y={cy + 30} textAnchor="middle" fontSize="6" fill="#9CA3AF">kcal</text>
+      </svg>
     </div>
   );
 };
