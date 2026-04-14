@@ -128,31 +128,29 @@ const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
           </g>
         ))}
 
-        {/* Needle — rotates around pivot (CX, CY) */}
-        <motion.g
-          style={{
-            rotate: needleAngle,
-            originX: `${CX}px`,
-            originY: `${CY}px`,
-            filter: "drop-shadow(0 0 4px #22C55E)",
-          }}
+        {/* Needle — SVG translate to pivot, then CSS rotate around local (0,0) */}
+        <g
+          transform={`translate(${CX}, ${CY})`}
+          style={{ filter: "drop-shadow(0 0 4px #22C55E)" }}
         >
-          {/* Body */}
-          <line
-            x1={CX} y1={CY}
-            x2={CX} y2={CY - 78}
-            stroke="#22C55E"
-            strokeWidth="5"
-            strokeLinecap="round"
-          />
-          {/* Effilée tip */}
-          <polygon
-            points={`${CX},${CY - 90} ${CX - 3.5},${CY - 74} ${CX + 3.5},${CY - 74}`}
-            fill="#22C55E"
-          />
-        </motion.g>
+          <motion.g style={{ rotate: needleAngle }}>
+            {/* Body: origin=pivot, pointing straight up */}
+            <line
+              x1="0" y1="0"
+              x2="0" y2="-80"
+              stroke="#22C55E"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+            {/* Effilée tip triangle */}
+            <polygon
+              points="0,-90 -3.5,-76 3.5,-76"
+              fill="#22C55E"
+            />
+          </motion.g>
+        </g>
 
-        {/* Pivot: white circle + orange dot */}
+        {/* Pivot: white circle + orange dot — drawn on top of needle base */}
         <circle cx={CX} cy={CY} r="11" fill="white" stroke="#FF6B00" strokeWidth="3" />
         <circle cx={CX} cy={CY} r="4.5" fill="#FF6B00" />
       </svg>
