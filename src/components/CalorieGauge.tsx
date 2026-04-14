@@ -14,7 +14,7 @@ const ARC = `M ${s.x} ${s.y} A ${R} ${R} 0 0 1 ${e.x} ${e.y}`;
 const TICKS = Array.from({ length: 11 }, (_, i) => {
   const val = i * 100;
   const angle = 180 - (val / MAX) * 180;
-  return { val, o: pt(angle, R + 5), i: pt(angle, R - 5), l: pt(angle, R - 17) };
+  return { val, o: pt(angle, R + 5), i: pt(angle, R - 5), l: pt(angle, R - 22) };
 });
 
 export default function CalorieGauge() {
@@ -36,12 +36,12 @@ export default function CalorieGauge() {
   }, []);
 
   const value = Math.round(progress * TARGET);
-  const needleAngleSVG = 180 - progress * (TARGET / MAX) * 180;
+  const needleAngleSVG = -90 + progress * (TARGET / MAX) * 180;
   const arcLen = progress * (TARGET / MAX);
 
   return (
     <div style={{ width: 300, height: 210, background: "white", borderRadius: 16, boxShadow: "0 4px 24px rgba(0,0,0,0.09)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg viewBox="0 0 240 138" width="100%" height="100%">
+      <svg viewBox="0 0 240 145" width="100%" height="100%">
         <defs>
           <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF6B00" />
@@ -74,7 +74,7 @@ export default function CalorieGauge() {
         ))}
 
         {/* NEEDLE using SVG transform rotate(angle, cx, cy) — no CSS transformOrigin */}
-        <g transform={`rotate(${needleAngleSVG - 90}, ${CX}, ${CY})`}>
+        <g transform={`rotate(${needleAngleSVG}, ${CX}, ${CY})`}>
           <line x1={CX} y1={CY} x2={CX} y2={CY - 72} stroke="#22C55E" strokeWidth="3.5" strokeLinecap="round" />
           <polygon points={`${CX},${CY - 72} ${CX - 4},${CY - 60} ${CX + 4},${CY - 60}`} fill="#22C55E" />
         </g>
