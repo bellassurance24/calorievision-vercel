@@ -28,8 +28,8 @@ async function fetchFirebaseConfig(): Promise<FirebaseConfig | null> {
       return null;
     }
 
-    if (!data?.projectId || !data?.messagingSenderId) {
-      console.warn("Firebase configuration is incomplete");
+    if (!data?.apiKey || !data?.projectId || !data?.messagingSenderId) {
+      console.warn("Firebase configuration is incomplete or missing — push notifications disabled");
       return null;
     }
 

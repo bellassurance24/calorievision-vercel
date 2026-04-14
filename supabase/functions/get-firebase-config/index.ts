@@ -22,8 +22,8 @@ serve(async (req) => {
       vapidKey: Deno.env.get("VITE_FIREBASE_VAPID_KEY") || "",
     };
 
-    // Validate that essential config is present
-    if (!config.projectId || !config.messagingSenderId) {
+    // Validate that essential config is present (apiKey required to avoid 400 errors)
+    if (!config.apiKey || !config.projectId || !config.messagingSenderId) {
       console.error("Firebase configuration is incomplete in secrets");
       return new Response(
         JSON.stringify({ error: "Firebase configuration not available" }),
