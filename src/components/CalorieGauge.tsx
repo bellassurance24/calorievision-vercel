@@ -1,22 +1,18 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface CalorieGaugeProps {
   value?: number;
   max?: number;
 }
 
-const CalorieGauge = ({ value = 487, max = 1000 }: CalorieGaugeProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-
-  // Needle: -90° (left) → +90° (right)
+const CalorieGauge = ({ value = 266, max = 1000 }: CalorieGaugeProps) => {
+  // Needle: -90° (far left) → +90° (far right)
   const angle = (value / max) * 180 - 90;
 
   return (
-    <div ref={ref} className="relative flex items-center justify-center w-64 h-64">
+    <div className="relative flex items-center justify-center w-64 h-64">
       <svg viewBox="0 0 200 120" className="w-full h-full">
-        {/* Track */}
+        {/* Background track */}
         <path
           d="M20 100 A80 80 0 0 1 180 100"
           fill="none"
@@ -25,7 +21,7 @@ const CalorieGauge = ({ value = 487, max = 1000 }: CalorieGaugeProps) => {
           strokeLinecap="round"
         />
 
-        {/* Progress arc */}
+        {/* Animated progress arc */}
         <motion.path
           d="M20 100 A80 80 0 0 1 180 100"
           fill="none"
@@ -33,7 +29,8 @@ const CalorieGauge = ({ value = 487, max = 1000 }: CalorieGaugeProps) => {
           strokeWidth="12"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
-          animate={isInView ? { pathLength: value / max } : { pathLength: 0 }}
+          whileInView={{ pathLength: value / max }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
 
@@ -44,10 +41,11 @@ const CalorieGauge = ({ value = 487, max = 1000 }: CalorieGaugeProps) => {
           </linearGradient>
         </defs>
 
-        {/* Needle — originX/originY anchored to SVG pivot point (100, 100) */}
+        {/* Needle — pivots on (100, 100) */}
         <motion.g
           initial={{ rotate: -90 }}
-          animate={isInView ? { rotate: angle } : { rotate: -90 }}
+          whileInView={{ rotate: angle }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{
             type: "spring",
             stiffness: 60,
@@ -74,7 +72,8 @@ const CalorieGauge = ({ value = 487, max = 1000 }: CalorieGaugeProps) => {
         <motion.span
           className="text-3xl font-bold text-slate-800"
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           {value}
