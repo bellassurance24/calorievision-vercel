@@ -43,12 +43,8 @@ const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
   /* Arc fill: 0 → TARGET/max */
   const pathLength = useTransform(progress, (v) => v * (TARGET / max));
 
-  /* Needle angle: -90° (far left) → targetAngle° */
+  /* Needle target angle: -90° (far left) → angle° at TARGET value */
   const TARGET_ANGLE = (TARGET / max) * 180 - 90; // ≈ −7.2°
-  const needleAngle = useTransform(
-    progress,
-    (v) => v * (TARGET / max) * 180 - 90
-  );
 
   /* Counter: 0 → TARGET, synced to progress */
   const displayFloat = useTransform(progress, (v) => v * TARGET);
@@ -128,27 +124,21 @@ const CalorieGauge = ({ max = 1000 }: CalorieGaugeProps) => {
           </g>
         ))}
 
-        {/* Needle — SVG translate to pivot, then CSS rotate around local (0,0) */}
-        <g
-          transform={`translate(${CX}, ${CY})`}
-          style={{ filter: "drop-shadow(0 0 4px #22C55E)" }}
+        {/* Needle — clock-hand style, rotates around (CX, CY) */}
+        <motion.g
+          style={{
+            transformOrigin: `${CX}px ${CY}px`,
+            filter: "drop-shadow(0 0 4px #22C55E)",
+          }}
+          animate={{ rotate: [-90, TARGET_ANGLE, -90] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
-          <motion.g style={{ rotate: needleAngle }}>
-            {/* Body: origin=pivot, pointing straight up */}
-            <line
-              x1="0" y1="0"
-              x2="0" y2="-80"
-              stroke="#22C55E"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-            {/* Effilée tip triangle */}
-            <polygon
-              points="0,-90 -3.5,-76 3.5,-76"
-              fill="#22C55E"
-            />
-          </motion.g>
-        </g>
+          <line
+            x1={CX} y1={CY} x2={CX} y2={CY - 75}
+            stroke="#22C55E" strokeWidth="4" strokeLinecap="round"
+          />
+          <circle cx={CX} cy={CY} r="6" fill="#FF6B00" />
+        </motion.g>
 
         {/* Pivot: white circle + orange dot — drawn on top of needle base */}
         <circle cx={CX} cy={CY} r="11" fill="white" stroke="#FF6B00" strokeWidth="3" />
