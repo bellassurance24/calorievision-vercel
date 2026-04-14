@@ -17,7 +17,7 @@ const TICKS = Array.from({ length: 11 }, (_, i) => {
   const rad = (angle * Math.PI) / 180;
   const outerR = R + 6;
   const innerR = R - 4;
-  const labelR = R + 16;
+  const labelR = R - 14;
   return {
     val,
     o: { x: CX + outerR * Math.cos(rad), y: CY + outerR * Math.sin(rad) },
@@ -50,7 +50,7 @@ export default function CalorieGauge() {
 
   return (
     <div style={{ width: 300, height: 210, background: "white", borderRadius: 16, boxShadow: "0 4px 24px rgba(0,0,0,0.09)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg viewBox="0 0 240 148" width="100%" height="100%">
+      <svg viewBox="0 0 240 125" width="100%" height="100%">
         <defs>
           <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF6B00" />
