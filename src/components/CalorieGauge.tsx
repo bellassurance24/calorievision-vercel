@@ -125,19 +125,19 @@ export default function CalorieGauge() {
           <line
             x1={CX} y1={CY + 9}
             x2={CX} y2={CY - 66}
-            stroke="#1E293B" strokeWidth="1.8" strokeLinecap="round"
+            stroke="#10b981" strokeWidth="1.8" strokeLinecap="round"
           />
         </g>
 
         {/* Hub */}
         <circle cx={CX} cy={CY} r="7.5" fill="white" stroke="#FF6B00" strokeWidth="2" />
-        <circle cx={CX} cy={CY} r="3" fill="#FF6B00" />
+        <circle cx={CX} cy={CY} r="3" fill="#10b981" />
 
         {/* Readout */}
         <text
           x={CX} y={CY + 20}
           textAnchor="middle"
-          fontSize="15" fontWeight="700" fill="#1E293B"
+          fontSize="15" fontWeight="700" fill="#10b981"
           fontFamily="system-ui, -apple-system, sans-serif"
         >{value}</text>
         <text
