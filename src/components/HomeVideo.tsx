@@ -44,6 +44,24 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         style={{ display: isPlaying ? 'none' : 'block', objectPosition: 'center top' }}
       />
+      {/* Play button overlay — visible only when not playing */}
+      {!isPlaying && (
+        <div
+          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none
+                     w-16 h-16 rounded-full bg-white/80 flex items-center justify-center
+                     animate-pulse hover:scale-110 transition-transform duration-200 z-10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#0d9488"
+            className="w-8 h-8 translate-x-0.5"
+          >
+            <path d="M8 5.14v14l11-7-11-7z" />
+          </svg>
+        </div>
+      )}
       <video
         className="w-full h-full object-cover"
         playsInline
