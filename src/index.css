@@ -296,6 +296,30 @@ article tbody tr:hover,
   }
 }
 
+/* ─── Affiliate links: visible on all backgrounds ───────────────────────────── */
+a[rel*="sponsored"] {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+}
+
+/* When on dark/green backgrounds */
+th a[rel*="sponsored"],
+td a[rel*="sponsored"],
+.bg-teal-600 a[rel*="sponsored"],
+[style*="background"] a[rel*="sponsored"] {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+/* When on white/light backgrounds */
+p a[rel*="sponsored"],
+li a[rel*="sponsored"] {
+  color: #0d9488 !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+}
+
 /* ─── Blog card image v5: fixed 220 px height — SolidBlogImage component ───── */
 .image-v5-fixed-220 {
   width: 100% !important;
