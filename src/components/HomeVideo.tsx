@@ -18,7 +18,7 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
 
   if (videoError) {
     return (
-      <div className="relative w-full max-w-xs mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl">
+      <div className="relative w-full max-w-xs mx-auto aspect-[9/16] shadow-xl bg-[#1a1a1a]">
         <img
           src={OPTIMIZED_POSTER}
           alt="CalorieVision app demo"
@@ -31,7 +31,7 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
   }
 
   return (
-    <div className="relative w-full max-w-xs mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl">
+    <div className="relative w-full max-w-xs mx-auto aspect-[9/16] shadow-xl bg-[#1a1a1a]">
       {/* Poster image — covers full container, hidden once video plays.
           Uses <img> instead of poster="" so object-fit: cover is respected. */}
       {!isPlaying && (
