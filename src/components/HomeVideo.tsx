@@ -4,7 +4,7 @@ interface HomeVideoProps {
   fallbackText: string;
 }
 
-const OPTIMIZED_POSTER = '/videos/poster-master-canva.png';
+const OPTIMIZED_POSTER = '/videos/poster-master-canva.png.png';
 const LOCAL_VIDEO = '/videos/video-mp4-calorievision-v1.mp4';
 
 // Clean poster with play button overlay. Click to play video WITH sound.
@@ -32,22 +32,23 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
 
   return (
     <div className="relative w-full max-w-xs mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl">
-      {/* Poster image — covers full container, hidden once video plays.
-          Uses <img> instead of poster="" so object-fit: cover is respected. */}
-      {!isPlaying && (
-        <img
-          src={OPTIMIZED_POSTER}
-          alt=""
-          aria-hidden="true"
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
-      )}
+      {/* Poster image — always in DOM, hidden via display:none once video plays.
+          absolute inset-0 overlays the video; pointer-events-none lets native
+          video controls receive clicks even while the poster is visible. */}
+      <img
+        src={OPTIMIZED_POSTER}
+        alt=""
+        aria-hidden="true"
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        style={{ display: isPlaying ? 'none' : 'block' }}
+      />
       <video
         className="w-full h-full object-cover"
         playsInline
         controls
+        autoPlay={false}
         preload="metadata"
         controlsList="nodownload"
         onPlay={() => setIsPlaying(true)}
