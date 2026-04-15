@@ -320,6 +320,30 @@ li a[rel*="sponsored"] {
   font-weight: 600 !important;
 }
 
+h1 a[rel*="sponsored"],
+h2 a[rel*="sponsored"],
+h3 a[rel*="sponsored"],
+h4 a[rel*="sponsored"],
+h5 a[rel*="sponsored"],
+h6 a[rel*="sponsored"] {
+  color: #0d9488 !important;
+  text-decoration: underline !important;
+  font-weight: inherit !important;
+}
+
+th a[rel*="sponsored"] {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+p a[rel*="sponsored"],
+li a[rel*="sponsored"],
+span a[rel*="sponsored"] {
+  color: #0d9488 !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+}
+
 /* ─── Blog card image v5: fixed 220 px height — SolidBlogImage component ───── */
 .image-v5-fixed-220 {
   width: 100% !important;
