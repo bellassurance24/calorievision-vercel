@@ -10,6 +10,7 @@ const LOCAL_VIDEO = '/videos/video-mp4-calorievision-v1.mp4';
 // Clean poster with play button overlay. Click to play video WITH sound.
 const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
   const [videoError, setVideoError] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleVideoError = useCallback(() => {
     setVideoError(true);
@@ -30,14 +31,28 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
   }
 
   return (
-    <div className="relative w-full max-w-xs mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-black/10 bg-black">
+    <div className="relative w-full max-w-xs mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-black/10">
+      {/* Poster image — covers full container, hidden once video plays.
+          Uses <img> instead of poster="" so object-fit: cover is respected. */}
+      {!isPlaying && (
+        <img
+          src={OPTIMIZED_POSTER}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+      )}
       <video
         className="w-full h-full object-cover"
         playsInline
         controls
         preload="metadata"
-        poster={OPTIMIZED_POSTER}
         controlsList="nodownload"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
         onError={handleVideoError}
       >
         <source src={LOCAL_VIDEO} type="video/mp4" onError={handleVideoError} />
