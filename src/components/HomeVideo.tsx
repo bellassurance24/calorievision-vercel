@@ -42,7 +42,7 @@ const HomeVideo = memo(function HomeVideo({ fallbackText }: HomeVideoProps) {
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        style={{ display: isPlaying ? 'none' : 'block' }}
+        style={{ display: isPlaying ? 'none' : 'block', objectPosition: 'center top' }}
       />
       <video
         className="w-full h-full object-cover"
