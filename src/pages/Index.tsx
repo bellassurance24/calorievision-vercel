@@ -13,7 +13,7 @@ import UGCHeroVideo from "@/components/UGCHeroVideo";
 import MediaShowcaseSection from "@/components/MediaShowcaseSection";
 
 import howItWorks1 from "@/assets/how-it-works-1.jpg";
-import howItWorks2 from "@/assets/how-it-works-2.jpg";
+import howItWorks2 from "@/assets/how-it-works-2.jpg.png";
 import CalorieGauge from "@/components/CalorieGauge";
 
 const Index = () => {
