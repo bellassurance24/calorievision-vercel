@@ -944,8 +944,8 @@ const Index = () => {
             )}
           </h2>
         </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4">
+        <div className="flex flex-col items-center gap-8">
+          <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4 w-full max-w-[500px]">
             <img
               src={howItWorks1}
               alt={t(
@@ -961,7 +961,7 @@ const Index = () => {
                 "Фотографирование еды на смартфон",
                 "スマートフォンで食事の写真を撮る",
               )}
-              className="w-full h-48 md:h-64 object-cover rounded-xl mb-4"
+              className="w-full object-cover rounded-2xl shadow-md mb-4"
               loading="lazy"
               decoding="async"
               width={800}
@@ -998,7 +998,7 @@ const Index = () => {
               )}
             </p>
           </div>
-          <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4">
+          <div className="rounded-2xl overflow-hidden bg-secondary/40 p-4 w-full max-w-[500px]">
             <img
               src={howItWorks2}
               alt={t(
@@ -1014,7 +1014,7 @@ const Index = () => {
                 "Панель анализа питания с калориями и макронутриентами",
                 "カロリーとマクロ栄養素を示す栄養分析ダッシュボード",
               )}
-              className="w-full h-48 md:h-64 object-cover rounded-xl mb-4"
+              className="w-full object-cover rounded-2xl shadow-md mb-4"
               loading="lazy"
               decoding="async"
               width={800}
