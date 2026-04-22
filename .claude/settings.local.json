@@ -46,7 +46,22 @@
       "Bash(python -c \":*)",
       "Bash(find C:UsershpDesktopCalorieVisionvision-plate-nutritionvision-plate-nutrition-main/src -type f -path *pages*)",
       "Bash(vercel)",
-      "Bash(vercel inspect:*)"
+      "Bash(vercel inspect:*)",
+      "Bash(node scripts/insert-affiliate-links.mjs)",
+      "Bash(node --input-type=module)",
+      "WebFetch(domain:calorievision.online)",
+      "Bash(pip install:*)",
+      "Bash(python generate_report.py)",
+      "Bash(mv \"awareness_fb.jpg \\(1200x628\\).png\" \"awareness_fb.png\")",
+      "Bash(mv \"awareness_ig.jpg \\(1080x1080\\).jpg\" \"awareness_ig.jpg\")",
+      "Bash(mv \"split-a_fb.jpg.png\" \"split-a_fb.png\")",
+      "Bash(mv \"split-a_ig.jpg.jpg\" \"split-a_ig.jpg\")",
+      "Bash(mv \"split-b_fb.jpg.png\" \"split-b_fb.png\")",
+      "Bash(mv \"awareness.mp4.mp4\" \"awareness.mp4\")",
+      "Bash(mv \"split-a.mp4.mp4\" \"split-a.mp4\")",
+      "Bash(mv \"split-b.mp4.mp4\" \"split-b.mp4\")",
+      "Bash(python deploy_campaigns.py)",
+      "Bash(python -c ':*)"
     ]
   }
 }

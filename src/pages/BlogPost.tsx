@@ -4,6 +4,7 @@ import { supabase } from '../integrations/supabase/client';
 import { useLanguage, Language, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
 import { useBlogT } from '../hooks/useBlogT';
 import { setBlogLangSlugMap, clearBlogLangSlugMap } from '../utils/blogLangSlugStore';
+import { StickyBlogBanner, BlogArticleWithCtas, EndArticleCta } from '../components/blog/BlogCtas';
 
 const SITE_URL = 'https://calorievision.online';
 
@@ -331,6 +332,9 @@ export default function BlogPost() {
       className="section-card max-w-4xl mx-auto px-4 sm:px-6 md:px-10 py-10"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
+      {/* Sticky CTA banner — dismissible, sticks on scroll */}
+      <StickyBlogBanner />
+
       {/* Back link */}
       <Link
         to={blogPath}
@@ -427,9 +431,10 @@ export default function BlogPost() {
         </nav>
       )}
 
-      {/* Article body — rendered as HTML via Tailwind Typography */}
-      <article
-        className="
+      {/* Article body — split into 3-paragraph segments with mid-article CTAs */}
+      <BlogArticleWithCtas
+        html={processedHtml}
+        articleClassName="
           prose prose-lg max-w-none
           prose-headings:font-bold prose-headings:text-gray-900 prose-headings:scroll-mt-20
           prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-teal-100
@@ -443,8 +448,10 @@ export default function BlogPost() {
           prose-blockquote:border-teal-400 prose-blockquote:text-gray-600
           prose-code:bg-gray-100 prose-code:rounded prose-code:px-1
         "
-        dangerouslySetInnerHTML={{ __html: processedHtml }}
       />
+
+      {/* End-of-article CTA */}
+      <EndArticleCta />
     </div>
   );
 }

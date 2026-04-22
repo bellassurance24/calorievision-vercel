@@ -1,0 +1,88 @@
+{
+  "project": {
+    "name": "CalorieVision",
+    "url": "https://calorievision.online",
+    "description": "AI-powered meal scanning app — user takes a photo of food and gets instant calories and nutrition data",
+    "language": "English",
+    "brand_colors": []
+  },
+
+  "campaign": {
+    "platform": "Meta (Facebook + Instagram)",
+    "daily_budget_usd": 5,
+    "num_campaigns": 3,
+    "campaign_types": ["Awareness", "Split_A", "Split_B"],
+    "objective_awareness": "OUTCOME_AWARENESS",
+    "objective_split": "OUTCOME_TRAFFIC",
+    "cta_awareness": "LEARN_MORE",
+    "cta_split": "SIGN_UP"
+  },
+
+  "targeting": {
+    "languages": ["English"],
+    "countries": ["US"],
+    "age_min": 18,
+    "age_max": 45,
+    "genders": "ALL",
+
+    "audiences": [
+      {
+        "name": "Weight Loss",
+        "description": "People who want to lose weight and track calories",
+        "interests": [
+          "Weight loss",
+          "Calorie counting",
+          "Dieting",
+          "Intermittent fasting",
+          "Healthy eating",
+          "MyFitnessPal",
+          "Weight Watchers"
+        ]
+      },
+      {
+        "name": "Fitness and Bodybuilding",
+        "description": "Fitness enthusiasts, gym goers, bodybuilders focused on nutrition",
+        "interests": [
+          "Fitness",
+          "Bodybuilding",
+          "Gym",
+          "Muscle building",
+          "Sports nutrition",
+          "Macro tracking",
+          "Protein diet",
+          "CrossFit"
+        ]
+      }
+    ],
+
+    "combine_audiences": true,
+    "combine_note": "Create ONE ad set combining both audiences for Awareness campaign. Create TWO separate ad sets for Split A and Split B."
+  },
+
+  "split_test": {
+    "split_a": {
+      "angle": "Weight Loss / Results",
+      "tone": "Transformation, motivation, before/after results",
+      "target_audience": "Weight Loss audience"
+    },
+    "split_b": {
+      "angle": "Fitness / Performance",
+      "tone": "Performance, precision nutrition, athletic lifestyle",
+      "target_audience": "Fitness and Bodybuilding audience"
+    }
+  },
+
+  "assets": {
+    "images_ready": false,
+    "image_tool": "Gemini Imagen",
+    "video_tool": "Sora 2",
+    "formats_needed": ["Facebook Feed 1200x628", "Instagram Feed 1080x1080", "Stories 1080x1920"],
+    "images_folder": "campaign-calorievision/images/",
+    "videos_folder": "campaign-calorievision/videos/"
+  },
+
+  "meta_credentials": {
+    "note": "Credentials are stored in .env file",
+    "source": ".env"
+  }
+}

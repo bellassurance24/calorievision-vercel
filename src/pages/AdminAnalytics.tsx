@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { AnalyticsDateFilter, DateRange, QuickFilter, getDateRangeForFilter } from "@/components/admin/AnalyticsDateFilter";
 import { AnalyticsMetricCard } from "@/components/admin/AnalyticsMetricCard";
@@ -36,19 +37,48 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
   Cell,
-  Tooltip
+  Tooltip,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts";
 import { subDays } from "date-fns";
 import { Loader2 } from "lucide-react";
+
+// ── Meta Ads types ────────────────────────────────────────────────────────────
+interface MetaCampaign {
+  id: string;
+  name: string;
+  impressions: number;
+  clicks: number;
+  cpc: number;
+  spend: number;
+}
+interface MetaDayPoint {
+  date: string;
+  impressions: number;
+  clicks: number;
+}
+// ── Supabase growth types ─────────────────────────────────────────────────────
+interface GrowthStats {
+  scansToday: number;
+  scansWeek: number;
+  scansMonth: number;
+  signupsToday: number;
+  signupsWeek: number;
+  activeSubscribers: number;
+  scansDailyLast30: { date: string; count: number }[];
+  signupsDailyLast30: { date: string; count: number }[];
+}
 
 const COLORS = [
   "hsl(var(--primary))",
@@ -129,6 +159,20 @@ const AdminAnalytics = () => {
   const [activeFilter, setActiveFilter] = useState<QuickFilter>("last7days");
   const [dateRange, setDateRange] = useState<DateRange>(getDateRangeForFilter("last7days"));
 
+  // ── Meta Ads state ──────────────────────────────────────────────────────────
+  const [metaCampaigns, setMetaCampaigns] = useState<MetaCampaign[]>([]);
+  const [metaDailyData, setMetaDailyData] = useState<MetaDayPoint[]>([]);
+  const [metaLoading, setMetaLoading] = useState(true);
+  const [metaError, setMetaError] = useState<string | null>(null);
+
+  // ── Supabase growth state ───────────────────────────────────────────────────
+  const [growthStats, setGrowthStats] = useState<GrowthStats>({
+    scansToday: 0, scansWeek: 0, scansMonth: 0,
+    signupsToday: 0, signupsWeek: 0, activeSubscribers: 0,
+    scansDailyLast30: [], signupsDailyLast30: [],
+  });
+  const [growthLoading, setGrowthLoading] = useState(true);
+
   // Calculate previous period for comparison
   const previousDateRange = useMemo(() => {
     const daysDiff = Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
@@ -159,7 +203,184 @@ const AdminAnalytics = () => {
     refresh,
   } = useAnalyticsData(dateRange, previousDateRange);
 
-  // Format duration for display
+  // ── Fetch Meta Ads data ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchMetaAds = async () => {
+      setMetaLoading(true);
+      setMetaError(null);
+      // Env vars must be VITE_ prefixed in Vite projects (add VITE_META_ACCESS_TOKEN
+      // and VITE_META_AD_ACCOUNT_ID to your .env file).
+      const token = import.meta.env.VITE_META_ACCESS_TOKEN as string | undefined;
+      const rawAccountId = import.meta.env.VITE_META_AD_ACCOUNT_ID as string | undefined;
+
+      if (!token || !rawAccountId) {
+        setMetaError("Meta Ads env vars not set (VITE_META_ACCESS_TOKEN / VITE_META_AD_ACCOUNT_ID)");
+        setMetaLoading(false);
+        return;
+      }
+
+      const accountId = rawAccountId.startsWith("act_") ? rawAccountId : `act_${rawAccountId}`;
+      const base = "https://graph.facebook.com/v19.0";
+
+      try {
+        // Campaign-level stats
+        const campRes = await fetch(
+          `${base}/${accountId}/campaigns?fields=name,insights%7Bimpressions%2Cclicks%2Ccpc%2Cspend%7D&access_token=${token}`,
+        );
+        const campJson = await campRes.json();
+        if (campJson.error) throw new Error(campJson.error.message);
+
+        const campaigns: MetaCampaign[] = (campJson.data || []).map((c: Record<string, unknown>) => {
+          const ins = (c.insights as { data?: Record<string, string>[] } | undefined)?.data?.[0] ?? {};
+          return {
+            id: c.id as string,
+            name: c.name as string,
+            impressions: parseInt(ins.impressions ?? "0", 10),
+            clicks: parseInt(ins.clicks ?? "0", 10),
+            cpc: parseFloat(ins.cpc ?? "0"),
+            spend: parseFloat(ins.spend ?? "0"),
+          };
+        });
+        setMetaCampaigns(campaigns);
+
+        // Account-level daily insights (last 7 days)
+        const insRes = await fetch(
+          `${base}/${accountId}/insights?fields=impressions%2Cclicks%2Cdate_start&time_increment=1&date_preset=last_7_days&access_token=${token}`,
+        );
+        const insJson = await insRes.json();
+        if (insJson.error) throw new Error(insJson.error.message);
+
+        const daily: MetaDayPoint[] = (insJson.data || []).map((d: Record<string, string>) => ({
+          date: d.date_start?.slice(5) ?? "", // MM-DD
+          impressions: parseInt(d.impressions ?? "0", 10),
+          clicks: parseInt(d.clicks ?? "0", 10),
+        }));
+        setMetaDailyData(daily);
+      } catch (err) {
+        setMetaError(err instanceof Error ? err.message : "Failed to load Meta Ads data");
+      } finally {
+        setMetaLoading(false);
+      }
+    };
+
+    fetchMetaAds();
+  }, []);
+
+  // ── Fetch Supabase growth stats ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchGrowthStats = async () => {
+      setGrowthLoading(true);
+      try {
+        const now = new Date();
+        const todayStr = now.toISOString().split("T")[0];
+        const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+        const monthAgo = new Date(now); monthAgo.setDate(monthAgo.getDate() - 30);
+        const thirtyDaysAgo = monthAgo.toISOString();
+
+        // ── Scans: today / week / month ────────────────────────────────────
+        const { count: scansToday } = await supabase
+          .from("user_scans")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", `${todayStr}T00:00:00`);
+
+        const { count: scansWeek } = await supabase
+          .from("user_scans")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", weekAgo.toISOString());
+
+        const { count: scansMonth } = await supabase
+          .from("user_scans")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", thirtyDaysAgo);
+
+        // ── Scans daily trend (last 30 days) ───────────────────────────────
+        const { data: scanRows } = await supabase
+          .from("user_scans")
+          .select("created_at")
+          .gte("created_at", thirtyDaysAgo)
+          .order("created_at", { ascending: true });
+
+        const scansByDay: Record<string, number> = {};
+        (scanRows || []).forEach((r) => {
+          const d = r.created_at.slice(0, 10);
+          scansByDay[d] = (scansByDay[d] ?? 0) + 1;
+        });
+        const scansDailyLast30 = Array.from({ length: 30 }, (_, i) => {
+          const d = new Date(monthAgo); d.setDate(d.getDate() + i);
+          const key = d.toISOString().slice(0, 10);
+          return { date: key.slice(5), count: scansByDay[key] ?? 0 };
+        });
+
+        // ── Signups: today / week (from profiles) ──────────────────────────
+        const { count: signupsToday } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", `${todayStr}T00:00:00`);
+
+        const { count: signupsWeek } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", weekAgo.toISOString());
+
+        // ── Signups daily trend (last 30 days) ─────────────────────────────
+        const { data: signupRows } = await supabase
+          .from("profiles")
+          .select("created_at")
+          .gte("created_at", thirtyDaysAgo)
+          .order("created_at", { ascending: true });
+
+        const signupsByDay: Record<string, number> = {};
+        (signupRows || []).forEach((r) => {
+          const d = (r as { created_at: string }).created_at.slice(0, 10);
+          signupsByDay[d] = (signupsByDay[d] ?? 0) + 1;
+        });
+        const signupsDailyLast30 = Array.from({ length: 30 }, (_, i) => {
+          const d = new Date(monthAgo); d.setDate(d.getDate() + i);
+          const key = d.toISOString().slice(0, 10);
+          return { date: key.slice(5), count: signupsByDay[key] ?? 0 };
+        });
+
+        // ── Active Pro/Ultimate subscribers ────────────────────────────────
+        let activeSubscribers = 0;
+        // Try user_roles table first
+        const { count: roleCount } = await supabase
+          .from("user_roles")
+          .select("*", { count: "exact", head: true })
+          .in("role", ["pro", "ultimate"] as never[]);
+        if (typeof roleCount === "number") {
+          activeSubscribers = roleCount;
+        } else {
+          // Fallback: try subscriptions table
+          const { count: subCount } = await supabase
+            .from("subscriptions")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "active");
+          activeSubscribers = subCount ?? 0;
+        }
+
+        setGrowthStats({
+          scansToday: scansToday ?? 0,
+          scansWeek: scansWeek ?? 0,
+          scansMonth: scansMonth ?? 0,
+          signupsToday: signupsToday ?? 0,
+          signupsWeek: signupsWeek ?? 0,
+          activeSubscribers,
+          scansDailyLast30,
+          signupsDailyLast30,
+        });
+      } catch (err) {
+        console.error("growthStats error:", err);
+      } finally {
+        setGrowthLoading(false);
+      }
+    };
+
+    fetchGrowthStats();
+  }, [isAdmin]);
+
+  // ── Format duration for display
   const formatDuration = (seconds: number): string => {
     if (seconds < 60) return `${seconds}s`;
     const minutes = Math.floor(seconds / 60);
@@ -223,6 +444,164 @@ const AdminAnalytics = () => {
 
         {/* User Scans */}
         <UserScansSection />
+
+        {/* ── Supabase Growth Stats ─────────────────────────────────────────── */}
+        <div
+          style={{ background: "#1e293b", borderRadius: 12, border: "1px solid #334155", padding: "24px" }}
+        >
+          <h2 style={{ color: "#f1f5f9", fontSize: 20, fontWeight: 700, marginBottom: 20 }}>
+            📊 App Growth Stats
+          </h2>
+
+          {/* KPI row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16, marginBottom: 28 }}>
+            {[
+              { label: "Scans Today",    value: growthStats.scansToday },
+              { label: "Scans This Week",value: growthStats.scansWeek },
+              { label: "Scans This Month",value: growthStats.scansMonth },
+              { label: "Signups Today",  value: growthStats.signupsToday },
+              { label: "Signups This Week",value: growthStats.signupsWeek },
+              { label: "Active Subscribers",value: growthStats.activeSubscribers },
+            ].map(({ label, value }) => (
+              <div
+                key={label}
+                style={{ background: "#0f172a", borderRadius: 10, border: "1px solid #334155", padding: "16px 20px" }}
+              >
+                {growthLoading ? (
+                  <div style={{ height: 32, background: "#334155", borderRadius: 6, animation: "pulse 1.5s infinite" }} />
+                ) : (
+                  <span style={{ fontSize: 28, fontWeight: 800, color: "#FF6B00" }}>{value}</span>
+                )}
+                <p style={{ color: "#94a3b8", fontSize: 12, marginTop: 4 }}>{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Charts row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            {/* Scans per day — Line */}
+            <div>
+              <p style={{ color: "#94a3b8", fontSize: 13, marginBottom: 8 }}>Scans / day (last 30 days)</p>
+              {growthLoading ? (
+                <div style={{ height: 180, background: "#0f172a", borderRadius: 8, animation: "pulse 1.5s infinite" }} />
+              ) : (
+                <ResponsiveContainer width="100%" height={180}>
+                  <LineChart data={growthStats.scansDailyLast30}>
+                    <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} interval={6} />
+                    <YAxis tick={{ fill: "#64748b", fontSize: 10 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#f1f5f9" }}
+                    />
+                    <Line type="monotone" dataKey="count" stroke="#FF6B00" strokeWidth={2} dot={false} name="Scans" />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            {/* Signups per day — Bar */}
+            <div>
+              <p style={{ color: "#94a3b8", fontSize: 13, marginBottom: 8 }}>New Signups / day (last 30 days)</p>
+              {growthLoading ? (
+                <div style={{ height: 180, background: "#0f172a", borderRadius: 8, animation: "pulse 1.5s infinite" }} />
+              ) : (
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={growthStats.signupsDailyLast30}>
+                    <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} interval={6} />
+                    <YAxis tick={{ fill: "#64748b", fontSize: 10 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#f1f5f9" }}
+                    />
+                    <Bar dataKey="count" fill="#FF6B00" radius={[4, 4, 0, 0]} name="Signups" />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Meta Ads Stats ────────────────────────────────────────────────── */}
+        <div
+          style={{ background: "#1e293b", borderRadius: 12, border: "1px solid #334155", padding: "24px" }}
+        >
+          <h2 style={{ color: "#f1f5f9", fontSize: 20, fontWeight: 700, marginBottom: 6 }}>
+            📣 Meta Ads Performance
+          </h2>
+          <p style={{ color: "#64748b", fontSize: 12, marginBottom: 20 }}>
+            Live data from Meta Marketing API · Campaigns under act_{String(import.meta.env.VITE_META_AD_ACCOUNT_ID ?? "—")}
+          </p>
+
+          {metaLoading && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} style={{ height: 88, background: "#0f172a", borderRadius: 10, animation: "pulse 1.5s infinite" }} />
+              ))}
+            </div>
+          )}
+
+          {!metaLoading && metaError && (
+            <div style={{ background: "#450a0a", border: "1px solid #991b1b", borderRadius: 10, padding: "16px 20px", color: "#fca5a5", marginBottom: 24 }}>
+              <strong>Error loading Meta Ads:</strong> {metaError}
+              <p style={{ marginTop: 6, fontSize: 12, color: "#f87171" }}>
+                Set <code>VITE_META_ACCESS_TOKEN</code> and <code>VITE_META_AD_ACCOUNT_ID</code> in your <code>.env</code> file.
+              </p>
+            </div>
+          )}
+
+          {!metaLoading && !metaError && (
+            <>
+              {/* Campaign cards */}
+              {metaCampaigns.length === 0 ? (
+                <p style={{ color: "#64748b", textAlign: "center", padding: "32px 0" }}>No campaign data found.</p>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16, marginBottom: 28 }}>
+                  {metaCampaigns.map((c) => (
+                    <div
+                      key={c.id}
+                      style={{ background: "#0f172a", borderRadius: 10, border: "1px solid #334155", padding: "16px 20px" }}
+                    >
+                      <p style={{ color: "#94a3b8", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>
+                        {c.name}
+                      </p>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                        {[
+                          { label: "Impressions", value: c.impressions.toLocaleString() },
+                          { label: "Clicks",       value: c.clicks.toLocaleString() },
+                          { label: "CPC",          value: `$${c.cpc.toFixed(2)}` },
+                          { label: "Spend",        value: `$${c.spend.toFixed(2)}` },
+                        ].map(({ label, value }) => (
+                          <div key={label}>
+                            <p style={{ color: "#FF6B00", fontSize: 18, fontWeight: 700 }}>{value}</p>
+                            <p style={{ color: "#64748b", fontSize: 11 }}>{label}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* 7-day evolution chart */}
+              {metaDailyData.length > 0 && (
+                <div>
+                  <p style={{ color: "#94a3b8", fontSize: 13, marginBottom: 10 }}>Impressions & Clicks — last 7 days</p>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={metaDailyData}>
+                      <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis yAxisId="left" tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis yAxisId="right" orientation="right" tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#f1f5f9" }}
+                      />
+                      <Legend wrapperStyle={{ color: "#94a3b8", fontSize: 12 }} />
+                      <Line yAxisId="left"  type="monotone" dataKey="impressions" stroke="#FF6B00" strokeWidth={2} dot={false} name="Impressions" />
+                      <Line yAxisId="right" type="monotone" dataKey="clicks"      stroke="#38bdf8" strokeWidth={2} dot={false} name="Clicks" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Key Metrics */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

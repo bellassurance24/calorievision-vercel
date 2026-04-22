@@ -1,0 +1,86 @@
+{
+  "created_at": "2026-04-20T01:42:47.987927",
+  "account_id": "act_1192927742787219",
+  "page_id": "819082091285115",
+  "instagram_actor_id": "17841470291292296",
+  "pixel_id": "1682046289705741",
+  "status": "ALL_PAUSED",
+  "campaigns": {
+    "awareness": {
+      "campaign_id": "120244963432790720",
+      "interests_used": [
+        "Alimentation humaine (science)",
+        "MyFitnessPal (fitness)",
+        "marques et fabricants de nourriture (fabrication)",
+        "Fitness et bien-être (fitness)",
+        "Bodybuilding (sport)",
+        "gymnastique (gymnastique)",
+        "Australian Sports Nutrition",
+        "CrossFit (fitness)",
+        "Premier Protein"
+      ],
+      "adset_id": "120244963433790720",
+      "video_id": "954058304024988",
+      "status": "DEPLOYED_PAUSED",
+      "error": "Meta API error -- Code 100: Invalid parameter",
+      "creatives": {
+        "image_fb_creative_id": "934600125850379",
+        "image_ig_creative_id": "1315172713862899",
+        "video_creative_id": "1220989256553349"
+      },
+      "ads": {
+        "image_fb_ad_id": "120245026867810720",
+        "image_ig_ad_id": "120245026868260720",
+        "video_ad_id": "120245026868690720"
+      }
+    },
+    "split_a": {
+      "campaign_id": "120244963439730720",
+      "interests_used": [
+        "Alimentation humaine (science)",
+        "MyFitnessPal (fitness)",
+        "marques et fabricants de nourriture (fabrication)"
+      ],
+      "adset_id": "120244963441330720",
+      "video_id": "1470499407900366",
+      "status": "DEPLOYED_PAUSED",
+      "error": "Meta API error -- Code 100: Invalid parameter",
+      "creatives": {
+        "image_fb_creative_id": "946203008168961",
+        "image_ig_creative_id": "965248926486680",
+        "video_creative_id": "796939303184500"
+      },
+      "ads": {
+        "image_fb_ad_id": "120245026870460720",
+        "image_ig_ad_id": "120245026870750720",
+        "video_ad_id": "120245026871060720"
+      }
+    },
+    "split_b": {
+      "campaign_id": "120244963444440720",
+      "interests_used": [
+        "Fitness et bien-être (fitness)",
+        "Bodybuilding (sport)",
+        "gymnastique (gymnastique)",
+        "Australian Sports Nutrition",
+        "CrossFit (fitness)",
+        "Premier Protein"
+      ],
+      "adset_id": "120244963445610720",
+      "video_id": "1476795033977500",
+      "status": "DEPLOYED_PAUSED",
+      "error": "Meta API error -- Code 100: Invalid parameter",
+      "creatives": {
+        "image_fb_creative_id": "970574545908546",
+        "image_ig_creative_id": "935790086110605",
+        "video_creative_id": "1271482017899272"
+      },
+      "ads": {
+        "image_fb_ad_id": "120245026873960720",
+        "image_ig_ad_id": "120245026874360720",
+        "video_ad_id": "120245026874810720"
+      }
+    }
+  },
+  "resumed_at": "2026-04-20T23:04:37.100649+00:00"
+}
