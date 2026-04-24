@@ -23,7 +23,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (type === 'insights') {
       const r = await fetch(
-        `${base}/${accountId}/insights?fields=impressions%2Cclicks%2Cdate_start&time_increment=1&date_preset=last_7_days&access_token=${token}`
+        `${base}/${accountId}/insights?fields=impressions%2Cclicks%2Cdate_start&time_increment=1&date_preset=last_7d&access_token=${token}`
       );
       const data = await r.json();
       return res.status(200).json(data);
