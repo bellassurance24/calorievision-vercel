@@ -203,32 +203,17 @@ const AdminAnalytics = () => {
     refresh,
   } = useAnalyticsData(dateRange, previousDateRange);
 
-  // ── Fetch Meta Ads data ─────────────────────────────────────────────────────
+  // ── Fetch Meta Ads data via Edge Function ───────────────────────────────────
   useEffect(() => {
     const fetchMetaAds = async () => {
       setMetaLoading(true);
       setMetaError(null);
-      // Env vars must be VITE_ prefixed in Vite projects (add VITE_META_ACCESS_TOKEN
-      // and VITE_META_AD_ACCOUNT_ID to your .env file).
-      const token = import.meta.env.VITE_META_ACCESS_TOKEN as string | undefined;
-      const rawAccountId = import.meta.env.VITE_META_AD_ACCOUNT_ID as string | undefined;
-
-      if (!token || !rawAccountId) {
-        setMetaError("Meta Ads env vars not set (VITE_META_ACCESS_TOKEN / VITE_META_AD_ACCOUNT_ID)");
-        setMetaLoading(false);
-        return;
-      }
-
-      const accountId = rawAccountId.startsWith("act_") ? rawAccountId : `act_${rawAccountId}`;
-      const base = "https://graph.facebook.com/v19.0";
 
       try {
         // Campaign-level stats
-        const campRes = await fetch(
-          `${base}/${accountId}/campaigns?fields=name,insights%7Bimpressions%2Cclicks%2Ccpc%2Cspend%7D&access_token=${token}`,
-        );
+        const campRes = await fetch('/api/meta-ads?type=campaigns');
         const campJson = await campRes.json();
-        if (campJson.error) throw new Error(campJson.error.message);
+        if (campJson.error) throw new Error(campJson.error);
 
         const campaigns: MetaCampaign[] = (campJson.data || []).map((c: Record<string, unknown>) => {
           const ins = (c.insights as { data?: Record<string, string>[] } | undefined)?.data?.[0] ?? {};
@@ -244,14 +229,12 @@ const AdminAnalytics = () => {
         setMetaCampaigns(campaigns);
 
         // Account-level daily insights (last 7 days)
-        const insRes = await fetch(
-          `${base}/${accountId}/insights?fields=impressions%2Cclicks%2Cdate_start&time_increment=1&date_preset=last_7_days&access_token=${token}`,
-        );
+        const insRes = await fetch('/api/meta-ads?type=insights');
         const insJson = await insRes.json();
-        if (insJson.error) throw new Error(insJson.error.message);
+        if (insJson.error) throw new Error(insJson.error);
 
         const daily: MetaDayPoint[] = (insJson.data || []).map((d: Record<string, string>) => ({
-          date: d.date_start?.slice(5) ?? "", // MM-DD
+          date: d.date_start?.slice(5) ?? "",
           impressions: parseInt(d.impressions ?? "0", 10),
           clicks: parseInt(d.clicks ?? "0", 10),
         }));
@@ -344,7 +327,6 @@ const AdminAnalytics = () => {
 
         // ── Active Pro/Ultimate subscribers ────────────────────────────────
         let activeSubscribers = 0;
-        // Try user_roles table first
         const { count: roleCount } = await supabase
           .from("user_roles")
           .select("*", { count: "exact", head: true })
@@ -352,7 +334,6 @@ const AdminAnalytics = () => {
         if (typeof roleCount === "number") {
           activeSubscribers = roleCount;
         } else {
-          // Fallback: try subscriptions table
           const { count: subCount } = await supabase
             .from("subscriptions")
             .select("*", { count: "exact", head: true })
@@ -527,7 +508,7 @@ const AdminAnalytics = () => {
             📣 Meta Ads Performance
           </h2>
           <p style={{ color: "#64748b", fontSize: 12, marginBottom: 20 }}>
-            Live data from Meta Marketing API · Campaigns under act_{String(import.meta.env.VITE_META_AD_ACCOUNT_ID ?? "—")}
+            Live data from Meta Marketing API
           </p>
 
           {metaLoading && (
@@ -541,9 +522,6 @@ const AdminAnalytics = () => {
           {!metaLoading && metaError && (
             <div style={{ background: "#450a0a", border: "1px solid #991b1b", borderRadius: 10, padding: "16px 20px", color: "#fca5a5", marginBottom: 24 }}>
               <strong>Error loading Meta Ads:</strong> {metaError}
-              <p style={{ marginTop: 6, fontSize: 12, color: "#f87171" }}>
-                Set <code>VITE_META_ACCESS_TOKEN</code> and <code>VITE_META_AD_ACCOUNT_ID</code> in your <code>.env</code> file.
-              </p>
             </div>
           )}
 
