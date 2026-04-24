@@ -277,7 +277,7 @@ const Index = () => {
                 <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
                   or take a photo with your camera
                 </button>
-                <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={() => setShowDemo(v => !v)}>
+                <button className="text-sm font-semibold text-orange-500 border border-orange-400 rounded-full px-4 py-1.5 hover:bg-orange-50 transition-colors" onClick={() => setShowDemo(v => !v)}>
                   Try demo
                 </button>
               </div>
