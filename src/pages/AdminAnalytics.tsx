@@ -211,7 +211,7 @@ const AdminAnalytics = () => {
 
       try {
         // Campaign-level stats
-        const campRes = await fetch('/api/meta-ads?type=campaigns');
+        const campRes = await fetch(`/api/meta-ads?type=campaigns&filter=${activeFilter}&from=${dateRange.from.toISOString().slice(0,10)}&to=${dateRange.to.toISOString().slice(0,10)}`);
         const campJson = await campRes.json();
         if (campJson.error) throw new Error(typeof campJson.error === 'object' ? JSON.stringify(campJson.error) : campJson.error);
 
@@ -229,7 +229,7 @@ const AdminAnalytics = () => {
         setMetaCampaigns(campaigns);
 
         // Account-level daily insights (last 7 days)
-        const insRes = await fetch('/api/meta-ads?type=insights');
+        const insRes = await fetch(`/api/meta-ads?type=insights&filter=${activeFilter}&from=${dateRange.from.toISOString().slice(0,10)}&to=${dateRange.to.toISOString().slice(0,10)}`);
         const insJson = await insRes.json();
         if (insJson.error) throw new Error(typeof insJson.error === 'object' ? JSON.stringify(insJson.error) : insJson.error);
 
@@ -247,7 +247,7 @@ const AdminAnalytics = () => {
     };
 
     fetchMetaAds();
-  }, []);
+  }, [activeFilter, dateRange]);
 
   // ── Fetch Supabase growth stats ─────────────────────────────────────────────
   useEffect(() => {
