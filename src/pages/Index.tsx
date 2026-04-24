@@ -77,6 +77,7 @@ const Index = () => {
       heroTakePhotoCta: "Take photo",
       heroEducational: "Educational insights only",
       heroPhotosNotStored: "Photos are not stored",
+      heroTryDemo: "Try demo",
     },
     fr: {
       heroEyebrow: "Analyse de repas à partir d'une photo - Instantané",
@@ -87,6 +88,7 @@ const Index = () => {
       heroTakePhotoCta: "Prendre une photo",
       heroEducational: "Informations éducatives uniquement",
       heroPhotosNotStored: "Les photos ne sont pas conservées",
+      heroTryDemo: "Essayer la démo",
     },
     es: {
       heroEyebrow: "Análisis de comidas desde una foto - Al instante",
@@ -97,6 +99,7 @@ const Index = () => {
       heroTakePhotoCta: "Tomar foto",
       heroEducational: "Información solo educativa",
       heroPhotosNotStored: "Las fotos no se guardan",
+      heroTryDemo: "Probar demo",
     },
     pt: {
       heroEyebrow: "Análise de refeições a partir de uma foto - Instantânea",
@@ -107,6 +110,7 @@ const Index = () => {
       heroTakePhotoCta: "Tirar foto",
       heroEducational: "Informações apenas educativas",
       heroPhotosNotStored: "As fotos não são guardadas",
+      heroTryDemo: "Experimentar demo",
     },
     zh: {
       heroEyebrow: "基于照片的即时膳食分析",
@@ -117,6 +121,7 @@ const Index = () => {
       heroTakePhotoCta: "拍照",
       heroEducational: "仅供教育用途的洞见",
       heroPhotosNotStored: "照片不会被保存",
+      heroTryDemo: "试用演示",
     },
     ar: {
       heroEyebrow: "تحليل وجبة بالذكاء الاصطناعي انطلاقًا من صورة – فورًا",
@@ -127,6 +132,7 @@ const Index = () => {
       heroTakePhotoCta: "التقاط صورة",
       heroEducational: "معلومات تعليمية فقط",
       heroPhotosNotStored: "لا يتم تخزين الصور",
+      heroTryDemo: "جرّب العرض",
     },
     it: {
       heroEyebrow: "Analisi del pasto da una foto - Istantanea",
@@ -137,6 +143,7 @@ const Index = () => {
       heroTakePhotoCta: "Scatta foto",
       heroEducational: "Solo informazioni educative",
       heroPhotosNotStored: "Le foto non vengono salvate",
+      heroTryDemo: "Prova la demo",
     },
     de: {
       heroEyebrow: "KI-Mahlzeitanalyse aus einem Foto - Sofort",
@@ -147,6 +154,7 @@ const Index = () => {
       heroTakePhotoCta: "Foto aufnehmen",
       heroEducational: "Nur Bildungsinformationen",
       heroPhotosNotStored: "Fotos werden nicht gespeichert",
+      heroTryDemo: "Demo ausprobieren",
     },
     nl: {
       heroEyebrow: "AI Maaltijdanalyse vanuit een foto - Direct",
@@ -157,6 +165,7 @@ const Index = () => {
       heroTakePhotoCta: "Foto maken",
       heroEducational: "Alleen educatieve inzichten",
       heroPhotosNotStored: "Foto's worden niet opgeslagen",
+      heroTryDemo: "Probeer demo",
     },
     ru: {
       heroEyebrow: "ИИ-анализ приёма пищи по фото — мгновенно",
@@ -167,6 +176,7 @@ const Index = () => {
       heroTakePhotoCta: "Сделать фото",
       heroEducational: "Только образовательная информация",
       heroPhotosNotStored: "Фото не сохраняются",
+      heroTryDemo: "Попробовать демо",
     },
     ja: {
       heroEyebrow: "AIによる食事の栄養分析 — 瞬時に",
@@ -177,6 +187,7 @@ const Index = () => {
       heroTakePhotoCta: "写真を撮る",
       heroEducational: "教育目的の情報のみ",
       heroPhotosNotStored: "写真は保存されません",
+      heroTryDemo: "デモを試す",
     },
   } as const;
   const copy = contentByLang[language];
@@ -278,7 +289,7 @@ const Index = () => {
                   or take a photo with your camera
                 </button>
                 <button className="text-sm font-semibold text-orange-500 border border-orange-400 rounded-full px-4 py-1.5 hover:bg-orange-50 transition-colors" onClick={() => setShowDemo(v => !v)}>
-                  Try demo
+                  {copy.heroTryDemo}
                 </button>
               </div>
             </div>
