@@ -86,6 +86,9 @@ const Index = () => {
       demoItem4: "Light sauce",
       demoTip: "Great balance of protein and carbs. Consider adding more colorful vegetables for extra fiber.",
       demoClose: "Close demo",
+      demoProtein: "Protein",
+      demoCarbs: "Carbs",
+      demoFat: "Fat",
     },
     fr: {
       heroEyebrow: "Analyse de repas à partir d'une photo - Instantané",
@@ -105,6 +108,9 @@ const Index = () => {
       demoItem4: "Sauce légère",
       demoTip: "Bon équilibre protéines/glucides. Ajoutez des légumes colorés pour plus de fibres.",
       demoClose: "Fermer la démo",
+      demoProtein: "Protéines",
+      demoCarbs: "Glucides",
+      demoFat: "Lipides",
     },
     es: {
       heroEyebrow: "Análisis de comidas desde una foto - Al instante",
@@ -124,6 +130,9 @@ const Index = () => {
       demoItem4: "Salsa ligera",
       demoTip: "Buen equilibrio de proteínas y carbohidratos. Añade más verduras coloridas para más fibra.",
       demoClose: "Cerrar demo",
+      demoProtein: "Proteína",
+      demoCarbs: "Carbohidratos",
+      demoFat: "Grasa",
     },
     pt: {
       heroEyebrow: "Análise de refeições a partir de uma foto - Instantânea",
@@ -143,6 +152,9 @@ const Index = () => {
       demoItem4: "Molho leve",
       demoTip: "Bom equilíbrio de proteínas e carboidratos. Adicione mais vegetais coloridos para mais fibra.",
       demoClose: "Fechar demo",
+      demoProtein: "Proteína",
+      demoCarbs: "Carboidratos",
+      demoFat: "Gordura",
     },
     zh: {
       heroEyebrow: "基于照片的即时膳食分析",
@@ -162,6 +174,9 @@ const Index = () => {
       demoItem4: "清淡酱汁",
       demoTip: "蛋白质和碳水比例均衡。建议多加些蔬菜以增加膳食纤维。",
       demoClose: "关闭演示",
+      demoProtein: "蛋白质",
+      demoCarbs: "碳水",
+      demoFat: "脂肪",
     },
     ar: {
       heroEyebrow: "تحليل وجبة بالذكاء الاصطناعي انطلاقًا من صورة – فورًا",
@@ -181,6 +196,9 @@ const Index = () => {
       demoItem4: "صلصة خفيفة",
       demoTip: "توازن رائع بين البروتين والكربوهيدرات. أضف المزيد من الخضروات الملوّنة للحصول على المزيد من الألياف.",
       demoClose: "إغلاق العرض",
+      demoProtein: "بروتين",
+      demoCarbs: "كربوهيدرات",
+      demoFat: "دهون",
     },
     it: {
       heroEyebrow: "Analisi del pasto da una foto - Istantanea",
@@ -200,6 +218,9 @@ const Index = () => {
       demoItem4: "Salsa leggera",
       demoTip: "Ottimo equilibrio tra proteine e carboidrati. Aggiungi più verdure colorate per più fibre.",
       demoClose: "Chiudi demo",
+      demoProtein: "Proteine",
+      demoCarbs: "Carboidrati",
+      demoFat: "Grassi",
     },
     de: {
       heroEyebrow: "KI-Mahlzeitanalyse aus einem Foto - Sofort",
@@ -219,6 +240,9 @@ const Index = () => {
       demoItem4: "Leichte Sauce",
       demoTip: "Gute Balance aus Proteinen und Kohlenhydraten. Mehr buntes Gemüse für extra Ballaststoffe.",
       demoClose: "Demo schließen",
+      demoProtein: "Protein",
+      demoCarbs: "Kohlenhydrate",
+      demoFat: "Fett",
     },
     nl: {
       heroEyebrow: "AI Maaltijdanalyse vanuit een foto - Direct",
@@ -238,6 +262,9 @@ const Index = () => {
       demoItem4: "Lichte saus",
       demoTip: "Goede balans tussen eiwitten en koolhydraten. Voeg meer kleurrijke groenten toe voor extra vezels.",
       demoClose: "Demo sluiten",
+      demoProtein: "Eiwitten",
+      demoCarbs: "Koolhydraten",
+      demoFat: "Vetten",
     },
     ru: {
       heroEyebrow: "ИИ-анализ приёма пищи по фото — мгновенно",
@@ -257,6 +284,9 @@ const Index = () => {
       demoItem4: "Лёгкий соус",
       demoTip: "Отличный баланс белков и углеводов. Добавьте больше овощей для клетчатки.",
       demoClose: "Закрыть демо",
+      demoProtein: "Белки",
+      demoCarbs: "Углеводы",
+      demoFat: "Жиры",
     },
     ja: {
       heroEyebrow: "AIによる食事の栄養分析 — 瞬時に",
@@ -276,6 +306,9 @@ const Index = () => {
       demoItem4: "軽いソース",
       demoTip: "たんぱく質と炭水化物のバランスが良好です。食物繊維のため野菜を追加しましょう。",
       demoClose: "デモを閉じる",
+      demoProtein: "たんぱく質",
+      demoCarbs: "炭水化物",
+      demoFat: "脂質",
     },
   } as const;
   const copy = contentByLang[language];
@@ -404,9 +437,9 @@ const Index = () => {
                   ))}
                 </div>
                 <div className="flex gap-4 rounded-xl bg-secondary px-4 py-2 text-xs">
-                  <span>Protein <strong>42g</strong></span>
-                  <span>Carbs <strong>58g</strong></span>
-                  <span>Fat <strong>18g</strong></span>
+                  <span>{copy.demoProtein} <strong>42g</strong></span>
+                  <span>{copy.demoCarbs} <strong>58g</strong></span>
+                  <span>{copy.demoFat} <strong>18g</strong></span>
                 </div>
                 <p className="text-xs text-muted-foreground italic">💡 {copy.demoTip}</p>
                 <button className="text-xs text-muted-foreground underline hover:text-primary transition-colors" onClick={() => setShowDemo(false)}>
