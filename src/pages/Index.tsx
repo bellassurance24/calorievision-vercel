@@ -78,6 +78,14 @@ const Index = () => {
       heroEducational: "Educational insights only",
       heroPhotosNotStored: "Photos are not stored",
       heroTryDemo: "Try demo",
+      demoDishName: "Grilled Chicken & Rice Bowl",
+      demoEstimated: "Estimated total:",
+      demoItem1: "Grilled chicken",
+      demoItem2: "Rice",
+      demoItem3: "Mixed vegetables",
+      demoItem4: "Light sauce",
+      demoTip: "Great balance of protein and carbs. Consider adding more colorful vegetables for extra fiber.",
+      demoClose: "Close demo",
     },
     fr: {
       heroEyebrow: "Analyse de repas à partir d'une photo - Instantané",
@@ -89,6 +97,14 @@ const Index = () => {
       heroEducational: "Informations éducatives uniquement",
       heroPhotosNotStored: "Les photos ne sont pas conservées",
       heroTryDemo: "Essayer la démo",
+      demoDishName: "Poulet grillé & riz",
+      demoEstimated: "Total estimé :",
+      demoItem1: "Poulet grillé",
+      demoItem2: "Riz",
+      demoItem3: "Légumes variés",
+      demoItem4: "Sauce légère",
+      demoTip: "Bon équilibre protéines/glucides. Ajoutez des légumes colorés pour plus de fibres.",
+      demoClose: "Fermer la démo",
     },
     es: {
       heroEyebrow: "Análisis de comidas desde una foto - Al instante",
@@ -100,6 +116,14 @@ const Index = () => {
       heroEducational: "Información solo educativa",
       heroPhotosNotStored: "Las fotos no se guardan",
       heroTryDemo: "Probar demo",
+      demoDishName: "Pollo a la parrilla & arroz",
+      demoEstimated: "Total estimado:",
+      demoItem1: "Pollo a la parrilla",
+      demoItem2: "Arroz",
+      demoItem3: "Verduras mixtas",
+      demoItem4: "Salsa ligera",
+      demoTip: "Buen equilibrio de proteínas y carbohidratos. Añade más verduras coloridas para más fibra.",
+      demoClose: "Cerrar demo",
     },
     pt: {
       heroEyebrow: "Análise de refeições a partir de uma foto - Instantânea",
@@ -111,6 +135,14 @@ const Index = () => {
       heroEducational: "Informações apenas educativas",
       heroPhotosNotStored: "As fotos não são guardadas",
       heroTryDemo: "Experimentar demo",
+      demoDishName: "Frango grelhado & arroz",
+      demoEstimated: "Total estimado:",
+      demoItem1: "Frango grelhado",
+      demoItem2: "Arroz",
+      demoItem3: "Legumes mistos",
+      demoItem4: "Molho leve",
+      demoTip: "Bom equilíbrio de proteínas e carboidratos. Adicione mais vegetais coloridos para mais fibra.",
+      demoClose: "Fechar demo",
     },
     zh: {
       heroEyebrow: "基于照片的即时膳食分析",
@@ -122,6 +154,14 @@ const Index = () => {
       heroEducational: "仅供教育用途的洞见",
       heroPhotosNotStored: "照片不会被保存",
       heroTryDemo: "试用演示",
+      demoDishName: "烤鸡肉饭",
+      demoEstimated: "预估总量：",
+      demoItem1: "烤鸡肉",
+      demoItem2: "米饭",
+      demoItem3: "混合蔬菜",
+      demoItem4: "清淡酱汁",
+      demoTip: "蛋白质和碳水比例均衡。建议多加些蔬菜以增加膳食纤维。",
+      demoClose: "关闭演示",
     },
     ar: {
       heroEyebrow: "تحليل وجبة بالذكاء الاصطناعي انطلاقًا من صورة – فورًا",
@@ -133,6 +173,14 @@ const Index = () => {
       heroEducational: "معلومات تعليمية فقط",
       heroPhotosNotStored: "لا يتم تخزين الصور",
       heroTryDemo: "جرّب العرض",
+      demoDishName: "دجاج مشوي مع أرز",
+      demoEstimated: "الإجمالي المُقدَّر:",
+      demoItem1: "دجاج مشوي",
+      demoItem2: "أرز",
+      demoItem3: "خضروات مشكّلة",
+      demoItem4: "صلصة خفيفة",
+      demoTip: "توازن رائع بين البروتين والكربوهيدرات. أضف المزيد من الخضروات الملوّنة للحصول على المزيد من الألياف.",
+      demoClose: "إغلاق العرض",
     },
     it: {
       heroEyebrow: "Analisi del pasto da una foto - Istantanea",
@@ -144,6 +192,14 @@ const Index = () => {
       heroEducational: "Solo informazioni educative",
       heroPhotosNotStored: "Le foto non vengono salvate",
       heroTryDemo: "Prova la demo",
+      demoDishName: "Pollo alla griglia & riso",
+      demoEstimated: "Totale stimato:",
+      demoItem1: "Pollo alla griglia",
+      demoItem2: "Riso",
+      demoItem3: "Verdure miste",
+      demoItem4: "Salsa leggera",
+      demoTip: "Ottimo equilibrio tra proteine e carboidrati. Aggiungi più verdure colorate per più fibre.",
+      demoClose: "Chiudi demo",
     },
     de: {
       heroEyebrow: "KI-Mahlzeitanalyse aus einem Foto - Sofort",
@@ -155,6 +211,14 @@ const Index = () => {
       heroEducational: "Nur Bildungsinformationen",
       heroPhotosNotStored: "Fotos werden nicht gespeichert",
       heroTryDemo: "Demo ausprobieren",
+      demoDishName: "Gegrilltes Hähnchen & Reis",
+      demoEstimated: "Geschätzter Gesamtwert:",
+      demoItem1: "Gegrilltes Hähnchen",
+      demoItem2: "Reis",
+      demoItem3: "Gemischtes Gemüse",
+      demoItem4: "Leichte Sauce",
+      demoTip: "Gute Balance aus Proteinen und Kohlenhydraten. Mehr buntes Gemüse für extra Ballaststoffe.",
+      demoClose: "Demo schließen",
     },
     nl: {
       heroEyebrow: "AI Maaltijdanalyse vanuit een foto - Direct",
@@ -166,6 +230,14 @@ const Index = () => {
       heroEducational: "Alleen educatieve inzichten",
       heroPhotosNotStored: "Foto's worden niet opgeslagen",
       heroTryDemo: "Probeer demo",
+      demoDishName: "Gegrilde kip & rijst",
+      demoEstimated: "Geschat totaal:",
+      demoItem1: "Gegrilde kip",
+      demoItem2: "Rijst",
+      demoItem3: "Gemengde groenten",
+      demoItem4: "Lichte saus",
+      demoTip: "Goede balans tussen eiwitten en koolhydraten. Voeg meer kleurrijke groenten toe voor extra vezels.",
+      demoClose: "Demo sluiten",
     },
     ru: {
       heroEyebrow: "ИИ-анализ приёма пищи по фото — мгновенно",
@@ -177,6 +249,14 @@ const Index = () => {
       heroEducational: "Только образовательная информация",
       heroPhotosNotStored: "Фото не сохраняются",
       heroTryDemo: "Попробовать демо",
+      demoDishName: "Курица на гриле с рисом",
+      demoEstimated: "Примерный итог:",
+      demoItem1: "Курица на гриле",
+      demoItem2: "Рис",
+      demoItem3: "Смешанные овощи",
+      demoItem4: "Лёгкий соус",
+      demoTip: "Отличный баланс белков и углеводов. Добавьте больше овощей для клетчатки.",
+      demoClose: "Закрыть демо",
     },
     ja: {
       heroEyebrow: "AIによる食事の栄養分析 — 瞬時に",
@@ -188,6 +268,14 @@ const Index = () => {
       heroEducational: "教育目的の情報のみ",
       heroPhotosNotStored: "写真は保存されません",
       heroTryDemo: "デモを試す",
+      demoDishName: "グリルチキン & ライスボウル",
+      demoEstimated: "推定合計：",
+      demoItem1: "グリルチキン",
+      demoItem2: "ご飯",
+      demoItem3: "ミックス野菜",
+      demoItem4: "軽いソース",
+      demoTip: "たんぱく質と炭水化物のバランスが良好です。食物繊維のため野菜を追加しましょう。",
+      demoClose: "デモを閉じる",
     },
   } as const;
   const copy = contentByLang[language];
@@ -298,16 +386,16 @@ const Index = () => {
                 <div className="flex items-center gap-3">
                   <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-orange-300 to-yellow-200 flex items-center justify-center text-2xl flex-shrink-0">🍽️</div>
                   <div>
-                    <p className="font-semibold text-base">Grilled Chicken & Rice Bowl</p>
-                    <p className="text-muted-foreground">Estimated total: <span className="font-medium text-foreground">~620 kcal</span></p>
+                    <p className="font-semibold text-base">{copy.demoDishName}</p>
+                    <p className="text-muted-foreground">{copy.demoEstimated} <span className="font-medium text-foreground">~620 kcal</span></p>
                   </div>
                 </div>
                 <div className="space-y-1">
                   {[
-                    { label: "Grilled chicken", kcal: "~220 kcal" },
-                    { label: "Rice", kcal: "~260 kcal" },
-                    { label: "Mixed vegetables", kcal: "~80 kcal" },
-                    { label: "Light sauce", kcal: "~60 kcal" },
+                    { label: copy.demoItem1, kcal: "~220 kcal" },
+                    { label: copy.demoItem2, kcal: "~260 kcal" },
+                    { label: copy.demoItem3, kcal: "~80 kcal" },
+                    { label: copy.demoItem4, kcal: "~60 kcal" },
                   ].map(item => (
                     <div key={item.label} className="flex justify-between text-muted-foreground">
                       <span>{item.label}</span>
@@ -320,9 +408,9 @@ const Index = () => {
                   <span>Carbs <strong>58g</strong></span>
                   <span>Fat <strong>18g</strong></span>
                 </div>
-                <p className="text-xs text-muted-foreground italic">💡 Great balance of protein and carbs. Consider adding more colorful vegetables for extra fiber.</p>
+                <p className="text-xs text-muted-foreground italic">💡 {copy.demoTip}</p>
                 <button className="text-xs text-muted-foreground underline hover:text-primary transition-colors" onClick={() => setShowDemo(false)}>
-                  Close demo
+                  {copy.demoClose}
                 </button>
               </div>
             )}
