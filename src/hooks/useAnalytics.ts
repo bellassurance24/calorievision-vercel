@@ -6,7 +6,7 @@
  *  • enriches geo from reliable Cloudflare headers (no 3rd-party IP API)
  *  • responds in <5 ms — never blocks navigation
  */
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { isLikelyBotUserAgent } from "@/lib/analyticsBot";
 import { trackVisit } from "@/lib/trackVisit";
@@ -102,12 +102,10 @@ export const trackEvent = (
     utm_campaign:  utm.utm_campaign,
     screen_width:  window.screen.width,
     screen_height: window.screen.height,
-    // country / city come from Cloudflare headers on the edge function side
     metadata,
   };
 
-  // Fire-and-forget — never blocks the page
-  const url    = getTrackUrl();
+  const url     = getTrackUrl();
   const anonKey = getAnonKey();
 
   fetch(url, {
@@ -117,9 +115,8 @@ export const trackEvent = (
       ...(anonKey ? { Authorization: `Bearer ${anonKey}` } : {}),
     },
     body:      JSON.stringify(payload),
-    keepalive: true, // survives page unload
+    keepalive: true,
   }).catch((err) => {
-    // Silently swallow network errors — tracking must never break the app
     if (import.meta.env.DEV) {
       console.debug("[analytics] track-event failed:", err);
     }
@@ -129,11 +126,49 @@ export const trackEvent = (
 // ── Page tracking hook ────────────────────────────────────────────────────────
 export const usePageTracking = (): void => {
   const location = useLocation();
+  const pageEntryTime = useRef<number>(Date.now());
+  const currentPath = useRef<string>(location.pathname);
 
   useEffect(() => {
+    // Fire page_view on arrival
     trackEvent("page_view", { path: location.pathname });
-    trackVisit(location.pathname); // also writes to analytics_master via n8n
+    trackVisit(location.pathname);
+
+    // Record entry time and path
+    pageEntryTime.current = Date.now();
+    currentPath.current = location.pathname;
+
+    // Fire page_leave with duration when user leaves this page
+    return () => {
+      const duration = Math.round((Date.now() - pageEntryTime.current) / 1000);
+      if (duration > 0) {
+        trackEvent("page_leave", {
+          path: currentPath.current,
+          duration_seconds: duration,
+        });
+      }
+    };
   }, [location.pathname]);
+
+  // Also fire page_leave when tab is closed or user navigates away
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        const duration = Math.round((Date.now() - pageEntryTime.current) / 1000);
+        if (duration > 0) {
+          trackEvent("page_leave", {
+            path: currentPath.current,
+            duration_seconds: duration,
+          });
+          // Reset timer so we don't double-count if tab comes back
+          pageEntryTime.current = Date.now();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 };
 
 // ── Convenience helpers ───────────────────────────────────────────────────────
