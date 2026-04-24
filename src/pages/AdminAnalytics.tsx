@@ -213,7 +213,7 @@ const AdminAnalytics = () => {
         // Campaign-level stats
         const campRes = await fetch('/api/meta-ads?type=campaigns');
         const campJson = await campRes.json();
-        if (campJson.error) throw new Error(campJson.error);
+        if (campJson.error) throw new Error(typeof campJson.error === 'object' ? JSON.stringify(campJson.error) : campJson.error);
 
         const campaigns: MetaCampaign[] = (campJson.data || []).map((c: Record<string, unknown>) => {
           const ins = (c.insights as { data?: Record<string, string>[] } | undefined)?.data?.[0] ?? {};
@@ -231,7 +231,7 @@ const AdminAnalytics = () => {
         // Account-level daily insights (last 7 days)
         const insRes = await fetch('/api/meta-ads?type=insights');
         const insJson = await insRes.json();
-        if (insJson.error) throw new Error(insJson.error);
+        if (insJson.error) throw new Error(typeof insJson.error === 'object' ? JSON.stringify(insJson.error) : insJson.error);
 
         const daily: MetaDayPoint[] = (insJson.data || []).map((d: Record<string, string>) => ({
           date: d.date_start?.slice(5) ?? "",
