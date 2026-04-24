@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Map dashboard filter names to Meta API date_preset values
 const DATE_PRESET_MAP: Record<string, string> = {
   today:      'today',
   yesterday:  'yesterday',
@@ -27,29 +26,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const dateFrom  = req.query.from as string | undefined;
   const dateTo    = req.query.to   as string | undefined;
 
-  const buildTimeRange = (): string => {
-    if (dateFrom && dateTo) {
-      return `&time_range=${encodeURIComponent(JSON.stringify({ since: dateFrom, until: dateTo }))}`;
-    }
-    const preset = DATE_PRESET_MAP[filterKey] ?? 'last_7d';
-    return `&date_preset=${preset}`;
-  };
-
-  const timeRange = buildTimeRange();
+  const timeParam = dateFrom && dateTo
+    ? `&time_range={"since":"${dateFrom}","until":"${dateTo}"}`
+    : `&date_preset=${DATE_PRESET_MAP[filterKey] ?? 'last_7d'}`;
 
   try {
     if (type === 'campaigns') {
-      const r = await fetch(
-        `${base}/${accountId}/campaigns?fields=name,insights%7Bimpressions%2Cclicks%2Ccpc%2Cspend${encodeURIComponent(timeRange)}%7D&access_token=${token}`
-      );
+      const url = `${base}/${accountId}/campaigns?fields=name,insights{impressions,clicks,cpc,spend}${timeParam}&access_token=${token}`;
+      const r = await fetch(url);
       const data = await r.json();
       return res.status(200).json(data);
     }
 
     if (type === 'insights') {
-      const r = await fetch(
-        `${base}/${accountId}/insights?fields=impressions%2Cclicks%2Cdate_start&time_increment=1${timeRange}&access_token=${token}`
-      );
+      const url = `${base}/${accountId}/insights?fields=impressions,clicks,date_start&time_increment=1${timeParam}&access_token=${token}`;
+      const r = await fetch(url);
       const data = await r.json();
       return res.status(200).json(data);
     }
