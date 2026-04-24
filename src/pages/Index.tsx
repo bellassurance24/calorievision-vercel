@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, CheckCircle2, Image as ImageIcon, Sparkles, Workflow } from "lucide-react";
 import { LocalizedNavLink } from "@/components/LocalizedNavLink";
@@ -19,6 +19,7 @@ import CalorieGauge from "@/components/CalorieGauge";
 const Index = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const [showDemo, setShowDemo] = useState(false);
 
   useEffect(() => {
     const hash = window.location.hash ?? "";
@@ -272,10 +273,48 @@ const Index = () => {
               <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
                 <LocalizedNavLink to="/analyze">Scan your meal now →</LocalizedNavLink>
               </Button>
-              <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
-                or take a photo with your camera
-              </button>
+              <div className="flex items-center gap-3 flex-wrap">
+                <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
+                  or take a photo with your camera
+                </button>
+                <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={() => setShowDemo(v => !v)}>
+                  Try demo
+                </button>
+              </div>
             </div>
+            {showDemo && (
+              <div className="rounded-2xl border border-border bg-card/90 p-5 space-y-4 text-sm shadow-md">
+                <div className="flex items-center gap-3">
+                  <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-orange-300 to-yellow-200 flex items-center justify-center text-2xl flex-shrink-0">🍽️</div>
+                  <div>
+                    <p className="font-semibold text-base">Grilled Chicken & Rice Bowl</p>
+                    <p className="text-muted-foreground">Estimated total: <span className="font-medium text-foreground">~620 kcal</span></p>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { label: "Grilled chicken", kcal: "~220 kcal" },
+                    { label: "Rice", kcal: "~260 kcal" },
+                    { label: "Mixed vegetables", kcal: "~80 kcal" },
+                    { label: "Light sauce", kcal: "~60 kcal" },
+                  ].map(item => (
+                    <div key={item.label} className="flex justify-between text-muted-foreground">
+                      <span>{item.label}</span>
+                      <span className="font-medium text-foreground">{item.kcal}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-4 rounded-xl bg-secondary px-4 py-2 text-xs">
+                  <span>Protein <strong>42g</strong></span>
+                  <span>Carbs <strong>58g</strong></span>
+                  <span>Fat <strong>18g</strong></span>
+                </div>
+                <p className="text-xs text-muted-foreground italic">💡 Great balance of protein and carbs. Consider adding more colorful vegetables for extra fiber.</p>
+                <button className="text-xs text-muted-foreground underline hover:text-primary transition-colors" onClick={() => setShowDemo(false)}>
+                  Close demo
+                </button>
+              </div>
+            )}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground md:text-sm">
               <span className="inline-flex items-center gap-1">
                 <Sparkles className="h-3 w-3 text-accent" aria-hidden="true" />
