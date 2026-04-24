@@ -75,6 +75,9 @@ const Index = () => {
         "Upload or take a photo of your meal and get an instant calorie and macro estimate. No signup needed for your first scans..",
       heroUploadCta: "Upload photo",
       heroTakePhotoCta: "Take photo",
+      heroScanCta: "Scan your meal now →",
+      heroTryDemo: "Try demo",
+      heroOrCamera: "or take a photo with your camera",
       heroEducational: "Educational insights only",
       heroPhotosNotStored: "Photos are not stored",
       heroTryDemo: "Try demo",
@@ -97,6 +100,9 @@ const Index = () => {
         "Téléchargez simplement une photo de votre assiette et laissez CalorieVision estimer les aliments présents, les portions et les calories approximatives. Rapide, accessible et purement éducatif - jamais médical.",
       heroUploadCta: "Télécharger une photo",
       heroTakePhotoCta: "Prendre une photo",
+      heroScanCta: "Scanner mon repas →",
+      heroTryDemo: "Voir la démo",
+      heroOrCamera: "ou prendre une photo avec ma caméra",
       heroEducational: "Informations éducatives uniquement",
       heroPhotosNotStored: "Les photos ne sont pas conservées",
       heroTryDemo: "Essayer la démo",
@@ -119,6 +125,9 @@ const Index = () => {
         "Sube una foto sencilla de tu plato y deja que CalorieVision estime los alimentos presentes, el tamaño de las porciones y las calorías aproximadas. Rápido, amigable y totalmente educativo, nunca médico.",
       heroUploadCta: "Subir foto",
       heroTakePhotoCta: "Tomar foto",
+      heroScanCta: "Escanear mi comida →",
+      heroTryDemo: "Ver demo",
+      heroOrCamera: "o tomar una foto con mi cámara",
       heroEducational: "Información solo educativa",
       heroPhotosNotStored: "Las fotos no se guardan",
       heroTryDemo: "Probar demo",
@@ -141,6 +150,9 @@ const Index = () => {
         "Carregue uma foto simples do seu prato e deixe o CalorieVision estimar os alimentos presentes, os tamanhos das porções e as calorias aproximadas. Rápido, acessível e apenas educativo — nunca médico.",
       heroUploadCta: "Carregar foto",
       heroTakePhotoCta: "Tirar foto",
+      heroScanCta: "Escanear minha refeição →",
+      heroTryDemo: "Ver demo",
+      heroOrCamera: "ou tirar uma foto com a câmera",
       heroEducational: "Informações apenas educativas",
       heroPhotosNotStored: "As fotos não são guardadas",
       heroTryDemo: "Experimentar demo",
@@ -163,6 +175,9 @@ const Index = () => {
         "上传一张清晰的餐盘照片，CalorieVision 会估算其中的食物、份量以及大致热量。快速、友好，仅用于学习参考，不构成任何医疗建议。",
       heroUploadCta: "上传照片",
       heroTakePhotoCta: "拍照",
+      heroScanCta: "立即扫描我的餐食 →",
+      heroTryDemo: "试用演示",
+      heroOrCamera: "或用相机拍照",
       heroEducational: "仅供教育用途的洞见",
       heroPhotosNotStored: "照片不会被保存",
       heroTryDemo: "试用演示",
@@ -185,6 +200,9 @@ const Index = () => {
         "التقط صورة واضحة لطبقك ودَع CalorieVision يقدّر الأطعمة الموجودة، أحجام الحصص، وعدد السعرات التقريبي. سريع، بسيط، وتعليمي فقط – وليس أبدًا أداة طبية.",
       heroUploadCta: "تحميل صورة",
       heroTakePhotoCta: "التقاط صورة",
+      heroScanCta: "→ امسح وجبتي الآن",
+      heroTryDemo: "جرّب العرض",
+      heroOrCamera: "أو التقط صورة بالكاميرا",
       heroEducational: "معلومات تعليمية فقط",
       heroPhotosNotStored: "لا يتم تخزين الصور",
       heroTryDemo: "جرّب العرض",
@@ -207,6 +225,9 @@ const Index = () => {
         "Carica una semplice foto del tuo piatto e lascia che CalorieVision stimi gli alimenti presenti, le porzioni e le calorie approssimative. Veloce, accessibile e puramente educativo - mai medico.",
       heroUploadCta: "Carica foto",
       heroTakePhotoCta: "Scatta foto",
+      heroScanCta: "Scansiona il mio pasto →",
+      heroTryDemo: "Prova la demo",
+      heroOrCamera: "o scatta una foto con la fotocamera",
       heroEducational: "Solo informazioni educative",
       heroPhotosNotStored: "Le foto non vengono salvate",
       heroTryDemo: "Prova la demo",
@@ -229,6 +250,9 @@ const Index = () => {
         "Laden Sie ein einfaches Foto Ihres Tellers hoch und lassen Sie CalorieVision die vorhandenen Lebensmittel, Portionsgrößen und ungefähren Kalorien schätzen. Schnell, freundlich und rein bildungsorientiert - niemals medizinisch.",
       heroUploadCta: "Foto hochladen",
       heroTakePhotoCta: "Foto aufnehmen",
+      heroScanCta: "Meine Mahlzeit scannen →",
+      heroTryDemo: "Demo testen",
+      heroOrCamera: "oder ein Foto mit der Kamera aufnehmen",
       heroEducational: "Nur Bildungsinformationen",
       heroPhotosNotStored: "Fotos werden nicht gespeichert",
       heroTryDemo: "Demo ausprobieren",
@@ -251,6 +275,9 @@ const Index = () => {
         "Upload een simpele foto van je bord en laat CalorieVision de aanwezige voedingsmiddelen, portiegroottes en geschatte calorieën inschatten. Snel, vriendelijk en puur educatief - nooit medisch.",
       heroUploadCta: "Foto uploaden",
       heroTakePhotoCta: "Foto maken",
+      heroScanCta: "Mijn maaltijd scannen →",
+      heroTryDemo: "Demo proberen",
+      heroOrCamera: "of een foto maken met de camera",
       heroEducational: "Alleen educatieve inzichten",
       heroPhotosNotStored: "Foto's worden niet opgeslagen",
       heroTryDemo: "Probeer demo",
@@ -273,6 +300,9 @@ const Index = () => {
         "Загрузите фото блюда и позвольте CalorieVision оценить состав, размер порций и примерную калорийность. Быстро, удобно и только в образовательных целях — не медицинский инструмент.",
       heroUploadCta: "Загрузить фото",
       heroTakePhotoCta: "Сделать фото",
+      heroScanCta: "Сканировать блюдо →",
+      heroTryDemo: "Попробовать демо",
+      heroOrCamera: "или сфотографировать камерой",
       heroEducational: "Только образовательная информация",
       heroPhotosNotStored: "Фото не сохраняются",
       heroTryDemo: "Попробовать демо",
@@ -295,6 +325,9 @@ const Index = () => {
         "お皿の写真をアップロードするだけで、CalorieVisionが食品の種類、量、およびおおよそのカロリーを推定します。速く、使いやすく、あくまで教育目的です — 医療ツールではありません。",
       heroUploadCta: "写真をアップロード",
       heroTakePhotoCta: "写真を撮る",
+      heroScanCta: "食事をスキャン →",
+      heroTryDemo: "デモを試す",
+      heroOrCamera: "またはカメラで写真を撮る",
       heroEducational: "教育目的の情報のみ",
       heroPhotosNotStored: "写真は保存されません",
       heroTryDemo: "デモを試す",
@@ -401,6 +434,7 @@ const Index = () => {
             <p className="max-w-xl text-base text-muted-foreground md:text-lg">
               {copy.heroSubtitle}
             </p>
+<<<<<<< HEAD
             <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
               <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
                 <LocalizedNavLink to="/analyze">Scan your meal now →</LocalizedNavLink>
@@ -413,6 +447,15 @@ const Index = () => {
                   {copy.heroTryDemo}
                 </button>
               </div>
+=======
+            <div className="flex flex-col items-stretch sm:items-start gap-2 w-full sm:w-auto">
+              <Button variant="hero" size="lg" className="w-full sm:w-auto min-h-[52px] text-lg px-8" asChild>
+                <LocalizedNavLink to="/analyze">{copy.heroScanCta}</LocalizedNavLink>
+              </Button>
+              <button type="button" className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2 text-center sm:text-left" onClick={handleTakePhotoClick}>
+                {copy.heroOrCamera}
+              </button>
+>>>>>>> 5494dc7 (update CTA wording homepage)
             </div>
             {showDemo && (
               <div className="rounded-2xl border border-border bg-card/90 p-5 space-y-4 text-sm shadow-md">
@@ -698,7 +741,7 @@ const Index = () => {
           </div>
           <UGCHeroVideo
             ctaText={t(
-              "Try It Free — Upload a Photo Now",
+              "Scan your first meal free",
               "Essayez gratuitement — Téléchargez une photo",
               "Pruébelo gratis — Suba una foto ahora",
               "Experimente grátis — Envie uma foto agora",
@@ -1263,17 +1306,17 @@ const Index = () => {
           <Button variant="outline" size="sm" asChild className="hidden shrink-0 md:inline-flex">
             <LocalizedNavLink to="/how-it-works" className="text-border bg-primary">
               {t(
-                "Deep dive",
-                "Voir en détail",
-                "Ver en detalle",
-                "Ver em detalhe",
-                "详细了解",
-                "استكشاف متعمّق",
-                "Approfondisci",
-                "Mehr erfahren",
-                "Meer weten",
-                "Подробнее",
-                "詳しく見る",
+                "See how it works",
+                "Voir comment ça marche",
+                "Ver cómo funciona",
+                "Ver como funciona",
+                "了解工作原理",
+                "انظر كيف يعمل",
+                "Scopri come funziona",
+                "Wie es funktioniert",
+                "Zie hoe het werkt",
+                "Посмотреть как работает",
+                "仕組みを見る",
               )}
             </LocalizedNavLink>
           </Button>
@@ -1447,17 +1490,17 @@ const Index = () => {
           <Button variant="outline" size="lg" asChild>
             <LocalizedNavLink to="/faq" className="bg-primary text-secondary">
               {t(
-                "View full FAQ",
-                "Consulter la FAQ complète",
-                "Ver la FAQ completa",
-                "Ver FAQ completa",
-                "查看完整常见问题",
-                "عرض الأسئلة الشائعة الكاملة",
-                "Vedi FAQ completa",
-                "Vollständige FAQ anzeigen",
-                "Bekijk volledige FAQ",
-                "Полный список вопросов",
-                "完全なFAQを見る",
+                "Got questions? See all answers",
+                "Des questions ? Voir toutes les réponses",
+                "¿Preguntas? Ver todas las respuestas",
+                "Perguntas? Ver todas as respostas",
+                "有问题？查看所有答案",
+                "أسئلة؟ انظر جميع الإجابات",
+                "Domande? Vedi tutte le risposte",
+                "Fragen? Alle Antworten sehen",
+                "Vragen? Bekijk alle antwoorden",
+                "Вопросы? Все ответы",
+                "質問？全ての答えを見る",
               )}
             </LocalizedNavLink>
           </Button>
