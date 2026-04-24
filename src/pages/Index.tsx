@@ -69,9 +69,8 @@ const Index = () => {
   const contentByLang = {
     en: {
       heroEyebrow: "AI Meal Analysis From a Photo - Instantly",
-      heroTitle: "heroSubtitle:
-See your meal calories in 5 seconds.",
-      heroSubtitle:
+     heroTitle: "See your meal calories in 5 seconds",
+     heroSubtitle:
         "Upload or take a photo of your meal and get an instant calorie and macro estimate. No signup needed for your first scans..",
       heroUploadCta: "Upload photo",
       heroTakePhotoCta: "Take photo",
