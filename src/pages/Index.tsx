@@ -69,9 +69,10 @@ const Index = () => {
   const contentByLang = {
     en: {
       heroEyebrow: "AI Meal Analysis From a Photo - Instantly",
-      heroTitle: "Understand your meal better with CalorieVision.",
+      heroTitle: "heroSubtitle:
+See your meal calories in 5 seconds.",
       heroSubtitle:
-        "Upload a simple picture of your plate and let CalorieVision estimate the foods present, portion sizes, and approximate calories. Fast, friendly, and fully educational - never medical.",
+        "Upload or take a photo of your meal and get an instant calorie and macro estimate. No signup needed for your first scans..",
       heroUploadCta: "Upload photo",
       heroTakePhotoCta: "Take photo",
       heroEducational: "Educational insights only",
@@ -268,14 +269,13 @@ const Index = () => {
             <p className="max-w-xl text-base text-muted-foreground md:text-lg">
               {copy.heroSubtitle}
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-              <Button variant="hero" size="lg" className="w-full sm:w-auto min-h-[44px]" asChild>
-                <LocalizedNavLink to="/analyze">{copy.heroUploadCta}</LocalizedNavLink>
+            <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
+              <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
+                <LocalizedNavLink to="/analyze">Scan your meal now →</LocalizedNavLink>
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-primary/30 hover:bg-primary/10 min-h-[44px]" onClick={handleTakePhotoClick}>
-                <Camera className="h-4 w-4" aria-hidden="true" />
-                {copy.heroTakePhotoCta}
-              </Button>
+              <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
+                or take a photo with your camera
+              </button>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground md:text-sm">
               <span className="inline-flex items-center gap-1">
