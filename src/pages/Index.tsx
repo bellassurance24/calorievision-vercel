@@ -1428,21 +1428,6 @@ const Index = () => {
                 "よくある質問",
               )}
             </p>
-            <h2 id="home-faq-heading" className="text-2xl font-semibold md:text-3xl">
-              {t(
-                "Still have questions?",
-                "Vous avez encore des questions ?",
-                "¿Todavía tienes dudas?",
-                "Ainda tem dúvidas?",
-                "还有疑问吗？",
-                "لديك أسئلة؟ إطلع على جميع الإجابات",
-                "Hai ancora domande?",
-                "Haben Sie noch Fragen?",
-                "Heeft u nog vragen?",
-                "Остались вопросы?",
-                "まだ質問がありますか？",
-              )}
-            </h2>
           </div>
           <Button variant="outline" size="lg" asChild>
             <LocalizedNavLink to="/faq" className="bg-primary text-secondary">
