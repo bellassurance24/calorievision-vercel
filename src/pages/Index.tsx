@@ -1263,17 +1263,17 @@ const Index = () => {
           <Button variant="outline" size="sm" asChild className="hidden shrink-0 md:inline-flex">
             <LocalizedNavLink to="/how-it-works" className="text-border bg-primary">
               {t(
-                "Deep dive",
-                "Voir en détail",
-                "Ver en detalle",
-                "Ver em detalhe",
-                "详细了解",
-                "استكشاف متعمّق",
-                "Approfondisci",
-                "Mehr erfahren",
-                "Meer weten",
-                "Подробнее",
-                "詳しく見る",
+                "See how it works",
+                "Voir comment ça marche",
+                "Ver cómo funciona",
+                "Ver como funciona",
+                "了解工作原理",
+                "انظر كيف يعمل",
+                "Scopri come funziona",
+                "Wie es funktioniert",
+                "Zie hoe het werkt",
+                "Посмотреть как работает",
+                "仕組みを見る",
               )}
             </LocalizedNavLink>
           </Button>
@@ -1447,17 +1447,17 @@ const Index = () => {
           <Button variant="outline" size="lg" asChild>
             <LocalizedNavLink to="/faq" className="bg-primary text-secondary">
               {t(
-                "View full FAQ",
-                "Consulter la FAQ complète",
-                "Ver la FAQ completa",
-                "Ver FAQ completa",
-                "查看完整常见问题",
-                "عرض الأسئلة الشائعة الكاملة",
-                "Vedi FAQ completa",
-                "Vollständige FAQ anzeigen",
-                "Bekijk volledige FAQ",
-                "Полный список вопросов",
-                "完全なFAQを見る",
+                "Got questions? See all answers",
+                "Des questions ? Voir toutes les réponses",
+                "¿Preguntas? Ver todas las respuestas",
+                "Perguntas? Ver todas as respostas",
+                "有问题？查看所有答案",
+                "أسئلة؟ انظر جميع الإجابات",
+                "Domande? Vedi tutte le risposte",
+                "Fragen? Alle Antworten sehen",
+                "Vragen? Bekijk alle antwoorden",
+                "Вопросы? Все ответы",
+                "質問？全ての答えを見る",
               )}
             </LocalizedNavLink>
           </Button>
