@@ -148,6 +148,9 @@ const Pricing = () => {
             `🎉 План ${planLabel} активирован!`,
             `🎉 ${planLabel}プランが有効になりました！`,
           ),
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Purchase', { currency: 'USD', value: 0 });
+          }
           description: t(
             "Welcome! Your subscription is now active. Happy scanning!",
             "Bienvenue ! Votre abonnement est maintenant actif. Bonne analyse !",
