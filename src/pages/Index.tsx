@@ -403,11 +403,11 @@ const Index = () => {
             </p>
             <div className="flex flex-col items-start gap-3 w-full sm:w-auto">
               <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
-                <LocalizedNavLink to="/analyze">Scan your meal now →</LocalizedNavLink>
+                <LocalizedNavLink to="/analyze">{copy.heroScanCta}</LocalizedNavLink>
               </Button>
               <div className="flex items-center gap-3 flex-wrap">
                 <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
-                  or take a photo with your camera
+                  {copy.heroOrCamera}
                 </button>
                 <button className="text-sm font-semibold text-orange-500 border border-orange-400 rounded-full px-4 py-1.5 hover:bg-orange-50 transition-colors" onClick={() => setShowDemo(v => !v)}>
                   {copy.heroTryDemo}
