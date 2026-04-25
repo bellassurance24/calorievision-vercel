@@ -690,42 +690,7 @@ const Analyze = () => {
       <h1 className="mb-3 text-3xl font-semibold md:text-4xl">{copy.title}</h1>
       <p className="mb-4 max-w-2xl text-sm text-muted-foreground md:text-base">{copy.intro}</p>
 
-      {/* Warning Banner */}
-      <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-        <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
-        <div className="text-sm">
-          <p className="font-semibold text-amber-800 dark:text-amber-300">
-            {t(
-              "Estimation Only – Not Medical Advice",
-              "Estimation uniquement – Pas un conseil médical",
-              "Solo estimación – No es asesoramiento médico",
-              "Apenas estimativa – Não é aconselhamento médico",
-              "仅供估算 – 非医学建议",
-              "تقدير فقط – ليس نصيحة طبية",
-              "Solo stima – Non è un consiglio medico",
-              "Nur Schätzung – Keine medizinische Beratung",
-              "Alleen schatting – Geen medisch advies"
-            )}
-          </p>
-          <p className="mt-1 text-amber-700 dark:text-amber-400/90">
-            {t(
-              "The nutritional information provided is an estimation only. Accuracy is not guaranteed. Results should not be used as a substitute for professional dietary or medical advice.",
-              "Les informations nutritionnelles fournies sont uniquement des estimations. L'exactitude n'est pas garantie. Les résultats ne doivent pas remplacer un avis diététique ou médical professionnel.",
-              "La información nutricional proporcionada es solo una estimación. No se garantiza la precisión. Los resultados no deben usarse como sustituto de asesoramiento dietético o médico profesional.",
-              "As informações nutricionais fornecidas são apenas uma estimativa. A precisão não é garantida. Os resultados não devem substituir aconselhamento dietético ou médico profissional.",
-              "提供的营养信息仅供估算，不保证准确性。结果不应替代专业的饮食或医学建议。",
-              "المعلومات الغذائية المقدمة هي مجرد تقدير. الدقة غير مضمونة. لا ينبغي استخدام النتائج كبديل عن الاستشارة الغذائية أو الطبية المتخصصة.",
-              "Le informazioni nutrizionali fornite sono solo una stima. L'accuratezza non è garantita. I risultati non devono essere usati come sostituto di consigli dietetici o medici professionali.",
-              "Die bereitgestellten Nährwertangaben sind nur eine Schätzung. Genauigkeit wird nicht garantiert. Die Ergebnisse sollten nicht als Ersatz für professionelle Ernährungs- oder medizinische Beratung verwendet werden.",
-              "De verstrekte voedingsinformatie is slechts een schatting. Nauwkeurigheid is niet gegarandeerd. Resultaten mogen niet worden gebruikt als vervanging voor professioneel dieet- of medisch advies."
-            )}
-            {" "}
-            <LocalizedNavLink to="/disclaimer" className="font-medium underline hover:text-amber-900 dark:hover:text-amber-200">
-              {t("Read full disclaimer", "Lire la clause complète", "Leer descargo completo", "Ler aviso completo", "阅读完整免责声明", "اقرأ إخلاء المسؤولية الكامل", "Leggi l'avviso completo", "Vollständigen Haftungsausschluss lesen", "Lees volledige disclaimer")}
-            </LocalizedNavLink>
-          </p>
-        </div>
-      </div>
+      <p className="text-xs text-muted-foreground mb-4">⚠️ Educational estimates only — not medical advice. <a href="/en/disclaimer" className="underline">Read disclaimer</a></p>
 
       <div className="grid gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <div className="space-y-4">
