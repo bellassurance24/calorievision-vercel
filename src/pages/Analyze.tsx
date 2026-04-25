@@ -82,7 +82,7 @@ const Analyze = () => {
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasTriggeredAutoCapture, setHasTriggeredAutoCapture] = useState(false);
-  const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
+  const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(true);
   const [rawError, setRawError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -753,35 +753,16 @@ const Analyze = () => {
                   <span className="font-medium text-foreground">{fileName}</span>
                 </p>
               )}
-              {/* Disclaimer checkbox */}
-              <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
-                <Checkbox
-                  id="accept-disclaimer"
-                  checked={acceptedDisclaimer}
-                  onCheckedChange={(checked) => setAcceptedDisclaimer(checked === true)}
-                  className="mt-0.5"
-                />
-                <label htmlFor="accept-disclaimer" className="text-sm text-muted-foreground cursor-pointer leading-relaxed">
-                  {t(
-                    "I understand that the results are estimates only and should not be used as medical or dietary advice.",
-                    "Je comprends que les résultats sont uniquement des estimations et ne doivent pas être utilisés comme conseils médicaux ou diététiques.",
-                    "Entiendo que los resultados son solo estimaciones y no deben usarse como consejos médicos o dietéticos.",
-                    "Compreendo que os resultados são apenas estimativas e não devem ser usados como aconselhamento médico ou dietético.",
-                    "我理解结果仅为估算值，不应作为医疗或饮食建议。",
-                    "أفهم أن النتائج تقديرات فقط ولا ينبغي استخدامها كنصيحة طبية أو غذائية.",
-                    "Comprendo che i risultati sono solo stime e non devono essere usati come consigli medici o dietetici.",
-                    "Ich verstehe, dass die Ergebnisse nur Schätzungen sind und nicht als medizinische oder diätetische Beratung verwendet werden sollten.",
-                    "Ik begrijp dat de resultaten slechts schattingen zijn en niet als medisch of dieetadvies mogen worden gebruikt."
-                  )}
-                </label>
-              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                By analyzing, you confirm results are estimates only and not medical advice.
+              </p>
 
               <Button
   type="button"
   variant="hero"
   size="lg"
   onClick={guestAtLimit ? () => navigate("/pricing") : (imageFile ? handleAnalyze : () => fileInputRef.current?.click())}
-  disabled={isAnalyzing || (imageFile && !acceptedDisclaimer && !guestAtLimit)}
+  disabled={isAnalyzing || !imageFile || guestAtLimit}
 >
   {isAnalyzing ? (
     <span className="inline-flex items-center justify-center gap-1.5">
