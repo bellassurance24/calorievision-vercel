@@ -762,7 +762,7 @@ const Analyze = () => {
   variant="hero"
   size="lg"
   onClick={guestAtLimit ? () => navigate("/pricing") : (imageFile ? handleAnalyze : () => fileInputRef.current?.click())}
-  disabled={isAnalyzing || !imageFile || guestAtLimit}
+  disabled={isAnalyzing}
 >
   {isAnalyzing ? (
     <span className="inline-flex items-center justify-center gap-1.5">
