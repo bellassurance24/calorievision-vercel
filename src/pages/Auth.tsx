@@ -232,6 +232,9 @@ const Auth = () => {
         return;
       }
       setSignupSuccess(true);
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'CompleteRegistration', { method: 'email' });
+      }
     } finally {
       setIsSubmitting(false);
     }
