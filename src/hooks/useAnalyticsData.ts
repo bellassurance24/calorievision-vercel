@@ -616,11 +616,15 @@ export const useAnalyticsData = (dateRange: DateRange, previousDateRange: DateRa
           postStatsMap[slug].visitors.add(event.visitor_id);
         }
 
-        // Calculate time on page (if there's a next event)
-        if (idx < sorted.length - 1) {
+        // Use duration_seconds from page_leave event if available
+        const directDuration = event.event_type === "page_leave" && event.event_data?.duration_seconds;
+        if (directDuration && directDuration > 0 && directDuration < 3600) {
+          postStatsMap[slug].durations.push(directDuration);
+        } else if (idx < sorted.length - 1) {
+          // Fallback: calculate from next event timestamp
           const nextEvent = sorted[idx + 1];
           const duration = (new Date(nextEvent.created_at).getTime() - new Date(event.created_at).getTime()) / 1000;
-          if (duration > 0 && duration < 3600) { // Cap at 1 hour
+          if (duration > 0 && duration < 3600) {
             postStatsMap[slug].durations.push(duration);
           }
         }
