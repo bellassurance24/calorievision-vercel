@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const ORANGE = '#FF6B00';
 
@@ -7,6 +7,7 @@ const ORANGE = '#FF6B00';
 
 export function StickyBlogBanner() {
   const [dismissed, setDismissed] = useState(false);
+  const { language = 'en' } = useParams<{ language: string }>();
   if (dismissed) return null;
 
   return (
@@ -20,7 +21,7 @@ export function StickyBlogBanner() {
         </span>
         <div className="flex items-center gap-2 shrink-0">
           <Link
-            to="/en"
+            to={`/${language}/analyze`}
             className="rounded-full text-sm font-bold px-4 py-1.5 no-underline whitespace-nowrap"
             style={{ backgroundColor: 'white', color: ORANGE }}
           >
@@ -43,6 +44,7 @@ export function StickyBlogBanner() {
 // ── 2. Mid-article CTA box ─────────────────────────────────────────────────────
 
 export function MidArticleCta() {
+  const { language = 'en' } = useParams<{ language: string }>();
   return (
     <div
       className="my-8 p-6 rounded-2xl border-2 text-center not-prose"
@@ -56,7 +58,7 @@ export function MidArticleCta() {
         Point your camera and find out in seconds
       </p>
       <Link
-        to="/en"
+        to={`/${language}/analyze`}
         className="inline-block rounded-full text-sm font-bold px-6 py-2.5 text-white no-underline"
         style={{ backgroundColor: ORANGE }}
       >
@@ -69,6 +71,7 @@ export function MidArticleCta() {
 // ── 3. End-of-article CTA ──────────────────────────────────────────────────────
 
 export function EndArticleCta() {
+  const { language = 'en' } = useParams<{ language: string }>();
   return (
     <div
       className="mt-10 p-8 rounded-2xl border-2 text-center"
@@ -85,7 +88,7 @@ export function EndArticleCta() {
         Free, instant, no account needed.
       </p>
       <Link
-        to="/en"
+        to={`/${language}/analyze`}
         className="inline-block rounded-full text-base font-bold px-8 py-3 text-white no-underline"
         style={{ backgroundColor: ORANGE }}
       >
