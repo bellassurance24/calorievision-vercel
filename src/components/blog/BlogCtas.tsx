@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useBlogT } from '@/hooks/useBlogT';
 
 const ORANGE = '#FF6B00';
 
@@ -45,6 +46,7 @@ export function StickyBlogBanner() {
 
 export function MidArticleCta() {
   const { language = 'en' } = useParams<{ language: string }>();
+  const t = useBlogT();
   return (
     <div
       className="my-8 p-6 rounded-2xl border-2 text-center not-prose"
@@ -52,17 +54,17 @@ export function MidArticleCta() {
     >
       <span className="block text-4xl mb-3" role="img" aria-label="camera">📷</span>
       <p className="font-bold text-gray-900 text-lg mb-1 m-0">
-        Curious about the calories in this meal?
+        {t.ctaScanHeadline}
       </p>
       <p className="text-gray-500 text-sm mb-4 m-0">
-        Point your camera and find out in seconds
+        {t.ctaScanSub}
       </p>
       <Link
         to={`/${language}/analyze`}
         className="inline-block rounded-full text-sm font-bold px-6 py-2.5 text-white no-underline"
         style={{ backgroundColor: ORANGE }}
       >
-        Scan Now — It's Free
+        {t.ctaScanBtn}
       </Link>
     </div>
   );
