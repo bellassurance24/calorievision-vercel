@@ -19,6 +19,8 @@ interface BlogStrings {
   ctaScanHeadline: string; // MidArticle CTA headline
   ctaScanSub: string;      // MidArticle CTA subtext
   ctaScanBtn: string;      // MidArticle CTA button
+  ctaBannerText: string;   // Sticky banner tagline
+  ctaBannerBtn: string;    // Sticky banner button
 }
 
 const translations: Record<Language, BlogStrings> = {
@@ -36,6 +38,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Curious about the calories in this meal?',
     ctaScanSub:      'Point your camera and find out in seconds',
     ctaScanBtn:      "Scan Now — It's Free",
+    ctaBannerText:   'Scan any meal & know its calories instantly',
+    ctaBannerBtn:    'Try Free →',
   },
   ar: {
     back:            'العودة إلى المدونة →',
@@ -51,6 +55,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'هل أنت فضولي بشأن سعرات هذه الوجبة؟',
     ctaScanSub:      'وجّه كاميرتك واكتشف في ثوانٍ',
     ctaScanBtn:      'امسح الآن — مجاناً',
+    ctaBannerText:   'امسح أي وجبة واعرف سعراتها على الفور',
+    ctaBannerBtn:    'جرّب مجاناً ←',
   },
   fr: {
     back:            '← Retour au Blog',
@@ -66,6 +72,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Curieux des calories de ce repas ?',
     ctaScanSub:      'Pointez votre caméra et découvrez en quelques secondes',
     ctaScanBtn:      "Scanner maintenant — C'est gratuit",
+    ctaBannerText:   "Scannez n'importe quel repas et connaissez ses calories instantanément",
+    ctaBannerBtn:    'Essayer gratuitement →',
   },
   es: {
     back:            '← Volver al Blog',
@@ -81,6 +89,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: '¿Curiosidad por las calorías de esta comida?',
     ctaScanSub:      'Apunta tu cámara y descúbrelo en segundos',
     ctaScanBtn:      'Escanear ahora — Es gratis',
+    ctaBannerText:   'Escanea cualquier comida y conoce sus calorías al instante',
+    ctaBannerBtn:    'Probar gratis →',
   },
   de: {
     back:            '← Zurück zum Blog',
@@ -96,6 +106,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Neugierig auf die Kalorien dieser Mahlzeit?',
     ctaScanSub:      'Richte deine Kamera aus und finde es in Sekunden heraus',
     ctaScanBtn:      'Jetzt scannen — Kostenlos',
+    ctaBannerText:   'Scanne jede Mahlzeit und erfahre sofort die Kalorien',
+    ctaBannerBtn:    'Kostenlos testen →',
   },
   it: {
     back:            '← Torna al Blog',
@@ -111,6 +123,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Curiosi sulle calorie di questo pasto?',
     ctaScanSub:      'Punta la fotocamera e scoprilo in secondi',
     ctaScanBtn:      'Scansiona ora — È gratis',
+    ctaBannerText:   'Scansiona qualsiasi pasto e scopri subito le calorie',
+    ctaBannerBtn:    'Prova gratis →',
   },
   pt: {
     back:            '← Voltar ao Blog',
@@ -126,6 +140,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Curioso sobre as calorias desta refeição?',
     ctaScanSub:      'Aponte sua câmera e descubra em segundos',
     ctaScanBtn:      'Escanear agora — É grátis',
+    ctaBannerText:   'Escaneie qualquer refeição e saiba as calorias instantaneamente',
+    ctaBannerBtn:    'Experimentar grátis →',
   },
   nl: {
     back:            '← Terug naar Blog',
@@ -141,6 +157,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Benieuwd naar de calorieën van dit gerecht?',
     ctaScanSub:      'Richt je camera en ontdek het in seconden',
     ctaScanBtn:      'Nu scannen — Gratis',
+    ctaBannerText:   'Scan elke maaltijd en weet direct de calorieën',
+    ctaBannerBtn:    'Gratis proberen →',
   },
   ru: {
     back:            '← Назад в блог',
@@ -156,6 +174,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'Интересно, сколько калорий в этом блюде?',
     ctaScanSub:      'Наведите камеру и узнайте за секунды',
     ctaScanBtn:      'Сканировать — Бесплатно',
+    ctaBannerText:   'Сканируй любое блюдо и узнай калории мгновенно',
+    ctaBannerBtn:    'Попробовать бесплатно →',
   },
   zh: {
     back:            '← 回到博客',
@@ -171,6 +191,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: '好奇这顿饭有多少卡路里？',
     ctaScanSub:      '对准摄像头，几秒内即可知晓',
     ctaScanBtn:      '立即扫描 — 免费',
+    ctaBannerText:   '扫描任意餐食，即刻获取卡路里信息',
+    ctaBannerBtn:    '免费试用 →',
   },
   ja: {
     back:            '← ブログに戻る',
@@ -186,6 +208,8 @@ const translations: Record<Language, BlogStrings> = {
     ctaScanHeadline: 'この食事のカロリーが気になりますか？',
     ctaScanSub:      'カメラを向けるだけで数秒で分かります',
     ctaScanBtn:      '今すぐスキャン — 無料',
+    ctaBannerText:   'どんな食事もスキャンしてカロリーを即座に確認',
+    ctaBannerBtn:    '無料で試す →',
   },
 };
 

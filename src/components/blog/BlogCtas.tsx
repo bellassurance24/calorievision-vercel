@@ -1,14 +1,28 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useBlogT } from '@/hooks/useBlogT';
+import { SUPPORTED_LANGUAGES, type Language } from '@/contexts/LanguageContext';
 
 const ORANGE = '#FF6B00';
+
+/** Read the two-letter language prefix directly from the URL path.
+ *  Routes are defined as literal paths (/en, /fr, …), not as /:language,
+ *  so useParams() cannot return the language — useLocation() must be used. */
+function useUrlLanguage(): Language {
+  const { pathname } = useLocation();
+  const match = pathname.match(/^\/([a-z]{2})(\/|$)/);
+  if (match && SUPPORTED_LANGUAGES.includes(match[1] as Language)) {
+    return match[1] as Language;
+  }
+  return 'en';
+}
 
 // ── 1. Sticky top banner ───────────────────────────────────────────────────────
 
 export function StickyBlogBanner() {
   const [dismissed, setDismissed] = useState(false);
-  const { language = 'en' } = useParams<{ language: string }>();
+  const language = useUrlLanguage();
+  const t = useBlogT();
   if (dismissed) return null;
 
   return (
@@ -18,7 +32,7 @@ export function StickyBlogBanner() {
     >
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 md:px-10 py-2.5">
         <span className="text-white font-medium text-sm leading-snug">
-          📸 Scan any meal &amp; know its calories instantly
+          📸 {t.ctaBannerText}
         </span>
         <div className="flex items-center gap-2 shrink-0">
           <Link
@@ -26,7 +40,7 @@ export function StickyBlogBanner() {
             className="rounded-full text-sm font-bold px-4 py-1.5 no-underline whitespace-nowrap"
             style={{ backgroundColor: 'white', color: ORANGE }}
           >
-            Try Free →
+            {t.ctaBannerBtn}
           </Link>
           <button
             type="button"
@@ -45,7 +59,7 @@ export function StickyBlogBanner() {
 // ── 2. Mid-article CTA box ─────────────────────────────────────────────────────
 
 export function MidArticleCta() {
-  const { language = 'en' } = useParams<{ language: string }>();
+  const language = useUrlLanguage();
   const t = useBlogT();
   return (
     <div
@@ -73,7 +87,7 @@ export function MidArticleCta() {
 // ── 3. End-of-article CTA ──────────────────────────────────────────────────────
 
 export function EndArticleCta() {
-  const { language = 'en' } = useParams<{ language: string }>();
+  const language = useUrlLanguage();
   return (
     <div
       className="mt-10 p-8 rounded-2xl border-2 text-center"
