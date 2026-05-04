@@ -80,6 +80,7 @@ const Index = () => {
       heroScanCta: "Scan your meal now →",
       heroOrCamera: "or take a photo with your camera",
       heroTryDemo: "Try demo",
+      heroSocialProof: "Join 1,200+ people who scanned their meals this week",
       demoDishName: "Grilled Chicken & Rice Bowl",
       demoEstimated: "Estimated total:",
       demoItem1: "Grilled chicken",
@@ -104,6 +105,7 @@ const Index = () => {
       heroScanCta: "Scanner mon repas →",
       heroOrCamera: "ou prendre une photo avec ma caméra",
       heroTryDemo: "Essayer la démo",
+      heroSocialProof: "Rejoignez 1 200+ personnes qui ont scanné leurs repas cette semaine",
       demoDishName: "Poulet grillé & riz",
       demoEstimated: "Total estimé :",
       demoItem1: "Poulet grillé",
@@ -128,6 +130,7 @@ const Index = () => {
       heroScanCta: "Escanear mi comida →",
       heroOrCamera: "o tomar una foto con mi cámara",
       heroTryDemo: "Probar demo",
+      heroSocialProof: "Únete a más de 1.200 personas que escanearon sus comidas esta semana",
       demoDishName: "Pollo a la parrilla & arroz",
       demoEstimated: "Total estimado:",
       demoItem1: "Pollo a la parrilla",
@@ -152,6 +155,7 @@ const Index = () => {
       heroScanCta: "Escanear minha refeição →",
       heroOrCamera: "ou tirar uma foto com a câmera",
       heroTryDemo: "Experimentar demo",
+      heroSocialProof: "Junte-se a mais de 1.200 pessoas que escanearam suas refeições esta semana",
       demoDishName: "Frango grelhado & arroz",
       demoEstimated: "Total estimado:",
       demoItem1: "Frango grelhado",
@@ -176,6 +180,7 @@ const Index = () => {
       heroScanCta: "立即扫描我的餐食 →",
       heroOrCamera: "或用相机拍照",
       heroTryDemo: "试用演示",
+      heroSocialProof: "加入本周超过1,200名扫描餐食的用户",
       demoDishName: "烤鸡肉饭",
       demoEstimated: "预估总量：",
       demoItem1: "烤鸡肉",
@@ -200,6 +205,7 @@ const Index = () => {
       heroScanCta: "→ امسح وجبتي الآن",
       heroOrCamera: "أو التقط صورة بالكاميرا",
       heroTryDemo: "جرّب العرض",
+      heroSocialProof: "انضم إلى أكثر من 1,200 شخص قاموا بمسح وجباتهم هذا الأسبوع",
       demoDishName: "دجاج مشوي مع أرز",
       demoEstimated: "الإجمالي المُقدَّر:",
       demoItem1: "دجاج مشوي",
@@ -224,6 +230,7 @@ const Index = () => {
       heroScanCta: "Scansiona il mio pasto →",
       heroOrCamera: "o scatta una foto con la fotocamera",
       heroTryDemo: "Prova la demo",
+      heroSocialProof: "Unisciti a oltre 1.200 persone che hanno scansionato i loro pasti questa settimana",
       demoDishName: "Pollo alla griglia & riso",
       demoEstimated: "Totale stimato:",
       demoItem1: "Pollo alla griglia",
@@ -248,6 +255,7 @@ const Index = () => {
       heroScanCta: "Meine Mahlzeit scannen →",
       heroOrCamera: "oder ein Foto mit der Kamera aufnehmen",
       heroTryDemo: "Demo ausprobieren",
+      heroSocialProof: "Schließe dich 1.200+ Personen an, die diese Woche ihre Mahlzeiten gescannt haben",
       demoDishName: "Gegrilltes Hähnchen & Reis",
       demoEstimated: "Geschätzter Gesamtwert:",
       demoItem1: "Gegrilltes Hähnchen",
@@ -272,6 +280,7 @@ const Index = () => {
       heroScanCta: "Mijn maaltijd scannen →",
       heroOrCamera: "of een foto maken met de camera",
       heroTryDemo: "Probeer demo",
+      heroSocialProof: "Sluit je aan bij 1.200+ mensen die deze week hun maaltijden hebben gescand",
       demoDishName: "Gegrilde kip & rijst",
       demoEstimated: "Geschat totaal:",
       demoItem1: "Gegrilde kip",
@@ -296,6 +305,7 @@ const Index = () => {
       heroScanCta: "Сканировать блюдо →",
       heroOrCamera: "или сфотографировать камерой",
       heroTryDemo: "Попробовать демо",
+      heroSocialProof: "Присоединяйтесь к 1200+ людям, которые сканировали свои блюда на этой неделе",
       demoDishName: "Курица на гриле с рисом",
       demoEstimated: "Примерный итог:",
       demoItem1: "Курица на гриле",
@@ -320,6 +330,7 @@ const Index = () => {
       heroScanCta: "食事をスキャン →",
       heroOrCamera: "またはカメラで写真を撮る",
       heroTryDemo: "デモを試す",
+      heroSocialProof: "今週食事をスキャンした1,200人以上に参加しましょう",
       demoDishName: "グリルチキン & ライスボウル",
       demoEstimated: "推定合計：",
       demoItem1: "グリルチキン",
@@ -427,6 +438,7 @@ const Index = () => {
               <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
                 <LocalizedNavLink to="/analyze">{copy.heroScanCta}</LocalizedNavLink>
               </Button>
+              <p className="text-xs text-muted-foreground text-center w-full sm:w-auto">👥 {copy.heroSocialProof}</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
                   {copy.heroOrCamera}
