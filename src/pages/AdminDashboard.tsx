@@ -4,11 +4,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { isLikelyBotUserAgent } from "@/lib/analyticsBot";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, BarChart3, Users, Eye, Activity, TrendingUp } from "lucide-react";
+import { Loader2, BarChart3, Users, Eye, Activity, TrendingUp, AlertCircle } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { HomeVideoManager } from "@/components/admin/HomeVideoManager";
+import {
+  DASHBOARD_TIME_ZONE,
+  SESSION_WINDOW_DAYS,
+  fetchDashboardStats,
+  type DashboardStats,
+} from "@/lib/adminDashboardStats";
 
 interface AnalyticsEvent {
   id: string;
@@ -20,21 +27,18 @@ interface AnalyticsEvent {
   user_agent: string | null;
 }
 
-interface Stats {
-  totalVisits: number;
-  totalAnalyses: number;
-  uniqueSessions: number;
-  todayVisits: number;
-}
-
 const AdminDashboard = () => {
   const { user, isAdmin, isLoading } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
 
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
-  const [stats, setStats] = useState<Stats>({ totalVisits: 0, totalAnalyses: 0, uniqueSessions: 0, todayVisits: 0 });
+  // null = not loaded (or failed) — never rendered as 0
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [statsError, setStatsError] = useState(false);
+  const [eventsError, setEventsError] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const t = (en: string, fr: string) => (language === "fr" ? fr : en);
 
@@ -87,44 +91,51 @@ const AdminDashboard = () => {
   }, [isLoading, user, isAdmin, navigate]);
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      if (!isAdmin) return;
+    if (!isAdmin) return;
+    let cancelled = false;
 
-      try {
-        const { data: eventsData, error } = await supabase
-          .from("analytics_events")
-          .select("id, event_type, page_path, created_at, metadata, session_id, user_agent")
-          .order("created_at", { ascending: false })
-          .limit(100);
-
-        if (error) throw error;
-
-        const allEvents = (eventsData || []) as AnalyticsEvent[];
-        const humanEvents = allEvents.filter((e) => !isLikelyBotUserAgent(e.user_agent));
-
-        setEvents(humanEvents);
-
-        // Calculate stats (humans only)
-        const today = new Date().toISOString().split("T")[0];
-        const humanPageViews = humanEvents.filter((e) => e.event_type === "page_view");
-
-        const totalVisits = humanPageViews.length;
-        const totalAnalyses = humanEvents.filter((e) => e.event_type === "meal_analysis").length;
-        const uniqueSessions = new Set(humanEvents.map((e) => e.session_id).filter(Boolean)).size;
-        const todayVisits = humanPageViews.filter((e) => e.created_at.startsWith(today)).length;
-
-        setStats({ totalVisits, totalAnalyses, uniqueSessions, todayVisits });
-      } catch (err) {
-        console.error("Error fetching analytics:", err);
-      } finally {
-        setLoadingData(false);
-      }
+    const fetchRecentEvents = async () => {
+      // Recent-activity table only: the 100 latest events
+      const { data: eventsData, error } = await supabase
+        .from("analytics_events")
+        .select("id, event_type, page_path, created_at, metadata, session_id, user_agent")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return ((eventsData || []) as AnalyticsEvent[]).filter((e) => !isLikelyBotUserAgent(e.user_agent));
     };
 
-    if (isAdmin) {
-      fetchAnalytics();
-    }
-  }, [isAdmin]);
+    const fetchAnalytics = async () => {
+      const [statsResult, eventsResult] = await Promise.allSettled([
+        fetchDashboardStats(supabase),
+        fetchRecentEvents(),
+      ]);
+      if (cancelled) return;
+
+      if (statsResult.status === "fulfilled") {
+        setStats(statsResult.value);
+        setStatsError(false);
+      } else {
+        console.error("Error fetching dashboard stats:", statsResult.reason);
+        setStatsError(true); // keep previously loaded values, if any
+      }
+
+      if (eventsResult.status === "fulfilled") {
+        setEvents(eventsResult.value);
+        setEventsError(false);
+      } else {
+        console.error("Error fetching recent events:", eventsResult.reason);
+        setEventsError(true);
+      }
+
+      setLoadingData(false);
+    };
+
+    fetchAnalytics();
+    return () => { cancelled = true; };
+  }, [isAdmin, reloadKey]);
+
+  const kpi = (value: number | undefined) => (value === undefined ? "—" : value.toLocaleString());
 
   if (isLoading || loadingData) {
     return (
@@ -152,6 +163,20 @@ const AdminDashboard = () => {
           </p>
         </div>
 
+        {statsError && (
+          <div className="flex flex-wrap items-center gap-3 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span className="flex-1">
+              {stats
+                ? t("Refresh failed — showing the last loaded values.", "Échec de l'actualisation — dernières valeurs chargées affichées.")
+                : t("Statistics could not be loaded. Values are unavailable, not zero.", "Impossible de charger les statistiques. Les valeurs sont indisponibles, pas nulles.")}
+            </span>
+            <Button size="sm" variant="outline" onClick={() => setReloadKey((k) => k + 1)}>
+              {t("Retry", "Réessayer")}
+            </Button>
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -162,7 +187,8 @@ const AdminDashboard = () => {
               <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalVisits}</div>
+              <div className="text-2xl font-bold">{kpi(stats?.totalVisits)}</div>
+              <p className="text-xs text-muted-foreground">{t("All time, excluding /admin", "Depuis le début, hors /admin")}</p>
             </CardContent>
           </Card>
 
@@ -174,7 +200,8 @@ const AdminDashboard = () => {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalAnalyses}</div>
+              <div className="text-2xl font-bold">{kpi(stats?.totalAnalyses)}</div>
+              <p className="text-xs text-muted-foreground">{t("All time", "Depuis le début")}</p>
             </CardContent>
           </Card>
 
@@ -186,7 +213,12 @@ const AdminDashboard = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.uniqueSessions}</div>
+              <div className="text-2xl font-bold">
+                {kpi(stats?.uniqueSessions)}{stats?.uniqueSessionsCapped ? "+" : ""}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t(`Last ${SESSION_WINDOW_DAYS} days`, `${SESSION_WINDOW_DAYS} derniers jours`)}
+              </p>
             </CardContent>
           </Card>
 
@@ -198,7 +230,8 @@ const AdminDashboard = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.todayVisits}</div>
+              <div className="text-2xl font-bold">{kpi(stats?.todayVisits)}</div>
+              <p className="text-xs text-muted-foreground">{t(`Since midnight (${DASHBOARD_TIME_ZONE})`, `Depuis minuit (${DASHBOARD_TIME_ZONE})`)}</p>
             </CardContent>
           </Card>
         </div>
@@ -228,7 +261,13 @@ const AdminDashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {events.length === 0 ? (
+                  {eventsError && events.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center text-destructive py-8">
+                        {t("Recent activity could not be loaded", "Impossible de charger l'activité récente")}
+                      </TableCell>
+                    </TableRow>
+                  ) : events.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
                         {t("No events recorded yet", "Aucun événement enregistré")}

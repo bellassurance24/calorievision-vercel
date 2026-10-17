@@ -11,6 +11,9 @@ import { useLocation } from "react-router-dom";
 import { isLikelyBotUserAgent } from "@/lib/analyticsBot";
 import { trackVisit } from "@/lib/trackVisit";
 
+/** Admin routes (/admin, /admin/*) — excluded from tracking. */
+export const isAdminPath = (pathname: string): boolean => pathname.startsWith("/admin");
+
 // ── Persistent IDs ────────────────────────────────────────────────────────────
 const getVisitorId = (): string => {
   let id = localStorage.getItem("cv_visitor_id");
@@ -130,9 +133,14 @@ export const usePageTracking = (): void => {
   const currentPath = useRef<string>(location.pathname);
 
   useEffect(() => {
+    // Admin pages are never tracked (they would pollute public statistics)
+    const tracked = !isAdminPath(location.pathname);
+
     // Fire page_view on arrival
-    trackEvent("page_view", { path: location.pathname });
-    trackVisit(location.pathname);
+    if (tracked) {
+      trackEvent("page_view", { path: location.pathname });
+      trackVisit(location.pathname);
+    }
 
     // Record entry time and path
     pageEntryTime.current = Date.now();
@@ -141,7 +149,7 @@ export const usePageTracking = (): void => {
     // Fire page_leave with duration when user leaves this page
     return () => {
       const duration = Math.round((Date.now() - pageEntryTime.current) / 1000);
-      if (duration > 0) {
+      if (tracked && duration > 0) {
         trackEvent("page_leave", {
           path: currentPath.current,
           duration_seconds: duration,
@@ -153,7 +161,7 @@ export const usePageTracking = (): void => {
   // Also fire page_leave when tab is closed or user navigates away
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
+      if (document.visibilityState === "hidden" && !isAdminPath(currentPath.current)) {
         const duration = Math.round((Date.now() - pageEntryTime.current) / 1000);
         if (duration > 0) {
           trackEvent("page_leave", {
