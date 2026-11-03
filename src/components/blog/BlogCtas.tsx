@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useBlogT } from '@/hooks/useBlogT';
 import { SUPPORTED_LANGUAGES, type Language } from '@/contexts/LanguageContext';
@@ -20,40 +19,9 @@ function useUrlLanguage(): Language {
 // ── 1. Sticky top banner ───────────────────────────────────────────────────────
 
 export function StickyBlogBanner() {
-  const [dismissed, setDismissed] = useState(false);
-  const language = useUrlLanguage();
-  const t = useBlogT();
-  if (dismissed) return null;
-
-  return (
-    <div
-      className="sticky top-0 z-50 -mx-4 sm:-mx-6 md:-mx-10 mb-8"
-      style={{ backgroundColor: ORANGE }}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 md:px-10 py-2.5">
-        <span className="text-white font-medium text-sm leading-snug">
-          📸 {t.ctaBannerText}
-        </span>
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            to={`/${language}/analyze`}
-            className="rounded-full text-sm font-bold px-4 py-1.5 no-underline whitespace-nowrap"
-            style={{ backgroundColor: 'white', color: ORANGE }}
-          >
-            {t.ctaBannerBtn}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setDismissed(true)}
-            className="text-white opacity-80 hover:opacity-100 text-xl font-bold leading-none px-1 cursor-pointer bg-transparent border-0"
-            aria-label="Dismiss banner"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  // Disabled on purpose: each article keeps only 2 scan buttons
+  // (one box in the middle of the article and one box at the end).
+  return null;
 }
 
 // ── 2. Mid-article CTA box ─────────────────────────────────────────────────────
@@ -114,52 +82,37 @@ export function EndArticleCta() {
   );
 }
 
-// ── 4. Article body renderer with injected mid-article CTAs ───────────────────
+// ── 4. Article body renderer with ONE mid-article CTA ─────────────────────────
 //
-// Splits the article HTML at every 3rd </p> boundary, renders each chunk
-// inside the prose article, and inserts a MidArticleCta between chunks.
-// The CTA is wrapped in `not-prose` so Tailwind Typography doesn't bleed into it.
+// Inserts a single MidArticleCta just before the <h2> section heading that is
+// closest to the middle of the article. Cutting before an <h2> keeps the HTML
+// valid (an <h2> is never inside a list or another block). If the article has
+// fewer than 2 <h2> headings, no mid-article CTA is shown.
 
 interface BlogArticleWithCtasProps {
   html: string;
   articleClassName: string;
 }
 
-function splitEvery3Paragraphs(html: string): string[] {
-  const segments: string[] = [];
-  let remaining = html;
-  const CLOSE_P = '</p>';
-
-  while (remaining.length > 0) {
-    let count = 0;
-    let searchFrom = 0;
-    let cutAt = -1;
-
-    while (searchFrom < remaining.length) {
-      const idx = remaining.indexOf(CLOSE_P, searchFrom);
-      if (idx === -1) break;
-      count += 1;
-      if (count === 3) {
-        cutAt = idx + CLOSE_P.length;
-        break;
-      }
-      searchFrom = idx + CLOSE_P.length;
-    }
-
-    if (cutAt === -1) {
-      // Fewer than 3 paragraphs remain — push the rest and stop
-      segments.push(remaining);
-      break;
-    }
-    segments.push(remaining.slice(0, cutAt));
-    remaining = remaining.slice(cutAt);
+function splitAtMiddleHeading(html: string): string[] {
+  const starts: number[] = [];
+  const re = /<h2[\s>]/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    if (m.index > 0) starts.push(m.index);
   }
+  if (starts.length < 2) return [html];
 
-  return segments;
+  const middle = html.length / 2;
+  let cut = starts[0];
+  for (const idx of starts) {
+    if (Math.abs(idx - middle) < Math.abs(cut - middle)) cut = idx;
+  }
+  return [html.slice(0, cut), html.slice(cut)];
 }
 
 export function BlogArticleWithCtas({ html, articleClassName }: BlogArticleWithCtasProps) {
-  const segments = splitEvery3Paragraphs(html);
+  const segments = splitAtMiddleHeading(html);
 
   return (
     <article className={articleClassName}>
