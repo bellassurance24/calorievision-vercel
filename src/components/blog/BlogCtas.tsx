@@ -54,8 +54,24 @@ export function MidArticleCta() {
 
 // ── 3. End-of-article CTA ──────────────────────────────────────────────────────
 
+const END_CTA_TEXT: Record<Language, { title: string; line1: string; line2: string; btn: string }> = {
+  en: { title: 'Now you know the facts — see it in action', line1: 'CalorieVision analyzes any meal from a photo.', line2: 'Free, instant, no account needed.', btn: 'Try CalorieVision Free' },
+  fr: { title: 'Vous connaissez les chiffres, voyez-les en action', line1: 'CalorieVision analyse n’importe quel repas à partir d’une photo.', line2: 'Gratuit, instantané, sans compte.', btn: 'Essayer CalorieVision gratuitement' },
+  es: { title: 'Ya conoces los datos, ahora compruébalo', line1: 'CalorieVision analiza cualquier comida a partir de una foto.', line2: 'Gratis, al instante, sin necesidad de cuenta.', btn: 'Prueba CalorieVision gratis' },
+  pt: { title: 'Agora você conhece os fatos, veja na prática', line1: 'O CalorieVision analisa qualquer refeição a partir de uma foto.', line2: 'Grátis, instantâneo, sem precisar de conta.', btn: 'Experimente o CalorieVision grátis' },
+  zh: { title: '了解了这些知识，现在亲自试试', line1: 'CalorieVision 通过一张照片分析任何餐食。', line2: '免费、即时、无需注册账户。', btn: '免费试用 CalorieVision' },
+  ar: { title: 'الآن تعرف الحقائق، شاهدها عمليًا', line1: 'يحلل CalorieVision أي وجبة من صورة.', line2: 'مجاني وفوري ولا يتطلب حسابًا.', btn: 'جرّب CalorieVision مجانًا' },
+  it: { title: 'Ora conosci i fatti, guardali in azione', line1: 'CalorieVision analizza qualsiasi pasto da una foto.', line2: 'Gratis, immediato, senza bisogno di un account.', btn: 'Prova CalorieVision gratis' },
+  de: { title: 'Jetzt kennen Sie die Fakten, sehen Sie es in Aktion', line1: 'CalorieVision analysiert jede Mahlzeit anhand eines Fotos.', line2: 'Kostenlos, sofort, kein Konto erforderlich.', btn: 'CalorieVision kostenlos testen' },
+  nl: { title: 'Nu kent u de feiten, zie het in actie', line1: 'CalorieVision analyseert elke maaltijd op basis van een foto.', line2: 'Gratis, direct, geen account nodig.', btn: 'Probeer CalorieVision gratis' },
+  ru: { title: 'Теперь вы знаете факты, посмотрите, как это работает', line1: 'CalorieVision анализирует любое блюдо по фотографии.', line2: 'Бесплатно, мгновенно, без регистрации.', btn: 'Попробовать CalorieVision бесплатно' },
+  ja: { title: '事実がわかったら、実際に試してみましょう', line1: 'CalorieVisionは写真から食事を分析します。', line2: '無料・即時・アカウント不要。', btn: 'CalorieVisionを無料で試す' },
+};
+
 export function EndArticleCta() {
   const language = useUrlLanguage();
+  const txt = END_CTA_TEXT[language] ?? END_CTA_TEXT.en;
+  const arrow = language === 'ar' ? '←' : '→';
   return (
     <div
       className="mt-10 p-8 rounded-2xl border-2 text-center"
@@ -65,18 +81,18 @@ export function EndArticleCta() {
       }}
     >
       <p className="font-extrabold text-gray-900 text-xl mb-2">
-        Now you know the facts — see it in action
+        {txt.title}
       </p>
       <p className="text-gray-500 text-sm leading-relaxed mb-6">
-        CalorieVision analyzes any meal from a photo.<br />
-        Free, instant, no account needed.
+        {txt.line1}<br />
+        {txt.line2}
       </p>
       <Link
         to={`/${language}/analyze`}
         className="inline-block rounded-full text-base font-bold px-8 py-3 text-white no-underline"
         style={{ backgroundColor: ORANGE }}
       >
-        Try CalorieVision Free →
+        {txt.btn} {arrow}
       </Link>
     </div>
   );
