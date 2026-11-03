@@ -438,7 +438,6 @@ const Index = () => {
               <Button variant="hero" size="lg" className="w-full sm:w-auto text-lg px-10 min-h-[56px]" asChild>
                 <LocalizedNavLink to="/analyze">{copy.heroScanCta}</LocalizedNavLink>
               </Button>
-              <p className="text-xs text-muted-foreground text-center w-full sm:w-auto">👥 {copy.heroSocialProof}</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <button className="text-sm text-muted-foreground underline hover:text-primary transition-colors" onClick={handleTakePhotoClick}>
                   {copy.heroOrCamera}
